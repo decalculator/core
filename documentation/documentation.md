@@ -1,5 +1,71 @@
 # Core
 
+## Table des matières
+
+- [Préambule](#préambule)
+    - [Sujet](#sujet)
+    - [Idée initiale](#idée-initiale)
+- [Concepts](#concepts)
+    - [Le moteur du portail](#le-moteur-du-portail)
+    - [Les paramètres statiques](#les-paramètres-statiques)
+    - [Les systèmes](#les-systèmes)
+    - [Les objets](#les-objets)
+    - [Valeurs JSON](#valeurs-json)
+    - [Le système d'objets](#le-système-dobjets)
+        - [Structure principale](#structure-principale)
+        - [Le fichier de configuration d'un objet](#le-fichier-de-configuration-dun-objet)
+        - [Le fichier de configuration général d'un objet](#le-fichier-de-configuration-général-dun-objet)
+        - [Les packs d'objets](#les-packs-dobjets)
+    - [Le système de plugins](#le-système-de-plugins)
+        - [Structure principale](#structure-principale-1)
+        - [Le fichier de configuration d'un plugin](#le-fichier-de-configuration-dun-plugin)
+        - [Le fichier de configuration général d'un plugin](#le-fichier-de-configuration-général-dun-plugin)
+        - [Les packs de plugins](#les-packs-de-plugins)
+    - [Le système de modules](#le-système-de-modules)
+        - [Structure principale](#structure-principale-2)
+        - [Le fichier de configuration d'un module](#le-fichier-de-configuration-dun-module)
+        - [Le fichier de configuration général d'un module](#le-fichier-de-configuration-général-dun-module)
+- [Développement plus détaillé des concepts](#développement-plus-détaillé-des-concepts)
+    - [Plugins par défaut](#plugins-par-défaut)
+        - [communication](#communication)
+        - [configuration](#configuration)
+        - [filesystem](#filesystem)
+        - [server](#server)
+        - [ui](#ui)
+        - [community](#community)
+        - [menu](#menu)
+        - [evolution](#evolution)
+    - [Objets par défaut](#objets-par-défaut)
+        - [moment](#moment)
+        - [date](#date)
+        - [season](#season)
+        - [weather](#weather)
+        - [probability](#probability)
+        - [consequence](#consequence)
+        - [aleatory](#aleatory)
+        - [world](#world)
+        - [rule](#rule)
+        - [obligation_future](#obligation_future)
+        - [possibilities](#possibilities)
+        - [save](#save)
+            - [Structure d'une save](#structure-dune-save)
+        - [map](#map)
+            - [Structure d'une map](#structure-dune-map)
+        - [zone](#zone)
+            - [Structure d'une zone](#structure-dune-zone)
+        - [entity](#entity)
+    - [Modules par défaut](#modules-par-défaut)
+        - [states](#states)
+        - [loader](#loader)
+    - [UI](#ui-1)
+    - [Synchronisme](#synchronisme)
+- [Idées moins claires](#idées-moins-claires)
+    - [Dynamisme](#dynamisme)
+    - [Template de création de système](#template-de-création-de-système)
+- [Propriétés générales](#propriétés-générales)
+    - [Principe de non-unicité de l'objet](#principe-de-non-unicité-de-lobjet)
+    - [Exemple : l'objet temps](#exemple--lobjet-temps)
+
 ## Préambule
 
 ### Sujet
@@ -41,7 +107,9 @@ Mais pour ne pas mélanger les concepts, nous appelerons cela un `portail`.
 Le moteur du portail est (aussi) nommé `core`.  
 Il est (ou sa plus grande part) `statique`.  
 C'est un `module`.  
-Il est présent dans `core/modules/core`.
+Il est présent dans `core/modules/core`.  
+
+L'utilité du moteur est assez simple : il permet de load des objets, de définir les classes requises au bon fonctionnement de l'application, de définir des symboles, etc.
 
 ### Les paramètres statiques
 
@@ -64,12 +132,17 @@ Avec cela, l'utilisateur pourra modeler le statisme (noms de champs, etc).
 Un système est le fruit d'une complémentarité : il est composé de modules, de plugins, et d'objets.  
 Le dossier pour les systèmes est actuellement `core/`.  
 
-Les noms de codes pour les types sont :
-- `object` : un objet de type objet
-- `plugin` : un objet de type plugin
-- `module` : un objet de type module
+### Les objets
 
-### JSON
+Les objets sont les "choses" que nous développons.  
+Il en existe trois types :
+- `object` : un objet de type `object`
+- `plugin` : un objet de type `plugin`
+- `module` : un objet de type `module`
+
+Nous reviendrons prochainement sur les définitions et différences de ces types d'objets.
+
+### Valeurs JSON
 
 Voici tous les paramètres (communs) qui peuvent revenir dans les fichiers JSON, et leurs significations.  
 Nous nommerons cela `objet`, puisqu'il peut s'agir d'un `module`, d'un `plugin`, ou d'un `objet` :
@@ -100,7 +173,7 @@ Nous appelerons `{action}` le choix, que ce soit une méthode ou une fonction, c
 - `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}` (objet) : il s'agit ici de déterminer si une macro peut être exécutée ou non.
 - `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}/execution_check_payload` (objet) : champ principal pour déterminer sur une macro peut être exécutée ou non.
 - `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}/execution_check_payload/file` (data) : le nom du fichier qui contient la vérification d'exécution de la macro.
-- `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}/execution_check_payload/process_type` (data) : ce que l'on fait avec ce fichier. Pour l'instant, le système supporte `import`.
+- `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}/execution_check_payload/process_type` (data) : ce que l'on fait avec ce fichier. Pour l'instant,consequence le système supporte `import`.
 - `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}/execution_check_payload/execution` (objet) : champ principal contenant les informations d'exécution du fichier `{macro_name}/execution_check_payload/file`.
 - `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}/execution_check_payload/execution/mode` (data) : il s'agit du mode d'exécution du fichier contenant la vérification de la macro. Pour le moment, ce paramètre peut avoir pour valeur `exec`.
 - `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}/execution_check_payload/execution/content` (data) : le contenu à exécuter. Cela peut être un nom de fonction / méthode, ou bien `all`, qui signifie le fichier sera exécuté comme un script.
@@ -116,16 +189,16 @@ Nous appelerons `{action}` le choix, que ce soit une méthode ou une fonction, c
 - `macros/{macro_name}/execution/mode` (data) : il s'agit du mode d'exécution du fichier contenant la macro. Pour le moment, ce paramètre peut avoir pour valeur `exec`.
 - `macros/{macro_name}/execution/content` (data) : le contenu à exécuter. Cela peut être un nom de fonction / méthode, ou bien `all`, qui signifie le fichier sera exécuté comme un script.
 
-Et pour finir, nous appelerons `type` le type d'objet implémenté (`objet`, `plugin`, `module`).
+Et pour finir, nous appelerons `type` le type d'objet implémenté (`object`, `plugin`, `module`).
 - `sub_{type}` (array) : un array contenant les noms des sous-objets implémentés (sous-objets, sous-plugins, sous-modules).
 
-#### Le système d'objets
+### Le système d'objets
 
 Un objet est la couche la plus basse dans la hiérarchie des systèmes.  
 Il contient son propre code d'implémentation.  
 Un objet est plus bas qu'un plugin.
 
-##### Structure principale
+#### Structure principale
 
 ```
 .
@@ -143,7 +216,7 @@ Un objet est plus bas qu'un plugin.
 A noter que ce dossier se trouve dans `<object_folder>`, et que le fichier de configuration se trouve dans `<object_config>`.  
 Il faut aussi prendre conscience du fait que les paths des fichiers `.py` ne sont en rien statiques, c'est un exemple.
 
-##### Le fichier de configuration d'un objet
+#### Le fichier de configuration d'un objet
 
 ``` json
 {
@@ -267,7 +340,7 @@ Il faut aussi prendre conscience du fait que les paths des fichiers `.py` ne son
 }
 ```
 
-##### Le fichier de configuration général
+#### Le fichier de configuration général d'un objet
 
 Ce fichier de configuration se trouve dans les paramètres statiques de l'application.  
 Plus précisément, il s'agit de `<object_config>`.  
@@ -292,9 +365,9 @@ Voici sa structure actuelle :
 }
 ```
 
-##### Les packs d'objets
+#### Les packs d'objets
 
-Un pack d'objet permet d'installer plusieurs objets en une fois.  
+Un pack d'objets permet d'installer plusieurs objets en une fois.  
 Le format pour cela est un fichier `.zip` :
 
 ```
@@ -310,14 +383,14 @@ object_pack1.zip
     └── object3.py
 ```
 
-#### Le système de plugins
+### Le système de plugins
 
 Un plugin est un objet.  
 Cependant, il est plus bas niveau qu'un objet.  
 
 Pour le moment, la structure entre un objet de type `plugin` et `object` est la même.
 
-##### Structure principale
+#### Structure principale
 
 ```
 .
@@ -335,14 +408,14 @@ Pour le moment, la structure entre un objet de type `plugin` et `object` est la 
 A noter que ce dossier se trouve dans `<plugin_folder>`, et que le fichier de configuration se trouve dans `<plugin_config>`.  
 Il faut aussi prendre conscience du fait que les paths des fichiers `.py` ne sont en rien statiques, c'est un exemple.
 
-##### Le fichier de configuration d'un plugin
+#### Le fichier de configuration d'un plugin
 
 ``` json
 {
     "version": "x.x.x",
     "name": "plugin_name",
     "module": "plugin_associated_module",
-    "plugin": "object_associated_plugin",
+    "plugin": "plugin_associated_plugin",
     "requires":
     {
         "modules": {},
@@ -459,7 +532,7 @@ Il faut aussi prendre conscience du fait que les paths des fichiers `.py` ne son
 }
 ```
 
-##### Le fichier de configuration général
+#### Le fichier de configuration général d'un plugin
 
 Ce fichier de configuration se trouve dans les paramètres statiques de l'application.  
 Plus précisément, il s'agit de `<plugin_config>`.  
@@ -484,9 +557,9 @@ Voici sa structure actuelle :
 }
 ```
 
-##### Les packs de plugins
+#### Les packs de plugins
 
-Un pack d'objet permet d'installer plusieurs objets en une fois.  
+Un pack de plugins permet d'installer plusieurs plugins en une fois.  
 Le format pour cela est un fichier `.zip` :
 
 ```
@@ -502,51 +575,46 @@ plugin_pack1.zip
     └── plugin3.py
 ```
 
-#### Le système de modules
+### Le système de modules
 
 Un module est différent des objets de type `plugin` ou `object`.  
 Sa structure est beaucoup plus complexe et abstraite.
 
 Nous allons prendre l'exemple du moteur (`core/modules/core`), puisqu'il n'existe pas de structure générale, pour le moment.
 
-##### Structure principale
+#### Structure principale
 
 ```
 .
-├── module1
-│   └── module1.json
-├── module2
-│   └── module2.json
-└── module3
-    └── module3.json
+├── json
+│   ├── settings.json
+│   └── symbols
+│       └── symbols.json
+└── scripting
+    ├── fakevent
+    │   ├── fakevent.py
+    ├── loader
+    │   ├── loader.py
+    ├── settings
+    │   └── settings.py
+    ├── states
+    │   └── states.py
+    └── symbols
+        └── symbols.py
 ```
+
+Pour le moment :
+- `core/modules/core/json` contient les données statiques de l'application.
+- `core/modules/core/scripting` contient les implémentations des sous-modules du moteur.
 
 A noter que ce dossier se trouve dans `<module_folder>`, et que le fichier de configuration se trouve dans `<module_config>`.
 
-##### Le fichier de configuration d'un module
+#### Le fichier de configuration d'un module
 
 ``` json
-{
-    "version": "x.x.x",
-    "name": "module_name",
-    "requires":
-    {
-        "modules": {},
-        "plugins": [],
-        "application":
-        {
-            "minimum_version": "eldest",
-            "maximum_version": "latest"
-        }
-    },
-    "sub_modules":
-    [
-        "module_name1", "module_name2", "module_name3"
-    ]
-}
 ```
 
-##### Le fichier de configuration
+#### Le fichier de configuration général d'un module
 
 Ce fichier de configuration se trouve dans les paramètres statiques de l'application.  
 Plus précisément, il s'agit de `<module_config>`.  
@@ -559,15 +627,7 @@ Voici sa structure actuelle :
 {
     "modules":
     {
-        "base" :
-        {
-            "enabled": true
-        },
         "core":
-        {
-            "enabled": true
-        },
-        "plugins_manager":
         {
             "enabled": true
         }
