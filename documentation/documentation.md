@@ -224,6 +224,7 @@ Il faut aussi prendre conscience du fait que les paths des fichiers `.py` ne son
     "name": "object_name",
     "module": "object_associated_module",
     "plugin": "object_associated_plugin",
+    "type": "object",
     "requires":
     {
         "modules": {},
@@ -234,104 +235,78 @@ Il faut aussi prendre conscience du fait que les paths des fichiers `.py` ne son
             "maximum_version": "latest"
         }
     },
-    "files":
-    [
-        "object_py_file_path":
-        {
-            "methods":
+    "execution":
+    {
+        "methods":
+        [
             {
-                "method1_name":
+                "name": "name",
+                "file": "object_py_file_path",
+                "process_type": "import",
+                "execution":
                 {
-                    "signature": "method1_signature",
-                    "execution_conditions":
+                    "mode": "exec",
+                    "content": "add",
+                    "result":
                     {
-                        "macros":
-                        [
-                            "macro1_name":
+                        "true": 1,
+                        "false": 0
+                    },
+                    "execution_conditions":
+                    [
+                        {
+                            "macro": "macro1_name",
+                            "result":
                             {
-                                "execution_check_payload":
+                                "true": 1,
+                                "false": 0
+                            },
+                            "execution_conditions":
+                            [
                                 {
-                                    "file": "macro_execution_check_payload_py_file_path",
+                                    "name": "name",
+                                    "file": "py_path_of_file_containing_check",
                                     "process_type": "import",
-                                    "execution" :
+                                    "execution":
                                     {
                                         "mode": "exec",
-                                        "content": "func_or_method_name"
-                                    },
-                                    "result":
-                                    {
-                                        "true": 1,
-                                        "false": 0
+                                        "content": "method_name",
+                                        "result":
+                                        {
+                                            "true": 1,
+                                            "false": 0
+                                        }
                                     }
                                 }
-                            }
-                        ]
-                    }
-                },
-                "method2_name":
-                {
-                    "signature": "method2_signature",
-                    "execution_conditions":
-                    {
-                        "macros":
-                        [
-                            "macro2_name":
-                            {
-                                "execution_check_payload":
-                                {
-                                    "file": "macro_execution_check_payload_py_file_path",
-                                    "process_type": "import",
-                                    "execution" :
-                                    {
-                                        "mode": "exec",
-                                        "content": "all"
-                                    },
-                                    "result":
-                                    {
-                                        "true": 1,
-                                        "false": 0
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                },
-            },
-            "functions":
-            {
-                "function1_name":
-                {
-                    "signature": "function1_signature"
-                },
-                "function2_name":
-                {
-                    "signature": "function2_signature"
+                            ]
+                        }
+                    ]
                 }
             }
-        }
-    ],
-    "macros":
-    {
-        "macro1_name":
-        {
-            "file": "macro_py_file",
-            "process_type": "import",
-            "execution":
+        ],
+        "macros":
+        [
             {
-                "mode": "exec",
-                "content": "func1"
-            }
-        },
-        "macro2_name":
-        {
-            "file": "macro_py_file",
-            "process_type": "import",
-            "execution":
+                "name": "name",
+                "file": "macro_py_file",
+                "process_type": "import",
+                "execution":
+                {
+                    "mode": "exec",
+                    "content": "func1"
+                }
+            },
             {
-                "mode": "exec",
-                "content": "all"
+                "name": "name",
+                "file": "macro_py_file",
+                "process_type": "import",
+                "execution":
+                {
+                    "mode": "exec",
+                    "content": "all"
+                }
             }
-        }
+        ]
     },
     "sub_objects":
     [
@@ -416,6 +391,7 @@ Il faut aussi prendre conscience du fait que les paths des fichiers `.py` ne son
     "name": "plugin_name",
     "module": "plugin_associated_module",
     "plugin": "plugin_associated_plugin",
+    "type": "plugin",
     "requires":
     {
         "modules": {},
@@ -426,104 +402,78 @@ Il faut aussi prendre conscience du fait que les paths des fichiers `.py` ne son
             "maximum_version": "latest"
         }
     },
-    "files":
-    [
-        "plugin_py_file_path":
-        {
-            "methods":
+    "execution":
+    {
+        "methods":
+        [
             {
-                "method1_name":
+                "name": "name",
+                "file": "plugin_py_file_path",
+                "process_type": "import",
+                "execution":
                 {
-                    "signature": "method1_signature",
-                    "execution_conditions":
+                    "mode": "exec",
+                    "content": "add",
+                    "result":
                     {
-                        "macros":
-                        [
-                            "macro1_name":
+                        "true": 1,
+                        "false": 0
+                    },
+                    "execution_conditions":
+                    [
+                        {
+                            "macro": "macro1_name",
+                            "result":
                             {
-                                "execution_check_payload":
+                                "true": 1,
+                                "false": 0
+                            },
+                            "execution_conditions":
+                            [
                                 {
-                                    "file": "macro_execution_check_payload_py_file_path",
+                                    "name": "name",
+                                    "file": "py_path_of_file_containing_check",
                                     "process_type": "import",
-                                    "execution" :
+                                    "execution":
                                     {
                                         "mode": "exec",
-                                        "content": "func_or_method_name"
-                                    },
-                                    "result":
-                                    {
-                                        "true": 1,
-                                        "false": 0
+                                        "content": "method_name",
+                                        "result":
+                                        {
+                                            "true": 1,
+                                            "false": 0
+                                        }
                                     }
                                 }
-                            }
-                        ]
-                    }
-                },
-                "method2_name":
-                {
-                    "signature": "method2_signature",
-                    "execution_conditions":
-                    {
-                        "macros":
-                        [
-                            "macro2_name":
-                            {
-                                "execution_check_payload":
-                                {
-                                    "file": "macro_execution_check_payload_py_file_path",
-                                    "process_type": "import",
-                                    "execution" :
-                                    {
-                                        "mode": "exec",
-                                        "content": "all"
-                                    },
-                                    "result":
-                                    {
-                                        "true": 1,
-                                        "false": 0
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                },
-            },
-            "functions":
-            {
-                "function1_name":
-                {
-                    "signature": "function1_signature"
-                },
-                "function2_name":
-                {
-                    "signature": "function2_signature"
+                            ]
+                        }
+                    ]
                 }
             }
-        }
-    ],
-    "macros":
-    {
-        "macro1_name":
-        {
-            "file": "macro_py_file",
-            "process_type": "import",
-            "execution":
+        ],
+        "macros":
+        [
             {
-                "mode": "exec",
-                "content": "func1"
-            }
-        },
-        "macro2_name":
-        {
-            "file": "macro_py_file",
-            "process_type": "import",
-            "execution":
+                "name": "name",
+                "file": "macro_py_file",
+                "process_type": "import",
+                "execution":
+                {
+                    "mode": "exec",
+                    "content": "func1"
+                }
+            },
             {
-                "mode": "exec",
-                "content": "all"
+                "name": "name",
+                "file": "macro_py_file",
+                "process_type": "import",
+                "execution":
+                {
+                    "mode": "exec",
+                    "content": "all"
+                }
             }
-        }
+        ]
     },
     "sub_plugins":
     [
@@ -591,8 +541,6 @@ Nous allons prendre l'exemple du moteur (`core/modules/core`), puisqu'il n'exist
 │   └── symbols
 │       └── symbols.json
 └── scripting
-    ├── fakevent
-    │   ├── fakevent.py
     ├── loader
     │   ├── loader.py
     ├── settings
@@ -1111,3 +1059,235 @@ Cependant, même pour un monde qui n'en développe qu'une seule, nous pourrions 
 
 Et nous ne parlons pas d'un simple décalage, comme on pourrait observer sur Terre entre une horloge en haut d'une montagne et une horloge plus basse.  
 Nous parlons vraiment de définitions différentes, nous pourrions imaginer que dans une plage de coordonnées, le temps irait à rebours, quand dans une autre plage de coordonnées, il "tournerait" "normalement".
+
+## Choses supplémentaires à bien rédiger et à ajouter plus haut
+
+### core/modules/core/scripting/executable
+
+Il s'agit d'une classe implémentant le type `Executable`.  
+Pour initialiser un exécutable, on passe au constructeur un dict / json de configuration, et l'objet states.  
+
+Pour le moment, nous ne faisons pas de réelle distinction entre une macro et une méthode, car la structure est très similaire.  
+Si cela venait à changer, des classes `macro`, `method`, `function` pourraient être implémentées.  
+
+Voici ce que doit contenir un dict de configuration :
+
+``` json
+{
+    "type": "method",
+    "name": "add_check_function",
+    "file": "core/objects/cell/cell_check.py",
+    "process_type": "import",
+    "execution":
+    {
+        "mode": "exec",
+        "content": "add_check_function_macro",
+        "result":
+        {
+            "true": 1,
+            "false": 0
+        }
+    }
+}
+```
+
+Mais si le `type` est `macro`, alors `result` peut ne pas être passé : il sera implémenté par la config qui appelle la macro.  
+
+Un paramètre `execution_conditions` peut être présent pour des checks de post-exécution :
+
+``` json
+{
+    "name": "name",
+    "file": "plugin_py_file_path",
+    "process_type": "import",
+    "execution":
+    {
+        "mode": "exec",
+        "content": "add",
+        "result":
+        {
+            "true": 1,
+            "false": 0
+        },
+        "execution_conditions":
+        [
+            {
+                "macro": "macro1_name",
+                "result":
+                {
+                    "true": 1,
+                    "false": 0
+                },
+                "execution_conditions":
+                [
+                    {
+                        "name": "name",
+                        "file": "py_path_of_file_containing_check",
+                        "process_type": "import",
+                        "execution":
+                        {
+                            "mode": "exec",
+                            "content": "method_name",
+                            "result":
+                            {
+                                "true": 1,
+                                "false": 0
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
+```
+
+Ici, cela signifie que `method_name()` de `py_path_of_file_containing_check` doit renvoyer `1` pour que `macro1_name` puisse s'exécuter, qui doit lui-même renvoyer `1` pour que `add()` de `plugin_py_file_path` puisse s'exécuter.  
+
+La méthode `Executable::execute()` permet d'exécuter un objet de type `Executable`.  
+Pour le moment, elle ne prend pas de paramètres supplémentaires :
+
+``` python
+executable = Executable(executable_config, states)
+executable.execute()
+```
+
+`self.result_code` contient un booléen qui indique si le retour de la fonction est égal à `result/true`.
+
+### core/modules/core/scripting/execution
+
+Il s'agit d'un objet plus haut qu'un exécutable.  
+En fait, c'est globalement le contexte d'exécution d'un objet.  
+Il contient tous les exécutables d'un objet.
+
+### core/modules/core/scripting/loader
+
+Il s'agit du loader : la classe principale permettant de load des objets non-définis à l'avance, dans le moteur.  
+Son constructeur prend (pour le moment) comme paramètres :
+
+``` python
+loader = Loader(states, "module_path", "plugin_path", "object_path")
+```
+
+La méthode principale de ce fichier est `Loader.load()`, dont la signature est :
+
+``` python
+load(self, name, load_type)
+```
+
+Elle va charger le fichier principal de configuration de l'objet, initialiser un objet de type `Object` grâce au contenu de celui-ci.
+
+### core/modules/core/scripting/object
+
+Il est load par `Loader`, grâce au fichier de configuration d'un objet.  
+Un objet de type `Object` contient globalement `Object.execution` (liste), qui contient des objets de type `Execution` (qui contiennent les objets de type `Executable`).  
+Pour le moment, la seule "entrée d'exécution" est le paramètre "execution" du fichier de configuration d'un objet, mais nous avons prévu une liste (ou objet json) au cas où plusieurs champs venaient à être utilisés.
+
+### Résumé simple du processus : en partant du load jusqu'à l'exécution d'un objet
+
+```
+Load(object) --> Object(object) --> Execution(object) --> Executable(object)
+```
+
+### core/modules/core/scripting/settings
+
+Il s'agit d'un module permettant de créer / gérer des paramètres.  
+Les principales méthodes sont :
+
+#### Créer un paramètre
+
+``` python
+Settings.create("name")
+```
+
+#### Supprimer un paramètre
+
+``` python
+Settings.remove("name")
+```
+
+#### Obtenir une valeur d'un paramètre
+
+``` python
+Settings.get("name/param1")
+```
+
+#### Ecrire une valeur dans un paramètre
+
+``` python
+Settings.write("name/param2", "value", 1)
+```
+
+#### Activer (booléen)
+
+``` python
+Settings.enable("name/enabled", "name", "object")
+```
+
+(Il y a aussi un `Loader.load()` d'appelé).
+
+#### Désactiver (booléen)
+
+``` python
+Settings.enable("name/disabled", "name", "object")
+```
+
+### core/modules/core/scripting/states
+
+Principales méthodes :
+
+#### Créer une state
+
+``` python
+States.create("name")
+```
+
+#### Assigner une valeur à une state
+
+``` python
+States.assign("name", "param1", "value1")
+```
+
+#### ...
+
+### core/modules/core/scripting/symbols
+
+C'est une classe permettant de gérer des `symboles`.  
+Prenons un exemple pour comprendre ce qu'est un symbole, et son importance :
+
+``` python
+symbols = Symbols(states)
+
+for key in app_config:
+    if key not in symbols.symbols:
+        symbols.create(key, app_config[key])
+
+pattern = "<[a-z/<>_]*>"
+
+for key in symbols.symbols:
+    current_value = symbols.symbols[key]
+    done = False
+
+    while not done:
+        match = re.search(pattern, current_value)
+
+        if match:
+            to_replace = match.group()
+            if to_replace in symbols.symbols:
+                replace_by = symbols.symbols[to_replace]
+            else:
+                replace_by = "<not_found>"
+
+            current_value = current_value.replace(to_replace, replace_by)
+        else:
+            symbols.symbols[key] = current_value
+            done = True
+
+print(symbols.symbols)
+```
+
+``` python
+{'<version>': '1.0.0', '<minimum_version>': '1.0.0', '<maximum_version>': '1.0.0', '<plugin_folder>': 'core/plugins', '<plugin_config>': 'core/plugins/plugins.json', '<module_folder>': 'core/modules', '<module_config>': 'core/modules/modules.json', '<object_folder>': 'core/objects', '<object_config>': 'core/objects/objects.json'}
+```
+
+Ce sont simplement des variables propres au bon fonctionnement du programme.
