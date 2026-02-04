@@ -55,8 +55,25 @@
             - [Structure d'une zone](#structure-dune-zone)
         - [entity](#entity)
     - [Modules par défaut](#modules-par-défaut)
+        - [executable](#executable)
+        - [execution](#execution)
         - [states](#states)
+            - [Créer une state](#créer-une-state)
+            - [Assigner une valeur à une state](#assigner-une-valeur-à-une-state)
         - [loader](#loader)
+        - [installator](#installator)
+            - [Installer un module](#installer-un-module)
+            - [Installer un plugin](#installer-un-plugin)
+            - [Installer un objet](#installer-un-objet)
+        - [object](#object)
+        - [settings](#settings)
+            - [Créer un paramètre](#créer-un-paramètre)
+            - [Supprimer un paramètre](#supprimer-un-paramètre)
+            - [Obtenir une valeur d'un paramètre](#obtenir-une-valeur-dun-paramètre)
+            - [Ecrire une valeur dans un paramètre](#ecrire-une-valeur-dans-un-paramètre)
+            - [Activer (booléen)](#activer-booléen)
+            - [Désactiver (booléen)](#désactiver-booléen)
+        - [symbols](#symbols)
     - [UI](#ui-1)
     - [Synchronisme](#synchronisme)
 - [Idées moins claires](#idées-moins-claires)
@@ -77,7 +94,7 @@ Il s'agit projet scolaire, les contraintes du sujet sont :
 - L'utilisation de l'intelligence artificielle est autorisée mais doit être déclarée.
 - C'est un projet que je réalise seul.
 
-Tout ce que j'écris ici est le fruit de ma réflexion personnelle, **aucune** intelligence artificielle ne sera utilisée.
+Tout ce que j'écris ici est le fruit de ma réflexion personnelle, **aucune** intelligence artificielle ne sera utilisée, ni aucun concept / tutoriel venant d'internet d'ailleurs. Les seules choses que je m'autorise à utiliser pour ce projet sont les modules et leurs documentations.
 
 ### Idée initiale
 
@@ -160,34 +177,11 @@ Nous nommerons cela `objet`, puisqu'il peut s'agir d'un `module`, d'un `plugin`,
 - `requires/application/minimum_version` (data) : la version minimale de l'application, pour exécuter l'objet.
 - `requires/application/maximum_version` (data) : la version maximale de l'application, pour exécuter l'objet.
 
-- `files` (objet) : il s'agit d'un champ concernant les fichiers.
-- `files/{filename}` (objet) : le champ principal concernant le fichier.
-- `files/{filename}/methods` (objet) : un champ concernant les méthodes de `{filename}`.
-- `files/{filename}/functions` (objet) : un champ concernant les fonctions de `{filename}`.
+- `execution` (objet) : il s'agit d'un champ concernant les objets d'exécution.
+- `execution/methods` (array) : un array contenant les méthodes de l'objet.
+- `execution/macros` (array) : un array contenant les macros de l'objet.
 
-Nous appelerons `{action}` le choix, que ce soit une méthode ou une fonction, car la structure est la même.
-- `files/{filename}/{action}/{action1_name}` (objet) : le champ principal concernant l'action (le nom de la méthode / fonction).
-- `files/{filename}/{action}/{action1_name}/signature` (data) : la signature de l'action.
-- `files/{filename}/{action}/{action1_name}/signature/execution_conditions` (objet) : les conditions qui permettent de savoir si l'action doit être exécutée ou non.
-- `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros` (objet) : un array contenant des macros utilisées pour déterminer l'exécution.
-- `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}` (objet) : il s'agit ici de déterminer si une macro peut être exécutée ou non.
-- `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}/execution_check_payload` (objet) : champ principal pour déterminer sur une macro peut être exécutée ou non.
-- `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}/execution_check_payload/file` (data) : le nom du fichier qui contient la vérification d'exécution de la macro.
-- `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}/execution_check_payload/process_type` (data) : ce que l'on fait avec ce fichier. Pour l'instant,consequence le système supporte `import`.
-- `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}/execution_check_payload/execution` (objet) : champ principal contenant les informations d'exécution du fichier `{macro_name}/execution_check_payload/file`.
-- `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}/execution_check_payload/execution/mode` (data) : il s'agit du mode d'exécution du fichier contenant la vérification de la macro. Pour le moment, ce paramètre peut avoir pour valeur `exec`.
-- `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}/execution_check_payload/execution/content` (data) : le contenu à exécuter. Cela peut être un nom de fonction / méthode, ou bien `all`, qui signifie le fichier sera exécuté comme un script.
-- `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}/execution_check_payload/result` (objet) : le champ contenant l'interprétation des résultats.
-- `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}/execution_check_payload/result/true` (data) : la valeur que doit retourner l'exécution pour que le système considère que la macro peut être exécutée.
-- `files/{filename}/{action}/{action1_name}/signature/execution_conditions/macros/{macro_name}/execution_check_payload/result/false` (data) : la valeur que doit retourner l'exécution pour que le système considère que la macro ne peut pas être exécutée. Je ne sais pas si elle est vraiment utile pour le moment.
-
-- `macros` (objet) : le champ principal de définition des macros.
-- `macros/{macro_name}` (objet) : le champ principal de définition de la macro `{macro_name}`.
-- `macros/{macro_name}/file` (data) : le path vers le fichier contenant la macro.
-- `macros/{macro_name}/process_type` (data) : ce que l'on fait avec ce fichier. Pour l'instant, le système supporte `import`.
-- `macros/{macro_name}/execution` (objet) : champ principal contenant les informations d'exécution du fichier `macros/{macro_name}/file`.
-- `macros/{macro_name}/execution/mode` (data) : il s'agit du mode d'exécution du fichier contenant la macro. Pour le moment, ce paramètre peut avoir pour valeur `exec`.
-- `macros/{macro_name}/execution/content` (data) : le contenu à exécuter. Cela peut être un nom de fonction / méthode, ou bien `all`, qui signifie le fichier sera exécuté comme un script.
+Que ce soit une méthode ou une macro, ce sont des objets de configuration pour le type `Executable` (nous y reviendrons).  
 
 Et pour finir, nous appelerons `type` le type d'objet implémenté (`object`, `plugin`, `module`).
 - `sub_{type}` (array) : un array contenant les noms des sous-objets implémentés (sous-objets, sous-plugins, sous-modules).
@@ -937,7 +931,7 @@ Voici ce que doit contenir un dict de configuration :
 
 Mais si le `type` est `macro`, alors `result` peut ne pas être passé : il sera implémenté par la config qui appelle la macro.  
 
-Un paramètre `execution_conditions` peut être présent pour des checks de post-exécution :
+Un paramètre `execution_conditions` peut être présent pour des checks de pré-exécution :
 
 ``` json
 {
@@ -1045,7 +1039,7 @@ Elle va charger le fichier principal de configuration de l'objet, initialiser un
 Ce module est assez semblable au `Loader`, je ne sais pas encore si nous le garderons dans la version finale.  
 En tout cas, il se distingue du `Loader` en un point : il est fait pour `installer` un module, de manière permanente.
 
-1 - Module
+##### Installer un module
 
 ``` python
 Installator.import(name, value_type)
@@ -1073,7 +1067,7 @@ def __init__(self, states):
 
 Après l'exécution de ce constructeur, le type a été importé dans le moteur.
 
-2 - Plugin
+##### Installer un plugin
 
 ``` python
 # exemple : importer le plugin base
@@ -1099,7 +1093,7 @@ def __init__(self, states):
 
 Après l'exécution de ce constructeur, le plugin a été importé dans le moteur, ainsi que les noms de méthodes des objets à exécuter, les règles, etc.
 
-3 - Objet
+##### Installer un objet
 
 ``` python
 # exemple : importer l'objet time
