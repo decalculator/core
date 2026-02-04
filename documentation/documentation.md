@@ -117,6 +117,18 @@ En anglais, il signifie `coeur`, ou encore `noyau`.
 Il semble approprié, puisque ce que nous développons est un `moteur`.  
 Mais pour ne pas mélanger les concepts, nous appelerons cela un `portail`.
 
+### Un petit peu de désabstraction
+
+Dans cette documentation, voici la définition de ce que nous appelerons objets :
+
+```
+Tout est objet, mis à part le moteur.
+```
+
+Donc :
+- toute chose, aussi abstraite soit elle, est un objet si elle n'est pas le moteur (ce que nous développons).
+- le temps, la vie, l'espace, les mondes, les êtres, ..., sont objets.
+
 ## Concepts
 
 ### Le moteur du portail
