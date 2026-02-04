@@ -713,13 +713,16 @@ Un monde pourrait par exemple être constitué :
 - D'un système de météo
 - ...
 
-En fait, un monde n'est qu'une structure principale contenant tous les autres éléments. Alors, un monde devrait pouvoir contenir tous les objets (sauf lui-même).
+En fait, un monde n'est qu'une structure principale contenant tous les autres éléments. Alors, un monde devrait pouvoir contenir tous les objets.
 
 #### rule
 
 Cet objet implémente le type d'objet `rule`, un système de règles.  
-Ce sont les propriétés fondamentales du monde, que l'on ne peut pas contredire.  
-Par exemple : la gravité.
+Ce sont les propriétés fondamentales du monde, par exemple : la gravité.  
+
+Ces règles ne sont pas contredites pas les objets, par défaut.  
+Cependant, des paramètres spécifiques pourront être développés si un objet ne doit pas respecter une règle (ou plusieurs).  
+Nous faisons ce choix en pensant avant tout au dynamisme, nous ne voulons pas ajouter de contraintes statiques (telle chose obligatoire pour tous les objets).  
 
 #### obligation_future
 
