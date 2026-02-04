@@ -906,163 +906,7 @@ Par défaut, il pourrait exister 3 types d'entités :
 
 ### Modules par défaut
 
-#### states
-
-Pour orchestrer le bon fonctionnement de l'application, une classe `States` est présente.  
-Chaque classe aura comme attribut d'instance un objet commun de type `states`, pour y inscrire les états en cours.
-
-#### loader
-
-1 - Module
-
-``` python
-Loader.import(name, value_type)
-
-# exemple : importer le module base
-Loader.import("base", "modules")
-```
-
-1) Le moteur importe dynamiquement "{value_type}/{name}/_entry.py".  
-2) Dans ce fichier, se trouve une classe "_entry", il l'exécute.  
-
-Le constructeur de cette classe est le suivant :
-``` python
-def __init__(self, states):
-    self.states = states
-    self.system_name = "nom_du_système_module"
-
-    self.states.create(system_name)
-    self.states.assign(system_name, ..., ...)
-
-    # code _entry
-    # ajoute le type au moteur
-    # ...
-```
-
-Après l'exécution de ce constructeur, le type a été importé dans le moteur.
-
-2 - Plugin
-
-``` python
-# exemple : importer le plugin base
-Loader.import("base", "plugins")
-```
-
-1) Le moteur importe dynamiquement "{value_type}/{name}/_entry.py".  
-2) Dans ce fichier, se trouve une classe "_entry", il l'exécute.  
-
-Le constructeur de cette classe est le suivant :
-``` python
-def __init__(self, states):
-    self.states = states
-    self.system_name = "nom_du_système_plugin"
-
-    self.states.create(system_name)
-    self.states.assign(system_name, ..., ...)
-
-    # code _entry
-    # ajoute le type au moteur
-    # ...
-```
-
-Après l'exécution de ce constructeur, le plugin a été importé dans le moteur, ainsi que les noms de méthodes des objets à exécuter, les règles, etc.
-
-3 - Objet
-
-``` python
-# exemple : importer l'objet time
-Loader.import("time", "objects")
-```
-
-1) Le moteur importe dynamiquement "{value_type}/{name}/_entry.py".  
-2) Dans ce fichier, se trouve une classe "_entry", il l'exécute.  
-
-Le constructeur de cette classe est le suivant :
-``` python
-def __init__(self, states):
-    self.states = states
-    self.system_name = "nom_du_système_object"
-
-    self.states.create(system_name)
-    self.states.assign(system_name, ..., ...)
-
-    # code _entry
-    # ajoute le type au moteur
-    # ...
-```
-
-Après l'exécution de ce constructeur, l'objet a été importé dans le moteur.
-
-### UI
-
-Pour l'UI, nous utiliserons très probablement `fastapi`, car il est plus fait pour le fonctionnement asynchrone que flask.  
-Nous optons pour un render web car, tout doit être modelable, c'est probablement bien plus simple de modifier du code source HTML / CSS / JS qu'une application tkinter, par exemple.  
-
-Car je ne l'ai pas forcément précisé, mais l'interface en elle-même devra être non-contextuelle.  
-
-### Synchronisme
-
-Les tâches s'exécutent de manière asynchrones, c'est à dire indépendamment les unes des autres, en même temps.  
-Pour cela, le module principal utilisé est `asyncio`, on déclare la fonction `main()` en `async def`.  
-Par exemple, pour le serveur :
-``` python
-server = Server(states)
-asyncio.run(server.run())
-
-# les lignes suivantes seront exécutées en même temps
-```
-Puis, l'idée est de tout gérer avec states, pour coordonner les actions entre elles, même asynchrones.  
-Voici la toute première state :
-``` python
-states = States()
-states.create("app")
-states.assign("app", "status", "on")
-```
-
-On peut ensuite faire quelque chose comme cela :
-``` python
-while states.get("app", "status") != "off":
-    # boucle principale de l'app
-```
-
-## Idées moins claires
-
-### Dynamisme
-
-Le principe est que le programme soit le moins contextuel possible, c'est pour cela que l'on parle de développement d'un portail.  
-Pour cela, plusieurs fonctions dynamiques propres à python peuvent être utilisées :
-- `exec()` : permet d'exécuter du code python, sans compilation
-- `eval()` : permet d'évaluer une expression, sans compilation
-- `write()` : permet de (ré)écrire le propre code du programme, sans compilation
-
-Mais si la non-contextualité est correctement développée, nous pourrions ne pas avoir à utiliser ces fonctions.
-
-### Template de création de système
-
-## Propriétés générales
-
-Il s'agit d'une petite liste de propriétés générales que la version finale devrait adopter.
-
-### Principe de non-unicité de l'objet
-
-La propriété est simple : un objet peut apparaître autant de fois que nous le souhaitons dans un monde. Et ce, pour tout objet.  
-Cela signifie que même pour des objets plus "abstraits", cela devrait être possible.  
-
-(Sauf si une propriété de l'objet dit le contraire, bien entendu.)
-
-#### Exemple : l'objet temps
-
-Cela signifie donc qu'un monde peut avoir plusieurs temps, indépendants les uns des autres.  
-Pour un monde qui développe plusieurs planètes, cela pourrait être assez courant.  
-
-Cependant, même pour un monde qui n'en développe qu'une seule, nous pourrions imaginer que dans une certaine plage de coordonnées, l'objet temps n'est pas le même et fonctionne différement.  
-
-Et nous ne parlons pas d'un simple décalage, comme on pourrait observer sur Terre entre une horloge en haut d'une montagne et une horloge plus basse.  
-Nous parlons vraiment de définitions différentes, nous pourrions imaginer que dans une plage de coordonnées, le temps irait à rebours, quand dans une autre plage de coordonnées, il "tournerait" "normalement".
-
-## Choses supplémentaires à bien rédiger et à ajouter plus haut
-
-### core/modules/core/scripting/executable
+#### executable
 
 Il s'agit d'une classe implémentant le type `Executable`.  
 Pour initialiser un exécutable, on passe au constructeur un dict / json de configuration, et l'objet states.  
@@ -1154,85 +998,16 @@ executable.execute()
 
 `self.result_code` contient un booléen qui indique si le retour de la fonction est égal à `result/true`.
 
-### core/modules/core/scripting/execution
+#### execution
 
 Il s'agit d'un objet plus haut qu'un exécutable.  
 En fait, c'est globalement le contexte d'exécution d'un objet.  
 Il contient tous les exécutables d'un objet.
 
-### core/modules/core/scripting/loader
+#### states
 
-Il s'agit du loader : la classe principale permettant de load des objets non-définis à l'avance, dans le moteur.  
-Son constructeur prend (pour le moment) comme paramètres :
-
-``` python
-loader = Loader(states, "module_path", "plugin_path", "object_path")
-```
-
-La méthode principale de ce fichier est `Loader.load()`, dont la signature est :
-
-``` python
-load(self, name, load_type)
-```
-
-Elle va charger le fichier principal de configuration de l'objet, initialiser un objet de type `Object` grâce au contenu de celui-ci.
-
-### core/modules/core/scripting/object
-
-Il est load par `Loader`, grâce au fichier de configuration d'un objet.  
-Un objet de type `Object` contient globalement `Object.execution` (liste), qui contient des objets de type `Execution` (qui contiennent les objets de type `Executable`).  
-Pour le moment, la seule "entrée d'exécution" est le paramètre "execution" du fichier de configuration d'un objet, mais nous avons prévu une liste (ou objet json) au cas où plusieurs champs venaient à être utilisés.
-
-### Résumé simple du processus : en partant du load jusqu'à l'exécution d'un objet
-
-```
-Load(object) --> Object(object) --> Execution(object) --> Executable(object)
-```
-
-### core/modules/core/scripting/settings
-
-Il s'agit d'un module permettant de créer / gérer des paramètres.  
-Les principales méthodes sont :
-
-#### Créer un paramètre
-
-``` python
-Settings.create("name")
-```
-
-#### Supprimer un paramètre
-
-``` python
-Settings.remove("name")
-```
-
-#### Obtenir une valeur d'un paramètre
-
-``` python
-Settings.get("name/param1")
-```
-
-#### Ecrire une valeur dans un paramètre
-
-``` python
-Settings.write("name/param2", "value", 1)
-```
-
-#### Activer (booléen)
-
-``` python
-Settings.enable("name/enabled", "name", "object")
-```
-
-(Il y a aussi un `Loader.load()` d'appelé).
-
-#### Désactiver (booléen)
-
-``` python
-Settings.enable("name/disabled", "name", "object")
-```
-
-### core/modules/core/scripting/states
+Pour orchestrer le bon fonctionnement de l'application, une classe `States` est présente.  
+Chaque classe aura comme attribut d'instance un objet commun de type `states`, pour y inscrire les états en cours.  
 
 Principales méthodes :
 
@@ -1248,11 +1023,160 @@ States.create("name")
 States.assign("name", "param1", "value1")
 ```
 
-#### ...
+#### loader
 
-### core/modules/core/scripting/symbols
+Il s'agit du module principal permettant de load des objets non-définis à l'avance, dans le moteur.  
+Son constructeur prend (pour le moment) comme paramètres :
 
-C'est une classe permettant de gérer des `symboles`.  
+``` python
+loader = Loader(states, "module_path", "plugin_path", "object_path")
+```
+
+La méthode principale de ce fichier est `Loader.load()`, dont la signature est :
+
+``` python
+load(self, name, load_type)
+```
+
+Elle va charger le fichier principal de configuration de l'objet, initialiser un objet de type `Object` grâce au contenu de celui-ci.
+
+#### installator
+
+Ce module est assez semblable au `Loader`, je ne sais pas encore si nous le garderons dans la version finale.  
+En tout cas, il se distingue du `Loader` en un point : il est fait pour `installer` un module, de manière permanente.
+
+1 - Module
+
+``` python
+Installator.import(name, value_type)
+
+# exemple : importer le module base
+Installator.import("base", "modules")
+```
+
+1) Le moteur importe dynamiquement "{value_type}/{name}/_install.py".  
+2) Dans ce fichier, se trouve une classe "_install", il l'exécute.  
+
+Le constructeur de cette classe est le suivant :
+``` python
+def __init__(self, states):
+    self.states = states
+    self.system_name = "nom_du_système_module"
+
+    self.states.create(system_name)
+    self.states.assign(system_name, ..., ...)
+
+    # code _install
+    # ajoute le type au moteur
+    # ...
+```
+
+Après l'exécution de ce constructeur, le type a été importé dans le moteur.
+
+2 - Plugin
+
+``` python
+# exemple : importer le plugin base
+Installator.import("base", "plugins")
+```
+
+1) Le moteur importe dynamiquement "{value_type}/{name}/_install.py".  
+2) Dans ce fichier, se trouve une classe "_install", il l'exécute.  
+
+Le constructeur de cette classe est le suivant :
+``` python
+def __init__(self, states):
+    self.states = states
+    self.system_name = "nom_du_système_plugin"
+
+    self.states.create(system_name)
+    self.states.assign(system_name, ..., ...)
+
+    # code _install
+    # ajoute le type au moteur
+    # ...
+```
+
+Après l'exécution de ce constructeur, le plugin a été importé dans le moteur, ainsi que les noms de méthodes des objets à exécuter, les règles, etc.
+
+3 - Objet
+
+``` python
+# exemple : importer l'objet time
+Installator.import("time", "objects")
+```
+
+1) Le moteur importe dynamiquement "{value_type}/{name}/_install.py".  
+2) Dans ce fichier, se trouve une classe "_install", il l'exécute.  
+
+Le constructeur de cette classe est le suivant :
+``` python
+def __init__(self, states):
+    self.states = states
+    self.system_name = "nom_du_système_object"
+
+    self.states.create(system_name)
+    self.states.assign(system_name, ..., ...)
+
+    # code _install
+    # ajoute le type au moteur
+    # ...
+```
+
+Après l'exécution de ce constructeur, l'objet a été importé dans le moteur.
+
+#### object
+
+Il est load par `Loader`, grâce au fichier de configuration d'un objet.  
+Un objet de type `Object` contient globalement `Object.execution` (liste), qui contient des objets de type `Execution` (qui contiennent les objets de type `Executable`).  
+Pour le moment, la seule "entrée d'exécution" est le paramètre "execution" du fichier de configuration d'un objet, mais nous avons prévu une liste (ou objet json) au cas où plusieurs champs venaient à être utilisés.
+
+#### settings
+
+Il s'agit d'un module permettant de créer / gérer des paramètres.  
+Les principales méthodes sont :
+
+##### Créer un paramètre
+
+``` python
+Settings.create("name")
+```
+
+##### Supprimer un paramètre
+
+``` python
+Settings.remove("name")
+```
+
+##### Obtenir une valeur d'un paramètre
+
+``` python
+Settings.get("name/param1")
+```
+
+##### Ecrire une valeur dans un paramètre
+
+``` python
+Settings.write("name/param2", "value", 1)
+```
+
+##### Activer (booléen)
+
+``` python
+Settings.enable("name/enabled", "name", "object")
+```
+
+(Il y a aussi un `Loader.load()` d'appelé).
+
+##### Désactiver (booléen)
+
+``` python
+Settings.enable("name/disabled", "name", "object")
+```
+
+#### symbols
+
+C'est un module permettant de gérer des `symboles`.  
 Prenons un exemple pour comprendre ce qu'est un symbole, et son importance :
 
 ``` python
@@ -1291,3 +1215,70 @@ print(symbols.symbols)
 ```
 
 Ce sont simplement des variables propres au bon fonctionnement du programme.
+
+### UI
+
+Pour l'UI, nous utiliserons très probablement `fastapi`, car il est plus fait pour le fonctionnement asynchrone que flask.  
+Nous optons pour un render web car, tout doit être modelable, c'est probablement bien plus simple de modifier du code source HTML / CSS / JS qu'une application tkinter, par exemple.  
+
+Car je ne l'ai pas forcément précisé, mais l'interface en elle-même devra être non-contextuelle.  
+
+### Synchronisme
+
+Les tâches s'exécutent de manière asynchrones, c'est à dire indépendamment les unes des autres, en même temps.  
+Pour cela, le module principal utilisé est `asyncio`, on déclare la fonction `main()` en `async def`.  
+Par exemple, pour le serveur :
+``` python
+server = Server(states)
+asyncio.run(server.run())
+
+# les lignes suivantes seront exécutées en même temps
+```
+Puis, l'idée est de tout gérer avec states, pour coordonner les actions entre elles, même asynchrones.  
+Voici la toute première state :
+``` python
+states = States()
+states.create("app")
+states.assign("app", "status", "on")
+```
+
+On peut ensuite faire quelque chose comme cela :
+``` python
+while states.get("app", "status") != "off":
+    # boucle principale de l'app
+```
+
+## Idées moins claires
+
+### Dynamisme
+
+Le principe est que le programme soit le moins contextuel possible, c'est pour cela que l'on parle de développement d'un portail.  
+Pour cela, plusieurs fonctions dynamiques propres à python peuvent être utilisées :
+- `exec()` : permet d'exécuter du code python, sans compilation
+- `eval()` : permet d'évaluer une expression, sans compilation
+- `write()` : permet de (ré)écrire le propre code du programme, sans compilation
+
+Mais si la non-contextualité est correctement développée, nous pourrions ne pas avoir à utiliser ces fonctions.
+
+### Template de création de système
+
+## Propriétés générales
+
+Il s'agit d'une petite liste de propriétés générales que la version finale devrait adopter.
+
+### Principe de non-unicité de l'objet
+
+La propriété est simple : un objet peut apparaître autant de fois que nous le souhaitons dans un monde. Et ce, pour tout objet.  
+Cela signifie que même pour des objets plus "abstraits", cela devrait être possible.  
+
+(Sauf si une propriété de l'objet dit le contraire, bien entendu.)
+
+#### Exemple : l'objet temps
+
+Cela signifie donc qu'un monde peut avoir plusieurs temps, indépendants les uns des autres.  
+Pour un monde qui développe plusieurs planètes, cela pourrait être assez courant.  
+
+Cependant, même pour un monde qui n'en développe qu'une seule, nous pourrions imaginer que dans une certaine plage de coordonnées, l'objet temps n'est pas le même et fonctionne différement.  
+
+Et nous ne parlons pas d'un simple décalage, comme on pourrait observer sur Terre entre une horloge en haut d'une montagne et une horloge plus basse.  
+Nous parlons vraiment de définitions différentes, nous pourrions imaginer que dans une plage de coordonnées, le temps irait à rebours, quand dans une autre plage de coordonnées, il "tournerait" "normalement".
