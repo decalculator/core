@@ -1225,6 +1225,41 @@ print(symbols.symbols)
 
 Ce sont simplement des variables propres au bon fonctionnement du programme.
 
+#### json
+
+Il s'agit du module principal pour intéragir avec les fichiers JSON.  
+
+Méthodes principales :
+
+##### Créer un JSON
+``` python
+Json.create("name1")
+```
+
+##### Supprimer un paramètre (et sa valeur) à un path
+
+``` python
+Json.remove("name1/a/b/c/d/e/f/param1")
+```
+
+##### Obtenir la valeur d'un paramètre
+
+``` python
+Json.get("name1/a/b/c/d/e/f/param1")
+```
+
+##### Ecrire une valeur dans un paramètre
+
+``` python
+Json.write("name1/a/b/c/d/e/f/param1", "value1", 1)
+```
+
+Les modes :
+- `0` pour ne pas créer les sous-objets si ils n'existent pas.
+- `1` pour créer les sous-objets si ils n'existent pas.
+
+Par défaut, la valeur de cet argument est `0`.
+
 ### UI
 
 Pour l'UI, nous utiliserons très probablement `fastapi`, car il est plus fait pour le fonctionnement asynchrone que flask.  
