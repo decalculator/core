@@ -170,16 +170,16 @@ Le dossier pour les systèmes est actuellement `core/`.
 
 Les objets sont les "choses" que nous développons.  
 Il en existe trois types :
-- `object` : un objet de type `object`
-- `plugin` : un objet de type `plugin`
-- `module` : un objet de type `module`
+- `Object` : un objet de type `Object`.
+- `Plugin` : un objet de type `Plugin`.
+- `Module` : un objet de type `Module`.
 
 Nous reviendrons prochainement sur les définitions et différences de ces types d'objets.
 
 ### V - Valeurs JSON
 
 Voici tous les paramètres (communs) qui peuvent revenir dans les fichiers JSON, et leurs significations.  
-Nous nommerons cela `objet`, puisqu'il peut s'agir d'un `module`, d'un `plugin`, ou d'un `objet` :
+Nous nommerons cela `objet`, puisqu'il peut s'agir d'un objet de type `Module`, `Plugin`, ou bien `Object` :
 
 - `version` (data) : il s'agit de la version de l'objet.
 - `name` (data) : il s'agit du nom de l'objet.
@@ -200,8 +200,8 @@ Nous nommerons cela `objet`, puisqu'il peut s'agir d'un `module`, d'un `plugin`,
 
 Que ce soit une méthode ou une macro, ce sont des objets de configuration pour le type `Executable` (nous y reviendrons).  
 
-Et pour finir, nous appelerons `type` le type d'objet implémenté (`object`, `plugin`, `module`).
-- `sub_{type}` (array) : un array contenant les noms des sous-objets implémentés (sous-objets, sous-plugins, sous-modules).
+Et pour finir, nous appelerons `type` le type d'objet implémenté (`Object`, `Plugin`, `Module`).
+- `sub_{type}s` (array) : un array contenant les noms des sous-objets implémentés (sous-objets, sous-plugins, sous-modules).
 
 ### VI - Le système d'objets
 
@@ -235,7 +235,7 @@ Il faut aussi prendre conscience du fait que les paths des fichiers `.py` ne son
     "name": "object_name",
     "module": "object_associated_module",
     "plugin": "object_associated_plugin",
-    "type": "object",
+    "type": "Object",
     "requires":
     {
         "modules": {},
@@ -372,9 +372,9 @@ object_pack1.zip
 ### VII - Le système de plugins
 
 Un plugin est un objet.  
-Cependant, il est plus bas niveau qu'un objet.  
+Cependant, il est plus bas niveau qu'un objet de type `Object`.  
 
-Pour le moment, la structure entre un objet de type `plugin` et `object` est la même.
+Pour le moment, la structure entre un objet de type `Plugin` et `Object` est la même.
 
 #### I - Structure principale
 
@@ -402,7 +402,7 @@ Il faut aussi prendre conscience du fait que les paths des fichiers `.py` ne son
     "name": "plugin_name",
     "module": "plugin_associated_module",
     "plugin": "plugin_associated_plugin",
-    "type": "plugin",
+    "type": "Plugin",
     "requires":
     {
         "modules": {},
@@ -538,7 +538,7 @@ plugin_pack1.zip
 
 ### VIII - Le système de modules
 
-Un module est différent des objets de type `plugin` ou `object`.  
+Un objet de type `Module` est différent des objets de type `Plugin` ou `Object`.  
 Sa structure est beaucoup plus complexe et abstraite.
 
 Nous allons prendre l'exemple du moteur (`core/modules/core`), puisqu'il n'existe pas de structure générale, pour le moment.
@@ -552,14 +552,14 @@ Nous allons prendre l'exemple du moteur (`core/modules/core`), puisqu'il n'exist
 │   └── symbols
 │       └── symbols.json
 └── scripting
-    ├── loader
-    │   ├── loader.py
-    ├── settings
-    │   └── settings.py
-    ├── states
-    │   └── states.py
-    └── symbols
-        └── symbols.py
+    ├── module1_name
+    │   ├── module1_name.py
+    ├── module2_name
+    │   └── module2_name.py
+    ├── module3_name
+    │   └── module3_name.py
+    └── module4_name
+        └── module4_name.py
 ```
 
 Pour le moment :
@@ -571,6 +571,7 @@ A noter que ce dossier se trouve dans `<module_folder>`, et que le fichier de co
 #### II - Le fichier de configuration d'un module
 
 ``` json
+
 ```
 
 #### III - Le fichier de configuration général d'un module
@@ -665,12 +666,12 @@ Voici quelques idées de choses qui devraient être rendues possibles :
 
 #### III - Season
 
-Cet objet implémente le type d'objet `season`.  
+Cet objet implémente le type d'objet `Season`.  
 
 #### IV - Weather
 
-Cet objet implémente le type d'objet `weather`, un système de météo.  
-Nous pourrons y lier des objets de types `probability`, `consequence`, ...  
+Cet objet implémente le type d'objet `Weather`, un système de météo.  
+Nous pourrons y lier des objets de types `Probability`, `Consequence`, ...  
 Par exemple, la probabilité de pluie en novembre pourrait être de 70%.  
 Et pour les conséquences, la pluie fait monter les niveaux d'eau.
 
@@ -680,18 +681,18 @@ Voici quelques idées de choses qui devraient être rendues possibles :
 
 #### V - Probability
 
-Cet objet implémente le type d'objet `probability`, un système de probabilité.  
+Cet objet implémente le type d'objet `Probability`, un système de probabilité.  
 
 Une représentation simple de probabilité pourrait être une valeur comprise entre 0 et 1.  
 
 Voici quelques idées de choses qui devraient être rendues possibles :
 - Les autres objets peuvent ensuite utiliser ce système de probabilités, pour les apparitions etc
-- `probability` n'est qu'un nom, on peut très bien imaginer un faux système derrière cela
+- `Probability` n'est qu'un nom, on peut très bien imaginer un faux système derrière cela
 - Les méthodes de représentation peuvent changer, ce n'est pas obligatoirement une valeur entre 0 et 1. Par exemple : cela pourrait être des sentiments, un string, ou autre.
 
 #### VI - Consequence
 
-Cet objet implémente le type d'objet `consequence`, un système de conséquence (déterminisme).  
+Cet objet implémente le type d'objet `Consequence`, un système de conséquence (déterminisme).  
 
 Cela pourrait globalement permettre d'implémenter ce qu'il se passe si [...].  
 
@@ -701,28 +702,30 @@ Voici quelques idées de choses qui devraient être rendues possibles :
 
 #### VII - Aleatory
 
-Cet objet implémente le type d'objet `aleatory`, un système d'aléatoire.  
+Cet objet implémente le type d'objet `Aleatory`, un système d'aléatoire.  
 L'aléatoire n'existant pas en informatique classique, il serait par exemple possible d'utiliser des API comme random.org, en cas de besoin.  
 
 Cet objet pourrait implémenter plusieurs types d'aléatoires : les pseudo-aléatoires, etc.
 
 #### VIII - World
 
-Cet objet implémente le type d'objet `world`, un système de monde.  
+Cet objet implémente le type d'objet `World`, un système de monde.  
+Un monde est un objet, d'un point de vu de type pur.  
+Mais d'un point de vu "extérieur" (utilisateur), c'est une structure contenant d'autres objets.  
 
-Un monde pourrait par exemple être constitué :
+Un monde pourrait par exemple être constitué des objets suivants :
 - D'un ensemble de règles (rule)
-- D'un ensemble d'objets
+- D'un ensemble d'entités
 - D'un système d'écoulement d'instants
 - D'un système de saison
 - D'un système de météo
 - ...
 
-En fait, un monde n'est qu'une structure principale contenant tous les autres éléments. Alors, un monde devrait pouvoir contenir tous les objets.
+Un objet de type `World` devrait pouvoir "contenir" tout objet.
 
 #### IX - Rule
 
-Cet objet implémente le type d'objet `rule`, un système de règles.  
+Cet objet implémente le type d'objet `Rule`, un système de règles.  
 Ce sont les propriétés fondamentales du monde, par exemple : la gravité.  
 
 Ces règles ne sont pas contredites pas les objets, par défaut.  
@@ -731,7 +734,7 @@ Nous faisons ce choix en pensant avant tout au dynamisme, nous ne voulons pas aj
 
 #### X - Obligation_future
 
-Cet objet implémente le type d'objet `obligation_future`, un système d'obligations futures.  
+Cet objet implémente le type d'objet `Obligation_future`, un système d'obligations futures.  
 Les obligations futures sont des conditions faites pour altérer le futur du monde et des objets qui y vivent.  
 L'objectif est de créer plusieurs scénarios possibles en fonction d'une obligation future, pour permettre à l'utilisateur de modeler le futur de son monde.  
 Exemple : si nous avons un groupe d'entités qui vivent ensembles, et qu'une entité externe attaque une entité de ce groupe, alors il pourrait y avoir conflit.  
@@ -740,11 +743,11 @@ L'utilisateur peut donc forcer un objet (conscient et "libre") à faire une chos
 
 #### XI - Possibilities
 
-Cet objet implémente le type d'objet `possibilities`, un système de possibilités (scénarios).  
+Cet objet implémente le type d'objet `Possibilities`, un système de possibilités (scénarios).  
 
 #### XII - Save
 
-Cet objet implémente le type d'objet `save`, un système de sauvegarde.  
+Cet objet implémente le type d'objet `Save`, un système de sauvegarde.  
 
 Par défaut, un monde pourra être sauvegardé de deux manières :
 - Localement : le dossier de sauvegarde du monde sera enregistré sur le disque de l'utilisateur.
@@ -752,7 +755,7 @@ Par défaut, un monde pourra être sauvegardé de deux manières :
 
 ##### I - Structure d'une save
 
-Voici la structure d'un objet JSON de type save, par défaut :
+Voici la structure JSON d'un objet de type `Save`, par défaut :
 
 ``` json
 {
@@ -791,8 +794,8 @@ Attention : cela ne doit pas être des adresses d'objets, car elles sont dynamiq
 
 #### XIII - Map
 
-Cet objet implémente le type d'objet `map`, un système de maps.  
-Une map est un ensemble qui contient des `zones`.  
+Cet objet implémente le type d'objet `Map`, un système de maps.  
+Une map est un ensemble qui contient des objets de type `Zone`.
 
 ##### I - Structure d'une map
 
@@ -849,7 +852,7 @@ Je ne sais pas vraiment si cela sera le cas dans la version développée, mais c
 
 #### XIV - Zone
 
-Cet objet implémente le type d'objet `zone`, un système de zones.  
+Cet objet implémente le type d'objet `Zone`, un système de zones.  
 
 ##### I - Structure d'une zone
 
@@ -911,7 +914,7 @@ La structure doit être adaptée.
 
 #### XV - Entity
 
-Cet objet implémente le type d'objet `entity`, un système d'entités.  
+Cet objet implémente le type d'objet `Entity`, un système d'entités.  
 
 Par défaut, il pourrait exister 3 types d'entités :
 - L'entité consciente libre : il s'agit d'une entité qui a une conscience et qui est libre de ses mouvements. Par exemple : un oiseau.
@@ -926,7 +929,7 @@ Il s'agit d'une classe implémentant le type `Executable`.
 Pour initialiser un exécutable, on passe au constructeur un dict / json de configuration, et l'objet states.  
 
 Pour le moment, nous ne faisons pas de réelle distinction entre une macro et une méthode, car la structure est très similaire.  
-Si cela venait à changer, des classes `macro`, `method`, `function` pourraient être implémentées.  
+Si cela venait à changer, des classes `Macro`, `Method`, `Function` pourraient être implémentées.  
 
 Voici ce que doit contenir un dict de configuration :
 
@@ -1021,7 +1024,7 @@ Il contient tous les exécutables d'un objet.
 #### III - States
 
 Pour orchestrer le bon fonctionnement de l'application, une classe `States` est présente.  
-Chaque classe aura comme attribut d'instance un objet commun de type `states`, pour y inscrire les états en cours.  
+Chaque classe aura comme attribut d'instance un objet commun de type `States`, pour y inscrire les états en cours.  
 
 Principales méthodes :
 
@@ -1068,8 +1071,8 @@ Installator.import(name, value_type)
 Installator.import("base", "modules")
 ```
 
-1) Le moteur importe dynamiquement "{value_type}/{name}/_install.py".  
-2) Dans ce fichier, se trouve une classe "_install", il l'exécute.  
+1) Le moteur importe dynamiquement `{value_type}/{name}/_install.py`.  
+2) Dans ce fichier, se trouve une classe `_install`, il l'exécute.  
 
 Le constructeur de cette classe est le suivant :
 ``` python
@@ -1094,8 +1097,8 @@ Après l'exécution de ce constructeur, le type a été importé dans le moteur.
 Installator.import("base", "plugins")
 ```
 
-1) Le moteur importe dynamiquement "{value_type}/{name}/_install.py".  
-2) Dans ce fichier, se trouve une classe "_install", il l'exécute.  
+1) Le moteur importe dynamiquement `{value_type}/{name}/_install.py`.  
+2) Dans ce fichier, se trouve une classe `_install`, il l'exécute.  
 
 Le constructeur de cette classe est le suivant :
 ``` python
@@ -1120,8 +1123,8 @@ Après l'exécution de ce constructeur, le plugin a été importé dans le moteu
 Installator.import("time", "objects")
 ```
 
-1) Le moteur importe dynamiquement "{value_type}/{name}/_install.py".  
-2) Dans ce fichier, se trouve une classe "_install", il l'exécute.  
+1) Le moteur importe dynamiquement `{value_type}/{name}/_install.py`.  
+2) Dans ce fichier, se trouve une classe `_install`, il l'exécute.  
 
 Le constructeur de cette classe est le suivant :
 ``` python
@@ -1232,7 +1235,7 @@ Ce sont simplement des variables propres au bon fonctionnement du programme.
 
 #### IX - Json
 
-Il s'agit du module principal pour intéragir avec les fichiers JSON.  
+Il s'agit du module principal pour intéragir avec des objets JSON.  
 
 Méthodes principales :
 
