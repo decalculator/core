@@ -1,96 +1,96 @@
-# Core
+# I - Core
 
-## Table des matières
+## I - Table des matières
 
-- [Préambule](#préambule)
-    - [Sujet](#sujet)
-    - [Idée initiale](#idée-initiale)
-- [Concepts](#concepts)
-    - [Le moteur du portail](#le-moteur-du-portail)
-    - [Les paramètres statiques](#les-paramètres-statiques)
-    - [Les systèmes](#les-systèmes)
-    - [Les objets](#les-objets)
-    - [Valeurs JSON](#valeurs-json)
-    - [Le système d'objets](#le-système-dobjets)
-        - [Structure principale](#structure-principale)
-        - [Le fichier de configuration d'un objet](#le-fichier-de-configuration-dun-objet)
-        - [Le fichier de configuration général d'un objet](#le-fichier-de-configuration-général-dun-objet)
-        - [Les packs d'objets](#les-packs-dobjets)
-    - [Le système de plugins](#le-système-de-plugins)
-        - [Structure principale](#structure-principale-1)
-        - [Le fichier de configuration d'un plugin](#le-fichier-de-configuration-dun-plugin)
-        - [Le fichier de configuration général d'un plugin](#le-fichier-de-configuration-général-dun-plugin)
-        - [Les packs de plugins](#les-packs-de-plugins)
-    - [Le système de modules](#le-système-de-modules)
-        - [Structure principale](#structure-principale-2)
-        - [Le fichier de configuration d'un module](#le-fichier-de-configuration-dun-module)
-        - [Le fichier de configuration général d'un module](#le-fichier-de-configuration-général-dun-module)
-- [Développement plus détaillé des concepts](#développement-plus-détaillé-des-concepts)
-    - [Plugins par défaut](#plugins-par-défaut)
-        - [communication](#communication)
-        - [configuration](#configuration)
-        - [filesystem](#filesystem)
-        - [server](#server)
-        - [ui](#ui)
-        - [community](#community)
-        - [menu](#menu)
-        - [evolution](#evolution)
-    - [Objets par défaut](#objets-par-défaut)
-        - [moment](#moment)
-        - [date](#date)
-        - [season](#season)
-        - [weather](#weather)
-        - [probability](#probability)
-        - [consequence](#consequence)
-        - [aleatory](#aleatory)
-        - [world](#world)
-        - [rule](#rule)
-        - [obligation_future](#obligation_future)
-        - [possibilities](#possibilities)
-        - [save](#save)
-            - [Structure d'une save](#structure-dune-save)
-        - [map](#map)
-            - [Structure d'une map](#structure-dune-map)
-        - [zone](#zone)
-            - [Structure d'une zone](#structure-dune-zone)
-        - [entity](#entity)
-    - [Modules par défaut](#modules-par-défaut)
-        - [executable](#executable)
-        - [execution](#execution)
-        - [states](#states)
-            - [Créer une state](#créer-une-state)
-            - [Assigner une valeur à une state](#assigner-une-valeur-à-une-state)
-        - [loader](#loader)
-        - [installator](#installator)
-            - [Installer un module](#installer-un-module)
-            - [Installer un plugin](#installer-un-plugin)
-            - [Installer un objet](#installer-un-objet)
-        - [object](#object)
-        - [settings](#settings)
-            - [Créer un paramètre](#créer-un-paramètre)
-            - [Supprimer un paramètre](#supprimer-un-paramètre)
-            - [Obtenir une valeur d'un paramètre](#obtenir-une-valeur-dun-paramètre)
-            - [Ecrire une valeur dans un paramètre](#ecrire-une-valeur-dans-un-paramètre)
-            - [Activer (booléen)](#activer-booléen)
-            - [Désactiver (booléen)](#désactiver-booléen)
-        - [symbols](#symbols)
-        - [JSON](#json)
-            - [Créer un JSON](#créer-un-json)
-            - [Supprimer un paramètre (et sa valeur) à un path](#supprimer-un-paramètre-et-sa-valeur-à-un-path)
-            - [Obtenir la valeur d'un paramètre](#obtenir-la-valeur-dun-paramètre)
-            - [Ecrire une valeur dans un paramètre](#ecrire-une-valeur-dans-un-paramètre-1)
-    - [UI](#ui-1)
-    - [Synchronisme](#synchronisme)
-- [Idées moins claires](#idées-moins-claires)
-    - [Dynamisme](#dynamisme)
-    - [Template de création de système](#template-de-création-de-système)
-- [Propriétés générales](#propriétés-générales)
-    - [Principe de non-unicité de l'objet](#principe-de-non-unicité-de-lobjet)
-    - [Exemple : l'objet temps](#exemple--lobjet-temps)
+- [II - Préambule](#ii---préambule)
+    - [I - Sujet](#i---sujet)
+    - [II - Idée initiale](#ii---idée-initiale)
+- [III - Concepts](#iii---concepts)
+    - [I - Le moteur du portail](#i---le-moteur-du-portail)
+    - [II - Les paramètres statiques](#ii---les-paramètres-statiques)
+    - [III - Les systèmes](#iii---les-systèmes)
+    - [IV - Les objets](#iv---les-objets)
+    - [V - Valeurs JSON](#v---valeurs-json)
+    - [VI - Le système d'objets](#vi---le-système-dobjets)
+        - [I - Structure principale](#i---structure-principale)
+        - [II - Le fichier de configuration d'un objet](#ii---le-fichier-de-configuration-dun-objet)
+        - [III - Le fichier de configuration général d'un objet](#iii---le-fichier-de-configuration-général-dun-objet)
+        - [IV - Les packs d'objets](#iv---les-packs-dobjets)
+    - [VII - Le système de plugins](#vii---le-système-de-plugins)
+        - [I - Structure principale](#i---structure-principale-1)
+        - [II - Le fichier de configuration d'un plugin](#ii---le-fichier-de-configuration-dun-plugin)
+        - [III - Le fichier de configuration général d'un plugin](#iii---le-fichier-de-configuration-général-dun-plugin)
+        - [IV - Les packs de plugins](#iv---les-packs-de-plugins)
+    - [VIII - Le système de modules](#viii---le-système-de-modules)
+        - [I - Structure principale](#i---structure-principale-2)
+        - [II - Le fichier de configuration d'un module](#ii---le-fichier-de-configuration-dun-module)
+        - [III - Le fichier de configuration général d'un module](#iii---le-fichier-de-configuration-général-dun-module)
+- [IV - Développement plus détaillé des concepts](#iv---développement-plus-détaillé-des-concepts)
+    - [I - Plugins par défaut](#i---plugins-par-défaut)
+        - [I - Communication](#i---communication)
+        - [II - Configuration](#ii---configuration)
+        - [III - Filesystem](#iii---filesystem)
+        - [IV - Server](#iv---server)
+        - [V - Ui](#v---ui)
+        - [VI - Community](#vi---community)
+        - [VII - Menu](#vii---menu)
+        - [VIII - Evolution](#viii---evolution)
+    - [II - Objets par défaut](#ii---objets-par-défaut)
+        - [I - Moment](#i---moment)
+        - [II - Date](#ii---date)
+        - [III - Season](#iii---season)
+        - [IV - Weather](#iv---weather)
+        - [V - Probability](#v---probability)
+        - [VI - Consequence](#vi---consequence)
+        - [VII - Aleatory](#vii---aleatory)
+        - [VIII - World](#viii---world)
+        - [IX - Rule](#ix---rule)
+        - [X - Obligation_future](#x---obligation_future)
+        - [XI - Possibilities](#xi---possibilities)
+        - [XII - Save](#xii---save)
+            - [I - Structure d'une save](#i---structure-dune-save)
+        - [XIII - Map](#xiii---map)
+            - [I - Structure d'une map](#i---structure-dune-map)
+        - [XIV - Zone](#xiv---zone)
+            - [I - Structure d'une zone](#i---structure-dune-zone)
+        - [XV - Entity](#xv---entity)
+    - [III - Modules par défaut](#iii---modules-par-défaut)
+        - [I - Executable](#i---executable)
+        - [II - Execution](#ii---execution)
+        - [III - States](#iii---states)
+            - [I - Créer une state](#i---créer-une-state)
+            - [II - Assigner une valeur à une state](#ii---assigner-une-valeur-à-une-state)
+        - [IV - Loader](#iv---loader)
+        - [V - Installator](#v---installator)
+            - [I - Installer un module](#i---installer-un-module)
+            - [II - Installer un plugin](#ii---installer-un-plugin)
+            - [III - Installer un objet](#iii---installer-un-objet)
+        - [VI - Object](#vi---object)
+        - [VII - Settings](#vii---settings)
+            - [I - Créer un paramètre](#i---créer-un-paramètre)
+            - [II - Supprimer un paramètre](#ii---supprimer-un-paramètre)
+            - [III - Obtenir une valeur d'un paramètre](#iii---obtenir-une-valeur-dun-paramètre)
+            - [IV - Ecrire une valeur dans un paramètre](#iv---ecrire-une-valeur-dans-un-paramètre)
+            - [V - Activer (booléen)](#v---activer-booléen)
+            - [VI - Désactiver (booléen)](#vi---désactiver-booléen)
+        - [VIII - Symbols](#viii---symbols)
+        - [IX - Json](#ix---json)
+            - [I - Créer un JSON](#i---créer-un-json)
+            - [II - Supprimer un paramètre (et sa valeur) à un path](#ii---supprimer-un-paramètre-et-sa-valeur-à-un-path)
+            - [III - Obtenir la valeur d'un paramètre](#iii---obtenir-la-valeur-dun-paramètre)
+            - [IV - Ecrire une valeur dans un paramètre](#iv---ecrire-une-valeur-dans-un-paramètre-1)
+    - [IV - UI](#iv---ui)
+    - [V - Synchronisme](#v---synchronisme)
+- [IV - Idées moins claires](#iv---idées-moins-claires)
+    - [I - Dynamisme](#i---dynamisme)
+    - [II - Template de création de système](#ii---template-de-création-de-système)
+- [V - Propriétés générales](#v---propriétés-générales)
+    - [I - Principe de non-unicité de l'objet](#i---principe-de-non-unicité-de-lobjet)
+        - [I - Exemple : l'objet temps](#i---exemple--lobjet-temps)
 
-## Préambule
+## II - Préambule
 
-### Sujet
+### I - Sujet
 
 Il s'agit projet scolaire, les contraintes du sujet sont :
 - Le langage de programmation utilisé doit être Python.
@@ -101,7 +101,7 @@ Il s'agit projet scolaire, les contraintes du sujet sont :
 
 Tout ce que j'écris ici est le fruit de ma réflexion personnelle, **aucune** intelligence artificielle ne sera utilisée, ni aucun concept / tutoriel venant d'internet d'ailleurs. Les seules choses que je m'autorise à utiliser pour ce projet sont les modules et leurs documentations.
 
-### Idée initiale
+### II - Idée initiale
 
 Le projet est de réaliser un portail de simulation de vie, en Python.  
 Nous appelons cela un portail, car l'idée est de faire en sorte qu'il soit dynamique, et non statique.  
@@ -122,7 +122,7 @@ En anglais, il signifie `coeur`, ou encore `noyau`.
 Il semble approprié, puisque ce que nous développons est un `moteur`.  
 Mais pour ne pas mélanger les concepts, nous appelerons cela un `portail`.
 
-### Un petit peu de désabstraction
+### III - Un petit peu de désabstraction
 
 Dans cette documentation, voici la définition de ce que nous appelerons objets :
 
@@ -134,9 +134,9 @@ Donc :
 - toute chose, aussi abstraite soit elle, est un objet si elle n'est pas le moteur (ce que nous développons).
 - le temps, la vie, l'espace, les mondes, les êtres, ..., sont objets.
 
-## Concepts
+## III - Concepts
 
-### Le moteur du portail
+### I - Le moteur du portail
 
 Le moteur du portail est (aussi) nommé `core`.  
 Il est (ou sa plus grande part) `statique`.  
@@ -145,7 +145,7 @@ Il est présent dans `core/modules/core`.
 
 L'utilité du moteur est assez simple : il permet de load des objets, de définir les classes requises au bon fonctionnement de l'application, de définir des symboles, etc.
 
-### Les paramètres statiques
+### II - Les paramètres statiques
 
 Les paramètres statiques se trouvent dans `core/module/core/json/settings.json` :
 - `<version>` : le numéro de version actuel du programme.
@@ -161,12 +161,12 @@ Les paramètres statiques se trouvent dans `core/module/core/json/settings.json`
 Nous avons fait ce choix pour diluer le statisme en une sorte de non-contextualité.  
 Avec cela, l'utilisateur pourra modeler le statisme (noms de champs, etc).
 
-### Les systèmes
+### III - Les systèmes
 
 Un système est le fruit d'une complémentarité : il est composé de modules, de plugins, et d'objets.  
 Le dossier pour les systèmes est actuellement `core/`.  
 
-### Les objets
+### IV - Les objets
 
 Les objets sont les "choses" que nous développons.  
 Il en existe trois types :
@@ -176,7 +176,7 @@ Il en existe trois types :
 
 Nous reviendrons prochainement sur les définitions et différences de ces types d'objets.
 
-### Valeurs JSON
+### V - Valeurs JSON
 
 Voici tous les paramètres (communs) qui peuvent revenir dans les fichiers JSON, et leurs significations.  
 Nous nommerons cela `objet`, puisqu'il peut s'agir d'un `module`, d'un `plugin`, ou d'un `objet` :
@@ -203,13 +203,13 @@ Que ce soit une méthode ou une macro, ce sont des objets de configuration pour 
 Et pour finir, nous appelerons `type` le type d'objet implémenté (`object`, `plugin`, `module`).
 - `sub_{type}` (array) : un array contenant les noms des sous-objets implémentés (sous-objets, sous-plugins, sous-modules).
 
-### Le système d'objets
+### VI - Le système d'objets
 
 Un objet est la couche la plus basse dans la hiérarchie des systèmes.  
 Il contient son propre code d'implémentation.  
 Un objet est plus bas qu'un plugin.
 
-#### Structure principale
+#### I - Structure principale
 
 ```
 .
@@ -227,7 +227,7 @@ Un objet est plus bas qu'un plugin.
 A noter que ce dossier se trouve dans `<object_folder>`, et que le fichier de configuration se trouve dans `<object_config>`.  
 Il faut aussi prendre conscience du fait que les paths des fichiers `.py` ne sont en rien statiques, c'est un exemple.
 
-#### Le fichier de configuration d'un objet
+#### II - Le fichier de configuration d'un objet
 
 ``` json
 {
@@ -326,7 +326,7 @@ Il faut aussi prendre conscience du fait que les paths des fichiers `.py` ne son
 }
 ```
 
-#### Le fichier de configuration général d'un objet
+#### III - Le fichier de configuration général d'un objet
 
 Ce fichier de configuration se trouve dans les paramètres statiques de l'application.  
 Plus précisément, il s'agit de `<object_config>`.  
@@ -351,7 +351,7 @@ Voici sa structure actuelle :
 }
 ```
 
-#### Les packs d'objets
+#### IV - Les packs d'objets
 
 Un pack d'objets permet d'installer plusieurs objets en une fois.  
 Le format pour cela est un fichier `.zip` :
@@ -369,14 +369,14 @@ object_pack1.zip
     └── object3.py
 ```
 
-### Le système de plugins
+### VII - Le système de plugins
 
 Un plugin est un objet.  
 Cependant, il est plus bas niveau qu'un objet.  
 
 Pour le moment, la structure entre un objet de type `plugin` et `object` est la même.
 
-#### Structure principale
+#### I - Structure principale
 
 ```
 .
@@ -394,7 +394,7 @@ Pour le moment, la structure entre un objet de type `plugin` et `object` est la 
 A noter que ce dossier se trouve dans `<plugin_folder>`, et que le fichier de configuration se trouve dans `<plugin_config>`.  
 Il faut aussi prendre conscience du fait que les paths des fichiers `.py` ne sont en rien statiques, c'est un exemple.
 
-#### Le fichier de configuration d'un plugin
+#### II - Le fichier de configuration d'un plugin
 
 ``` json
 {
@@ -493,7 +493,7 @@ Il faut aussi prendre conscience du fait que les paths des fichiers `.py` ne son
 }
 ```
 
-#### Le fichier de configuration général d'un plugin
+#### III - Le fichier de configuration général d'un plugin
 
 Ce fichier de configuration se trouve dans les paramètres statiques de l'application.  
 Plus précisément, il s'agit de `<plugin_config>`.  
@@ -518,7 +518,7 @@ Voici sa structure actuelle :
 }
 ```
 
-#### Les packs de plugins
+#### IV - Les packs de plugins
 
 Un pack de plugins permet d'installer plusieurs plugins en une fois.  
 Le format pour cela est un fichier `.zip` :
@@ -536,14 +536,14 @@ plugin_pack1.zip
     └── plugin3.py
 ```
 
-### Le système de modules
+### VIII - Le système de modules
 
 Un module est différent des objets de type `plugin` ou `object`.  
 Sa structure est beaucoup plus complexe et abstraite.
 
 Nous allons prendre l'exemple du moteur (`core/modules/core`), puisqu'il n'existe pas de structure générale, pour le moment.
 
-#### Structure principale
+#### I - Structure principale
 
 ```
 .
@@ -568,12 +568,12 @@ Pour le moment :
 
 A noter que ce dossier se trouve dans `<module_folder>`, et que le fichier de configuration se trouve dans `<module_config>`.
 
-#### Le fichier de configuration d'un module
+#### II - Le fichier de configuration d'un module
 
 ``` json
 ```
 
-#### Le fichier de configuration général d'un module
+#### III - Le fichier de configuration général d'un module
 
 Ce fichier de configuration se trouve dans les paramètres statiques de l'application.  
 Plus précisément, il s'agit de `<module_config>`.  
@@ -594,53 +594,53 @@ Voici sa structure actuelle :
 }
 ```
 
-## Développement plus détaillé des concepts
+## IV - Développement plus détaillé des concepts
 
-### Plugins par défaut
+### I - Plugins par défaut
 
 Voici une liste plutôt précise des plugins par défaut.
 
-#### communication
+#### I - Communication
 
 Ce plugin sert à la communication avec l'Internet.  
 Il se trouve dans `core/plugins/communication`.
 
-#### configuration
+#### II - Configuration
 
 Il se trouve dans `core/plugins/configuration`.
 
-#### filesystem
+#### III - Filesystem
 
 Il se trouve dans `core/plugins/filesystem`.
 
-#### server
+#### IV - Server
 
 Il se trouve dans `core/plugins/server`.
 
-#### ui
+#### V - Ui
 
 Il se trouve dans `core/plugins/ui`.
 
-#### community
+#### VI - Community
 
 Une communauté est un espace publique qui regroupe des partages d'objets, de règles, de mondes, en ligne.  
 Chaque objet, règle, monde, ou autre de la communauté a un identifiant unique de 10 chiffres : `0123456789`.  
 Ce plugin permettra d'intéragir avec.
 
-#### menu
+#### VII - Menu
 
 Il y aura globalement deux options :
 - Lancement local : on demande à l'utilisateur de sélectionner le dossier de son monde, si il ne se trouve pas dans le dossier par défaut.
 - Lancement serveur : on demande à l'utilisateur de saisir l'identifiant unique de son monde, ainsi que l'url vers le serveur communautaire.
 
-#### evolution
+#### VIII - Evolution
 
 Un objet peut subir des évolutions (mutations).  
 Le plugin evolution permet de faire évoluer des objets en d'autres objets (ou autres modifications).
 
-### Objets par défaut
+### II - Objets par défaut
 
-#### moment
+#### I - Moment
 
 Il s'agit d'un objet d'écoulement d'instants.  
 Nous utilisons "instant" pour parler du temps.  
@@ -653,7 +653,7 @@ Par contre, il devrait toujours y avoir un écoulement d'instants, je crois.
 
 Pour voir l'évolution de son monde, l'utilisateur doit donc pouvoir moduler les instants : passer tant d'instants, aller à un instant, etc.  
 
-#### date
+#### II - Date
 
 Cet objet permet d'implémenter un système de dates.  
 Toutes les règles sont faisables, dans la limite du possible (performances de l'ordinateur, enjeux de mémoire, etc).  
@@ -663,11 +663,11 @@ Voici quelques idées de choses qui devraient être rendues possibles :
 - Ou bien encore imaginer un système de date totalement différent, qui repose sur des calculs aléatoires, pour définir quel jour nous sommes !
 - Ou une boucle temporelle : nous revenons à la même date, en boucle
 
-#### season
+#### III - Season
 
 Cet objet implémente le type d'objet `season`.  
 
-#### weather
+#### IV - Weather
 
 Cet objet implémente le type d'objet `weather`, un système de météo.  
 Nous pourrons y lier des objets de types `probability`, `consequence`, ...  
@@ -678,7 +678,7 @@ Voici quelques idées de choses qui devraient être rendues possibles :
 - Il sera aisé de créer une nouvelle météo, par exemple un temps où il pleut de l'électricité
 - Le sens n'est pas obligatoirement unidirectionnel. La plupart du temps, la météo vient de l'exterieur vers l'intérieur, mais ce n'est pas nécessairement le cas ici. Par exemple, une météo pourrait être une planète qui renvoie de l'eau qui monte au ciel (par une loi de type law)
 
-#### probability
+#### V - Probability
 
 Cet objet implémente le type d'objet `probability`, un système de probabilité.  
 
@@ -689,7 +689,7 @@ Voici quelques idées de choses qui devraient être rendues possibles :
 - `probability` n'est qu'un nom, on peut très bien imaginer un faux système derrière cela
 - Les méthodes de représentation peuvent changer, ce n'est pas obligatoirement une valeur entre 0 et 1. Par exemple : cela pourrait être des sentiments, un string, ou autre.
 
-#### consequence
+#### VI - Consequence
 
 Cet objet implémente le type d'objet `consequence`, un système de conséquence (déterminisme).  
 
@@ -699,14 +699,14 @@ Voici quelques idées de choses qui devraient être rendues possibles :
 - Une conséquence d'avant-apparition : ce qu'il se passe pour que l'évènement se produise. Par exemple : les fleurs poussent grâce à la pluie (en partie).
 - Une conséquence d'après-apparition : ce qu'il se passe à la suite de l'évènement, ce qu'il engendre. Par exemple : les fleurs qui éclosent permettent aux bourdons de venir butiner.
 
-#### aleatory
+#### VII - Aleatory
 
 Cet objet implémente le type d'objet `aleatory`, un système d'aléatoire.  
 L'aléatoire n'existant pas en informatique classique, il serait par exemple possible d'utiliser des API comme random.org, en cas de besoin.  
 
 Cet objet pourrait implémenter plusieurs types d'aléatoires : les pseudo-aléatoires, etc.
 
-#### world
+#### VIII - World
 
 Cet objet implémente le type d'objet `world`, un système de monde.  
 
@@ -720,7 +720,7 @@ Un monde pourrait par exemple être constitué :
 
 En fait, un monde n'est qu'une structure principale contenant tous les autres éléments. Alors, un monde devrait pouvoir contenir tous les objets.
 
-#### rule
+#### IX - Rule
 
 Cet objet implémente le type d'objet `rule`, un système de règles.  
 Ce sont les propriétés fondamentales du monde, par exemple : la gravité.  
@@ -729,7 +729,7 @@ Ces règles ne sont pas contredites pas les objets, par défaut.
 Cependant, des paramètres spécifiques pourront être développés si un objet ne doit pas respecter une règle (ou plusieurs).  
 Nous faisons ce choix en pensant avant tout au dynamisme, nous ne voulons pas ajouter de contraintes statiques (telle chose obligatoire pour tous les objets).  
 
-#### obligation_future
+#### X - Obligation_future
 
 Cet objet implémente le type d'objet `obligation_future`, un système d'obligations futures.  
 Les obligations futures sont des conditions faites pour altérer le futur du monde et des objets qui y vivent.  
@@ -738,11 +738,11 @@ Exemple : si nous avons un groupe d'entités qui vivent ensembles, et qu'une ent
 On peut forcer le conflit, pour voir ce qu'il va se passer, en posant cette obligation future : entité 1 attaque entité 2 tel jour.  
 L'utilisateur peut donc forcer un objet (conscient et "libre") à faire une chose à un instant T.
 
-#### possibilities
+#### XI - Possibilities
 
 Cet objet implémente le type d'objet `possibilities`, un système de possibilités (scénarios).  
 
-#### save
+#### XII - Save
 
 Cet objet implémente le type d'objet `save`, un système de sauvegarde.  
 
@@ -750,7 +750,7 @@ Par défaut, un monde pourra être sauvegardé de deux manières :
 - Localement : le dossier de sauvegarde du monde sera enregistré sur le disque de l'utilisateur.
 - En ligne : le dossier de sauvegarde du monde sera enregistré sur un serveur.
 
-##### Structure d'une save
+##### I - Structure d'une save
 
 Voici la structure d'un objet JSON de type save, par défaut :
 
@@ -789,12 +789,12 @@ Voici la structure d'un objet JSON de type save, par défaut :
 - `states` : les states écrivent dans ce champ leurs données qui seront réstaurées à la prochaine exécution du programme.  
 Attention : cela ne doit pas être des adresses d'objets, car elles sont dynamiques. Ce sont bien des données, en JSON par exemple.
 
-#### map
+#### XIII - Map
 
 Cet objet implémente le type d'objet `map`, un système de maps.  
 Une map est un ensemble qui contient des `zones`.  
 
-##### Structure d'une map
+##### I - Structure d'une map
 
 Voici une potentielle structure d'une map :
 
@@ -847,11 +847,11 @@ zone 3 (100x100) : x = 0, y = 2
 Les zones n'utiliseraient donc pas les mêmes coordonnées que la map.  
 Je ne sais pas vraiment si cela sera le cas dans la version développée, mais c'est probable.
 
-#### zone
+#### XIV - Zone
 
 Cet objet implémente le type d'objet `zone`, un système de zones.  
 
-##### Structure d'une zone
+##### I - Structure d'une zone
 
 Voici ce qui pourrait être une structure de zone :
 
@@ -909,7 +909,7 @@ Notons que pour le moment, ce fichier est très contextuel.
 En effet, une grande partie de ce schéma vient du premier fichier `old/preambule.md`.  
 La structure doit être adaptée.
 
-#### entity
+#### XV - Entity
 
 Cet objet implémente le type d'objet `entity`, un système d'entités.  
 
@@ -918,9 +918,9 @@ Par défaut, il pourrait exister 3 types d'entités :
 - L'entité consciente : il s'agit d'une entité qui a une conscience, mais qui n'est pas vraiment libre de ses déplacements. Par exemple : une plante, bien qu'elle grandisse.
 - L'entité non-consciente non-vivante : il s'agit d'une entité qui n'a ni conscience, ni liberté. Par exemple : une table.
 
-### Modules par défaut
+### III - Modules par défaut
 
-#### executable
+#### I - Executable
 
 Il s'agit d'une classe implémentant le type `Executable`.  
 Pour initialiser un exécutable, on passe au constructeur un dict / json de configuration, et l'objet states.  
@@ -1012,32 +1012,32 @@ executable.execute()
 
 `self.result_code` contient un booléen qui indique si le retour de la fonction est égal à `result/true`.
 
-#### execution
+#### II - Execution
 
 Il s'agit d'un objet plus haut qu'un exécutable.  
 En fait, c'est globalement le contexte d'exécution d'un objet.  
 Il contient tous les exécutables d'un objet.
 
-#### states
+#### III - States
 
 Pour orchestrer le bon fonctionnement de l'application, une classe `States` est présente.  
 Chaque classe aura comme attribut d'instance un objet commun de type `states`, pour y inscrire les états en cours.  
 
 Principales méthodes :
 
-#### Créer une state
+##### I - Créer une state
 
 ``` python
 States.create("name")
 ```
 
-#### Assigner une valeur à une state
+##### II - Assigner une valeur à une state
 
 ``` python
 States.assign("name", "param1", "value1")
 ```
 
-#### loader
+#### IV - Loader
 
 Il s'agit du module principal permettant de load des objets non-définis à l'avance, dans le moteur.  
 Son constructeur prend (pour le moment) comme paramètres :
@@ -1054,12 +1054,12 @@ load(self, name, load_type)
 
 Elle va charger le fichier principal de configuration de l'objet, initialiser un objet de type `Object` grâce au contenu de celui-ci.
 
-#### installator
+#### V - Installator
 
 Ce module est assez semblable au `Loader`, je ne sais pas encore si nous le garderons dans la version finale.  
 En tout cas, il se distingue du `Loader` en un point : il est fait pour `installer` un module, de manière permanente.
 
-##### Installer un module
+##### I - Installer un module
 
 ``` python
 Installator.import(name, value_type)
@@ -1087,7 +1087,7 @@ def __init__(self, states):
 
 Après l'exécution de ce constructeur, le type a été importé dans le moteur.
 
-##### Installer un plugin
+##### II - Installer un plugin
 
 ``` python
 # exemple : importer le plugin base
@@ -1113,7 +1113,7 @@ def __init__(self, states):
 
 Après l'exécution de ce constructeur, le plugin a été importé dans le moteur, ainsi que les noms de méthodes des objets à exécuter, les règles, etc.
 
-##### Installer un objet
+##### III - Installer un objet
 
 ``` python
 # exemple : importer l'objet time
@@ -1139,42 +1139,42 @@ def __init__(self, states):
 
 Après l'exécution de ce constructeur, l'objet a été importé dans le moteur.
 
-#### object
+#### VI - Object
 
 Il est load par `Loader`, grâce au fichier de configuration d'un objet.  
 Un objet de type `Object` contient globalement `Object.execution` (liste), qui contient des objets de type `Execution` (qui contiennent les objets de type `Executable`).  
 Pour le moment, la seule "entrée d'exécution" est le paramètre "execution" du fichier de configuration d'un objet, mais nous avons prévu une liste (ou objet json) au cas où plusieurs champs venaient à être utilisés.
 
-#### settings
+#### VII - Settings
 
 Il s'agit d'un module permettant de créer / gérer des paramètres.  
 Les principales méthodes sont :
 
-##### Créer un paramètre
+##### I - Créer un paramètre
 
 ``` python
 Settings.create("name")
 ```
 
-##### Supprimer un paramètre
+##### II - Supprimer un paramètre
 
 ``` python
 Settings.remove("name")
 ```
 
-##### Obtenir une valeur d'un paramètre
+##### III - Obtenir une valeur d'un paramètre
 
 ``` python
 Settings.get("name/param1")
 ```
 
-##### Ecrire une valeur dans un paramètre
+##### IV - Ecrire une valeur dans un paramètre
 
 ``` python
 Settings.write("name/param2", "value", 1)
 ```
 
-##### Activer (booléen)
+##### V - Activer (booléen)
 
 ``` python
 Settings.enable("name/enabled", "name", "object")
@@ -1182,13 +1182,13 @@ Settings.enable("name/enabled", "name", "object")
 
 (Il y a aussi un `Loader.load()` d'appelé).
 
-##### Désactiver (booléen)
+##### VI - Désactiver (booléen)
 
 ``` python
 Settings.enable("name/disabled", "name", "object")
 ```
 
-#### symbols
+#### VIII - Symbols
 
 C'est un module permettant de gérer des `symboles`.  
 Prenons un exemple pour comprendre ce qu'est un symbole, et son importance :
@@ -1230,30 +1230,30 @@ print(symbols.symbols)
 
 Ce sont simplement des variables propres au bon fonctionnement du programme.
 
-#### json
+#### IX - Json
 
 Il s'agit du module principal pour intéragir avec les fichiers JSON.  
 
 Méthodes principales :
 
-##### Créer un JSON
+##### I - Créer un JSON
 ``` python
 Json.create("name1")
 ```
 
-##### Supprimer un paramètre (et sa valeur) à un path
+##### II - Supprimer un paramètre (et sa valeur) à un path
 
 ``` python
 Json.remove("name1/a/b/c/d/e/f/param1")
 ```
 
-##### Obtenir la valeur d'un paramètre
+##### III - Obtenir la valeur d'un paramètre
 
 ``` python
 Json.get("name1/a/b/c/d/e/f/param1")
 ```
 
-##### Ecrire une valeur dans un paramètre
+##### IV - Ecrire une valeur dans un paramètre
 
 ``` python
 Json.write("name1/a/b/c/d/e/f/param1", "value1", 1)
@@ -1265,14 +1265,14 @@ Les modes :
 
 Par défaut, la valeur de cet argument est `0`.
 
-### UI
+### IV - UI
 
 Pour l'UI, nous utiliserons très probablement `fastapi`, car il est plus fait pour le fonctionnement asynchrone que flask.  
 Nous optons pour un render web car, tout doit être modelable, c'est probablement bien plus simple de modifier du code source HTML / CSS / JS qu'une application tkinter, par exemple.  
 
 Car je ne l'ai pas forcément précisé, mais l'interface en elle-même devra être non-contextuelle.  
 
-### Synchronisme
+### V - Synchronisme
 
 Les tâches s'exécutent de manière asynchrones, c'est à dire indépendamment les unes des autres, en même temps.  
 Pour cela, le module principal utilisé est `asyncio`, on déclare la fonction `main()` en `async def`.  
@@ -1297,9 +1297,9 @@ while states.get("app", "status") != "off":
     # boucle principale de l'app
 ```
 
-## Idées moins claires
+## IV - Idées moins claires
 
-### Dynamisme
+### I - Dynamisme
 
 Le principe est que le programme soit le moins contextuel possible, c'est pour cela que l'on parle de développement d'un portail.  
 Pour cela, plusieurs fonctions dynamiques propres à python peuvent être utilisées :
@@ -1309,20 +1309,20 @@ Pour cela, plusieurs fonctions dynamiques propres à python peuvent être utilis
 
 Mais si la non-contextualité est correctement développée, nous pourrions ne pas avoir à utiliser ces fonctions.
 
-### Template de création de système
+### II - Template de création de système
 
-## Propriétés générales
+## V - Propriétés générales
 
 Il s'agit d'une petite liste de propriétés générales que la version finale devrait adopter.
 
-### Principe de non-unicité de l'objet
+### I - Principe de non-unicité de l'objet
 
 La propriété est simple : un objet peut apparaître autant de fois que nous le souhaitons dans un monde. Et ce, pour tout objet.  
 Cela signifie que même pour des objets plus "abstraits", cela devrait être possible.  
 
 (Sauf si une propriété de l'objet dit le contraire, bien entendu.)
 
-#### Exemple : l'objet temps
+#### I - Exemple : l'objet temps
 
 Cela signifie donc qu'un monde peut avoir plusieurs temps, indépendants les uns des autres.  
 Pour un monde qui développe plusieurs planètes, cela pourrait être assez courant.  
