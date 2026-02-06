@@ -1334,3 +1334,79 @@ Cependant, même pour un monde qui n'en développe qu'une seule, nous pourrions 
 
 Et nous ne parlons pas d'un simple décalage, comme on pourrait observer sur Terre entre une horloge en haut d'une montagne et une horloge plus basse.  
 Nous parlons vraiment de définitions différentes, nous pourrions imaginer que dans une plage de coordonnées, le temps irait à rebours, quand dans une autre plage de coordonnées, il "tournerait" "normalement".
+
+## V - Développement
+
+La documentation du moteur et de l'application étant déjà bien avancéee, nous allons pouvoir commencer à discuter du développement ici même.
+
+### I - Chronologie
+
+Voici l'ordre que nous allons probablement respecter :
+
+#### I - Core
+
+Tout d'abord, développer le module `core` (moteur).  
+
+##### I - Plan
+
+```
+└── core
+    └── modules
+        └── core
+            ├── core.json
+            ├── json
+            │   ├── settings.json
+            │   └── symbols
+            │       └── symbols.json
+            └── scripting
+                ├── executable
+                │   └── executable.py
+                ├── execution
+                │   └── execution.py
+                ├── installator
+                │   └── installator.py
+                ├── json
+                │   └── json.py
+                ├── loader
+                │   └── loader.py
+                ├── object
+                │   └── object.py
+                ├── settings
+                │   └── settings.py
+                ├── states
+                │   └── states.py
+                └── symbols
+                    └── symbols.py
+```
+
+##### II - Avancement
+
+```
+└── core
+    └── modules
+        └── core
+            ├── core.json
+            ├── json
+            │   ├── settings.json
+            │   └── symbols
+            │       └── symbols.json
+            └── scripting
+                ├── executable
+                │   └── executable.py
+                ├── execution
+                │   └── execution.py
+                ├── installator
+                │   └── installator.py
+                ├── json
+                │   └── json.py : 90%
+                ├── loader
+                │   └── loader.py
+                ├── object
+                │   └── object.py
+                ├── settings
+                │   └── settings.py
+                ├── states
+                │   └── states.py
+                └── symbols
+                    └── symbols.py
+```
