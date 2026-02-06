@@ -87,6 +87,7 @@
                 - [IV - Json.write](#iv---jsonwrite)
                 - [V - Json.exists](#v---jsonexists)
                 - [VI - Json.path_to_json](#vi---jsonpath_to_json)
+                - [VII - Json.get_from_file](#vii---jsonget_from_file)
             - [II - Settings](#ii---settings)
                 - [I - Settings.create](#i---settingscreate)
                 - [II - Settings.remove](#ii---settingsremove)
@@ -1266,6 +1267,14 @@ Tout d'abord, nous allons développer le module `core` (moteur).
 
 #### I - Json
 
+``` python
+__init__(self)
+```
+
+``` python
+>>> json = Json()
+```
+
 ##### I - Json.create
 
 Méthode implémentée.
@@ -1275,13 +1284,16 @@ create(self, name)
 ```
 
 ``` python
->>> json = Json()
 >>> json.create("a")
 ```
 
 ##### II - Json.remove
 
 Méthode implémentée.
+
+``` python
+remove(self, path)
+```
 
 ``` python
 >>> json = Json()
@@ -1345,7 +1357,25 @@ path_to_json(self, path)
 ["a"]["b"]
 ```
 
+##### VII - Json.get_from_file
+
+``` python
+get_from_file(self, path)
+```
+
+``` python
+>>> json.write("a/b", json.get_from_file("core/modules/core/json/settings.json"))
+```
+
 #### II - Settings
+
+``` python
+__init__(self, states, loader)
+```
+
+``` python
+>>> settings = Settings(states, loader)
+```
 
 ##### I - Settings.create
 
@@ -1356,7 +1386,6 @@ create(self, name)
 ```
 
 ``` python
->>> settings = Settings(states, loader)
 >>> settings.create("a")
 ```
 
@@ -1426,6 +1455,14 @@ disable(self, settings_path, disabled_name, disabled_type)
 
 #### III - States
 
+``` python
+__init__(self)
+```
+
+``` python
+>>> states = States()
+```
+
 ##### I - States.create
 
 Méthode implémentée.
@@ -1476,4 +1513,66 @@ exists(self, path)
 ...     if states.get("app/value") == "on":
 ...         print("app is on !")
 app is on !
+```
+
+#### IV - Executable
+
+``` python
+__init__(self, config, states)
+```
+
+``` python
+>>> executable = Executable(config, states)
+```
+
+##### I - Executable.execute
+
+Méthode implémentée.
+
+``` python
+execute(self)
+```
+
+``` python
+>>> executable.execute()
+```
+
+#### V - Execution
+
+``` python
+__init__(self, config, states)
+```
+
+``` python
+>>> execution = Execution(config, states)
+```
+
+#### VI - Object
+
+``` python
+__init__(self, config, states)
+```
+
+``` python
+>>> current_object = Object(config, states)
+```
+
+#### VII - Loader
+
+``` python
+__init__(self, states, module_path, plugin_path, object_path)
+```
+
+``` python
+>>> loader = Loader(states, "module_folder", "plugin_folder", "object_folder")
+```
+
+##### I - Loader.load
+
+``` python
+def load(self, name, load_type)
+```
+
+``` python
+>>> loader.load("communication", "plugin")
 ```
