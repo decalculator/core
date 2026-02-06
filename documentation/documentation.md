@@ -58,8 +58,6 @@
         - [I - Executable](#i---executable)
         - [II - Execution](#ii---execution)
         - [III - States](#iii---states)
-            - [I - Créer une state](#i---créer-une-state)
-            - [II - Assigner une valeur à une state](#ii---assigner-une-valeur-à-une-state)
         - [IV - Loader](#iv---loader)
         - [V - Installator](#v---installator)
             - [I - Installer un module](#i---installer-un-module)
@@ -67,18 +65,8 @@
             - [III - Installer un objet](#iii---installer-un-objet)
         - [VI - Object](#vi---object)
         - [VII - Settings](#vii---settings)
-            - [I - Créer un paramètre](#i---créer-un-paramètre)
-            - [II - Supprimer un paramètre](#ii---supprimer-un-paramètre)
-            - [III - Obtenir une valeur d'un paramètre](#iii---obtenir-une-valeur-dun-paramètre)
-            - [IV - Ecrire une valeur dans un paramètre](#iv---ecrire-une-valeur-dans-un-paramètre)
-            - [V - Activer (booléen)](#v---activer-booléen)
-            - [VI - Désactiver (booléen)](#vi---désactiver-booléen)
         - [VIII - Symbols](#viii---symbols)
         - [IX - Json](#ix---json)
-            - [I - Créer un JSON](#i---créer-un-json)
-            - [II - Supprimer un paramètre (et sa valeur) à un path](#ii---supprimer-un-paramètre-et-sa-valeur-à-un-path)
-            - [III - Obtenir la valeur d'un paramètre](#iii---obtenir-la-valeur-dun-paramètre)
-            - [IV - Ecrire une valeur dans un paramètre](#iv---ecrire-une-valeur-dans-un-paramètre-1)
     - [IV - UI](#iv---ui)
     - [V - Synchronisme](#v---synchronisme)
 - [IV - Idées moins claires](#iv---idées-moins-claires)
@@ -92,7 +80,7 @@
 
 ### I - Sujet
 
-Il s'agit projet scolaire, les contraintes du sujet sont :
+Il s'agit d'un projet scolaire, les contraintes du sujet sont :
 - Le langage de programmation utilisé doit être Python.
 - Le thème est : la nature (mieux vaudrait éviter le hors-sujet).
 - Le temps imparti est d'environ 2 mois et demi.
@@ -1024,38 +1012,11 @@ Il contient tous les exécutables d'un objet.
 #### III - States
 
 Pour orchestrer le bon fonctionnement de l'application, une classe `States` est présente.  
-Chaque classe aura comme attribut d'instance un objet commun de type `States`, pour y inscrire les états en cours.  
-
-Principales méthodes :
-
-##### I - Créer une state
-
-``` python
-States.create("name")
-```
-
-##### II - Assigner une valeur à une state
-
-``` python
-States.assign("name", "param1", "value1")
-```
+Chaque classe aura comme attribut d'instance un objet commun de type `States`, pour y inscrire les états en cours.
 
 #### IV - Loader
 
-Il s'agit du module principal permettant de load des objets non-définis à l'avance, dans le moteur.  
-Son constructeur prend (pour le moment) comme paramètres :
-
-``` python
-loader = Loader(states, "module_path", "plugin_path", "object_path")
-```
-
-La méthode principale de ce fichier est `Loader.load()`, dont la signature est :
-
-``` python
-load(self, name, load_type)
-```
-
-Elle va charger le fichier principal de configuration de l'objet, initialiser un objet de type `Object` grâce au contenu de celui-ci.
+Il s'agit du module principal permettant de load des objets indéfinis à l'avance, dans le moteur.
 
 #### V - Installator
 
@@ -1150,46 +1111,7 @@ Pour le moment, la seule "entrée d'exécution" est le paramètre "execution" du
 
 #### VII - Settings
 
-Il s'agit d'un module permettant de créer / gérer des paramètres.  
-Les principales méthodes sont :
-
-##### I - Créer un paramètre
-
-``` python
-Settings.create("name")
-```
-
-##### II - Supprimer un paramètre
-
-``` python
-Settings.remove("name")
-```
-
-##### III - Obtenir une valeur d'un paramètre
-
-``` python
-Settings.get("name/param1")
-```
-
-##### IV - Ecrire une valeur dans un paramètre
-
-``` python
-Settings.write("name/param2", "value", 1)
-```
-
-##### V - Activer (booléen)
-
-``` python
-Settings.enable("name/enabled", "name", "object")
-```
-
-(Il y a aussi un `Loader.load()` d'appelé).
-
-##### VI - Désactiver (booléen)
-
-``` python
-Settings.enable("name/disabled", "name", "object")
-```
+Il s'agit d'un module permettant de créer / gérer des paramètres.
 
 #### VIII - Symbols
 
@@ -1235,38 +1157,7 @@ Ce sont simplement des variables propres au bon fonctionnement du programme.
 
 #### IX - Json
 
-Il s'agit du module principal pour intéragir avec des objets JSON.  
-
-Méthodes principales :
-
-##### I - Créer un JSON
-``` python
-Json.create("name1")
-```
-
-##### II - Supprimer un paramètre (et sa valeur) à un path
-
-``` python
-Json.remove("name1/a/b/c/d/e/f/param1")
-```
-
-##### III - Obtenir la valeur d'un paramètre
-
-``` python
-Json.get("name1/a/b/c/d/e/f/param1")
-```
-
-##### IV - Ecrire une valeur dans un paramètre
-
-``` python
-Json.write("name1/a/b/c/d/e/f/param1", "value1", 1)
-```
-
-Les modes :
-- `0` pour ne pas créer les sous-objets si ils n'existent pas.
-- `1` pour créer les sous-objets si ils n'existent pas.
-
-Par défaut, la valeur de cet argument est `0`.
+Il s'agit du module principal pour intéragir avec des objets JSON.
 
 ### IV - UI
 
@@ -1291,12 +1182,12 @@ Voici la toute première state :
 ``` python
 states = States()
 states.create("app")
-states.assign("app", "status", "on")
+states.write("app/status", "on")
 ```
 
 On peut ensuite faire quelque chose comme cela :
 ``` python
-while states.get("app", "status") != "off":
+while states.get("app/status") != "off":
     # boucle principale de l'app
 ```
 
@@ -1335,78 +1226,219 @@ Cependant, même pour un monde qui n'en développe qu'une seule, nous pourrions 
 Et nous ne parlons pas d'un simple décalage, comme on pourrait observer sur Terre entre une horloge en haut d'une montagne et une horloge plus basse.  
 Nous parlons vraiment de définitions différentes, nous pourrions imaginer que dans une plage de coordonnées, le temps irait à rebours, quand dans une autre plage de coordonnées, il "tournerait" "normalement".
 
-## V - Développement
+# II - Développement
 
 La documentation du moteur et de l'application étant déjà bien avancéee, nous allons pouvoir commencer à discuter du développement ici même.
 
-### I - Chronologie
+## I - Core
 
-Voici l'ordre que nous allons probablement respecter :
+Tout d'abord, nous allons développer le module `core` (moteur).  
 
-#### I - Core
+### I - Avancement
 
-Tout d'abord, développer le module `core` (moteur).  
+#### I - Json
 
-##### I - Plan
+##### I - Json.create
 
-```
-└── core
-    └── modules
-        └── core
-            ├── core.json
-            ├── json
-            │   ├── settings.json
-            │   └── symbols
-            │       └── symbols.json
-            └── scripting
-                ├── executable
-                │   └── executable.py
-                ├── execution
-                │   └── execution.py
-                ├── installator
-                │   └── installator.py
-                ├── json
-                │   └── json.py
-                ├── loader
-                │   └── loader.py
-                ├── object
-                │   └── object.py
-                ├── settings
-                │   └── settings.py
-                ├── states
-                │   └── states.py
-                └── symbols
-                    └── symbols.py
+Méthode implémentée.
+
+``` python
+create(self, name)
 ```
 
-##### II - Avancement
-
+``` python
+>>> json = Json()
+>>> json.create("a")
 ```
-└── core
-    └── modules
-        └── core
-            ├── core.json
-            ├── json
-            │   ├── settings.json
-            │   └── symbols
-            │       └── symbols.json
-            └── scripting
-                ├── executable
-                │   └── executable.py
-                ├── execution
-                │   └── execution.py
-                ├── installator
-                │   └── installator.py
-                ├── json
-                │   └── json.py : 90%
-                ├── loader
-                │   └── loader.py
-                ├── object
-                │   └── object.py
-                ├── settings
-                │   └── settings.py
-                ├── states
-                │   └── states.py
-                └── symbols
-                    └── symbols.py
+
+##### II - Json.remove
+
+Méthode à implémenter.
+
+``` python
+>>> json.remove("a")
+```
+
+##### III - Json.get
+
+Méthode implémentée.
+
+``` python
+get(self, path)
+```
+
+``` python
+>>> json.get("a")
+```
+
+##### IV - Json.write
+
+Méthode implémentée.
+
+``` python
+write(self, path, value, mode = 0)
+```
+
+``` python
+>>> json.write("a/b", "value")
+```
+
+##### V - Json.exists
+
+Méthode implémentée.
+
+``` python
+exists(self, path)
+```
+
+``` python
+>>> if json.exists("a/b"):
+...     print(json.get("a/b"))
+True
+```
+
+##### IV - Json.path_to_json
+
+Méthode implémentée.
+
+``` python
+path_to_json(self, path)
+```
+
+``` python
+>>> print(json.path_to_json("a/b"))
+["a"]["b"]
+```
+
+#### II - Settings
+
+##### I - Settings.create
+
+Méthode implémentée.
+
+``` python
+create(self, name)
+```
+
+``` python
+>>> settings = Settings(states, loader)
+>>> settings.create("a")
+```
+
+##### II - Settings.remove
+
+Méthode implémentée.
+
+``` python
+remove(self, name)
+```
+
+``` python
+>>> settings.remove("a")
+```
+
+##### III - Settings.get
+
+Méthode implémentée.
+
+``` python
+get(self, path)
+```
+
+``` python
+>>> print(settings.get("a"))
+{}
+```
+
+##### IV - Settings.write
+
+Méthode implémentée.
+
+``` python
+write(self, path, value, mode = 0)
+```
+
+``` python
+>>> settings.write("a/b", "value")
+>>> print(settings.get("a"))
+{'b': 'value'}
+```
+
+##### V - Settings.enable
+
+Méthode implémentée.
+
+``` python
+enable(self, settings_path, enabled_name, enabled_type)
+```
+
+``` python
+>>> settings.write("a/enabled", "")
+>>> settings.enable("a/enabled", "core", "module")
+```
+
+##### VI - Settings.disable
+
+Méthode implémentée.
+
+``` python
+disable(self, settings_path, disabled_name, disabled_type)
+```
+
+``` python
+>>> settings.disable("a/enabled", "core", "module")
+```
+
+#### III - States
+
+##### I - States.create
+
+Méthode implémentée.
+
+``` python
+create(self, name)
+```
+
+``` python
+>>> states.create("app")
+```
+
+##### II - States.write
+
+Méthode implémentée.
+
+``` python
+write(self, path, value)
+```
+
+``` python
+>>> states.write("app/value", "on")
+```
+
+##### III - States.get
+
+Méthode implémentée.
+
+``` python
+get(self, path)
+```
+
+``` python
+>>> print(states.get("app/value"))
+on
+```
+
+##### IV - States.exists
+
+Méthode implémentée.
+
+``` python
+exists(self, path)
+```
+
+``` python
+>>> if states.exists("app/value"):
+...     if states.get("app/value") == "on":
+...         print("app is on !")
+app is on !
 ```
