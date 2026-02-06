@@ -1281,10 +1281,17 @@ create(self, name)
 
 ##### II - Json.remove
 
-Méthode à implémenter.
+Méthode implémentée.
 
 ``` python
->>> json.remove("a")
+>>> json = Json()
+>>> json.create("a")
+>>> json.write("a/b", "test")
+>>> json.remove("a/b")
+>>> print(json.exists("a"))
+True
+>>> print(json.exists("a/b"))
+False
 ```
 
 ##### III - Json.get
@@ -1322,7 +1329,7 @@ exists(self, path)
 ``` python
 >>> if json.exists("a/b"):
 ...     print(json.get("a/b"))
-True
+value
 ```
 
 ##### VI - Json.path_to_json
