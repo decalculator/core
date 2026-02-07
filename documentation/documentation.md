@@ -79,7 +79,7 @@
             - [I - Exemple : l'objet temps](#i---exemple--lobjet-temps)
 - [II - Développement](#ii---développement)
     - [I - Core](#i---core-1)
-        - [I - Avancement](#i---avancement)
+        - [I - Avancement : première partie](#i---avancement--première-partie)
             - [I - Json](#i---json)
                 - [I - Json.create](#i---jsoncreate)
                 - [II - Json.remove](#ii---jsonremove)
@@ -106,6 +106,16 @@
             - [VI - Object](#vi---object-1)
             - [VII - Loader](#vii---loader)
                 - [I - Loader.load](#i---loaderload)
+        - [II - Avancement : résultats](#ii---avancement--résultats)
+            - [I - Premier exemple](#i---premier-exemple)
+                - [I - Configuration](#i---configuration)
+                - [II - Code](#ii---code)
+                - [III - Résultats](#iii---résultats)
+            - [II - Deuxième exemple](#ii---deuxième-exemple)
+                - [I - Configuration](#i---configuration-1)
+                - [II - Code](#ii---code-1)
+                - [III - Résultats](#iii---résultats-1)
+
 
 ## II - Préambule
 
@@ -276,7 +286,7 @@ Il faut aussi prendre conscience du fait que les paths des fichiers `.py` ne son
                 "execution":
                 {
                     "mode": "exec",
-                    "content": "add",
+                    "content": "method1_name",
                     "result":
                     {
                         "true": 1,
@@ -443,7 +453,7 @@ Il faut aussi prendre conscience du fait que les paths des fichiers `.py` ne son
                 "execution":
                 {
                     "mode": "exec",
-                    "content": "add",
+                    "content": "method1_name",
                     "result":
                     {
                         "true": 1,
@@ -1269,7 +1279,7 @@ Si ils apparaissent plus bas, c'est que leur logique a été approuvée / refact
 
 Tout d'abord, nous allons développer le module `core` (moteur).  
 
-### I - Avancement
+### I - Avancement : première partie
 
 #### I - Json
 
@@ -1582,3 +1592,240 @@ def load(self, name, load_type)
 ``` python
 >>> loader.load("communication", "plugin")
 ```
+
+### II - Avancement : résultats
+
+Voici, entre autre, une démonstration de ce qu'il est actuellement possible de faire.  
+
+#### I - Premier exemple
+
+##### I - Configuration
+
+La configuration d'objet utilisée est la suivante :
+
+``` json
+{
+    "version": "1.0.0",
+    "name": "cell",
+    "type": "Object",
+    "requires":
+    {
+        "application":
+        {
+            "minimum_version": "eldest",
+            "maximum_version": "latest"
+        }
+    },
+    "execution":
+    {
+        "methods":
+        [
+            {
+                "type": "method",
+                "name": "add",
+                "file": "core/objects/cell/cell.py",
+                "process_type": "import",
+                "execution":
+                {
+                    "mode": "exec",
+                    "content": "add",
+                    "result":
+                    {
+                        "true": 1,
+                        "false": 0
+                    },
+                    "execution_conditions":
+                    [
+                        {
+                            "macro": "add_macro_check",
+                            "result":
+                            {
+                                "true": 1,
+                                "false": 0
+                            },
+                            "execution_conditions":
+                            [
+                                {
+                                    "type": "method",
+                                    "name": "add_macro_check_check",
+                                    "file": "core/objects/cell/cell_check.py",
+                                    "process_type": "import",
+                                    "execution":
+                                    {
+                                        "mode": "exec",
+                                        "content": "add_check_function_macro",
+                                        "result":
+                                        {
+                                            "true": 1,
+                                            "false": 0
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ],
+        "macros":
+        [
+            {
+                "type": "macro",
+                "name": "add_macro_check",
+                "file": "core/objects/cell/cell_check.py",
+                "process_type": "import",
+                "execution":
+                {
+                    "mode": "exec",
+                    "content": "add_check_function"
+                }
+            }
+        ]
+    }
+}
+```
+
+##### II - Code
+
+Le code utilisé est le suivant :
+
+``` python
+import asyncio
+import re
+
+from core.modules.core.scripting.loader.loader import *
+from core.modules.core.scripting.states.states import *
+from core.modules.core.scripting.symbols.symbols import *
+from core.modules.core.scripting.json.json import *
+from core.modules.core.scripting.settings.settings import *
+
+async def main():
+    states = States()
+    states.create("app")
+    states.write("app/value", "on")
+
+    json = Json()
+    json.create("settings")
+    json.write("settings", json.get_from_file("core/modules/core/json/settings.json"))
+
+    symbols = Symbols(states)
+
+    for key, value in json.get("settings").items():
+        if key not in symbols.symbols:
+            symbols.create(key, value)
+
+    pattern = "<[a-z/<>_]*>"
+
+    for key in symbols.symbols:
+        current_value = symbols.symbols[key]
+        done = False
+
+        while not done:
+            match = re.search(pattern, current_value)
+
+            if match:
+                to_replace = match.group()
+                if to_replace in symbols.symbols:
+                    replace_by = symbols.symbols[to_replace]
+                else:
+                    replace_by = "<not_found>"
+
+                current_value = current_value.replace(to_replace, replace_by)
+            else:
+                symbols.symbols[key] = current_value
+                done = True
+
+    loader = Loader(states, symbols.get("<module_folder>"), symbols.get("<plugin_folder>"), symbols.get("<object_folder>"))
+
+    settings = Settings(states, loader)
+    settings.create("objects")
+
+    settings.write("objects/folder", symbols.get("<object_folder>"))
+    settings.write("objects/path", symbols.get("<object_config>"))
+
+    settings.load("objects", "path", "content")
+    settings.enable("objects/content/objects/cell/enabled", "cell", "object")
+    settings.save("objects/path", "objects/content")
+
+    cell = loader.get("cell/objects")
+
+    for obj in cell:
+        print(f"object : {obj.name}\n")
+
+        for execution in obj.execution:
+            for method in execution.methods:
+                method.execute(logs = True)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+Toutes les fonctions de cell renvoient `1`.
+
+##### III - Résultats
+
+Les résultats (du point de vu du terminal) sont :
+
+```
+object : cell
+
+execute : add_macro_check_check
+expected result : 1
+result : 1
+
+execute : add_macro_check
+expected result : 1
+result : 1
+
+execute : add
+expected result : 1
+result : 1
+
+global result : 1
+```
+
+#### II - Deuxième exemple
+
+##### I - Configuration
+
+Cet exemple est le même que le premier, mais les résultats sont inversés :
+
+``` json
+{
+    "type": "method",
+    "name": "add_macro_check_check",
+    "file": "core/objects/cell/cell_check.py",
+    "process_type": "import",
+    "execution":
+    {
+        "mode": "exec",
+        "content": "add_check_function_macro",
+        "result":
+        {
+            "true": 0,
+            "false": 1
+        }
+    }
+}
+```
+
+##### II - Code
+
+Le code est le même que dans le premier exemple.  
+Toutes les fonctions renvoient `1`, la condition est donc fausse.
+
+##### III - Résultats
+
+Les résultats (du point de vu du terminal) sont :
+
+```
+object : cell
+
+execute : add_macro_check_check
+expected result : 0
+result : 1
+
+global result : 0
+```
+
+Ce sont exactement les résultats attendus.
