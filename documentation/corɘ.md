@@ -1,8 +1,8 @@
-# I - Core
+# I - corǝ
 
 ## I - Table des matières
 
-- [I - Core](#i---core)
+- [I - corɘ](#i---corǝ)
     - [I - Table des matières](#i---table-des-matières)
     - [II - Préambule](#ii---préambule)
         - [I - Sujet](#i---sujet)
@@ -78,7 +78,7 @@
         - [I - Principe de non-unicité de l'objet](#i---principe-de-non-unicité-de-lobjet)
             - [I - Exemple : l'objet temps](#i---exemple--lobjet-temps)
 - [II - Développement](#ii---développement)
-    - [I - Core](#i---core-1)
+    - [I - corǝ](#i---corǝ-1)
         - [I - Avancement : première partie](#i---avancement--première-partie)
             - [I - Json](#i---json)
                 - [I - Json.create](#i---jsoncreate)
@@ -115,7 +115,6 @@
                 - [I - Configuration](#i---configuration-1)
                 - [II - Code](#ii---code-1)
                 - [III - Résultats](#iii---résultats-1)
-
 
 ## II - Préambule
 
@@ -1275,7 +1274,7 @@ Je vais essayer garder un semblant de logique liée à la chronologie, même si 
 Les fichiers pythons existent déjà, mais ce sont des bétas.  
 Si ils apparaissent plus bas, c'est que leur logique a été approuvée / refactorisée.
 
-## I - Core
+## I - corǝ
 
 Tout d'abord, nous allons développer le module `core` (moteur).  
 
