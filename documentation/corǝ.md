@@ -1545,7 +1545,7 @@ __init__(self, config, states)
 Méthode implémentée.
 
 ``` python
-execute(self)
+execute(self, logs = False)
 ```
 
 ``` python
@@ -1590,6 +1590,36 @@ def load(self, name, load_type)
 
 ``` python
 >>> loader.load("communication", "plugin")
+```
+
+#### VIII - Symbols
+
+``` python
+__init__(self, states)
+```
+
+##### I - Symbols.create
+
+Méthode implémentée.
+
+``` python
+create(self, name)
+```
+
+##### II - Symbols.write
+
+Méthode implémentée.
+
+``` python
+write(self, path, value)
+```
+
+##### III - Symbols.get
+
+Méthode implémentée.
+
+``` python
+get(self, path)
 ```
 
 ### II - Avancement : résultats
@@ -1708,15 +1738,16 @@ async def main():
     json.write("settings", json.get_from_file("core/modules/core/json/settings.json"))
 
     symbols = Symbols(states)
+    symbols.create("symbols")
 
     for key, value in json.get("settings").items():
-        if key not in symbols.symbols:
-            symbols.create(key, value)
+        if key not in symbols.get("symbols"):
+            symbols.write(f"symbols/{key}", value)
 
     pattern = "<[a-z/<>_]*>"
 
-    for key in symbols.symbols:
-        current_value = symbols.symbols[key]
+    for key in symbols.get("symbols"):
+        current_value = symbols.get(f"symbols/{key}")
         done = False
 
         while not done:
@@ -1724,14 +1755,14 @@ async def main():
 
             if match:
                 to_replace = match.group()
-                if to_replace in symbols.symbols:
-                    replace_by = symbols.symbols[to_replace]
+                if to_replace in symbols.get("symbols"):
+                    replace_by = symbols.get(f"symbols/{to_replace}")
                 else:
                     replace_by = "<not_found>"
 
                 current_value = current_value.replace(to_replace, replace_by)
             else:
-                symbols.symbols[key] = current_value
+                symbols.write(key, current_value)
                 done = True
 
     loader = Loader(states, symbols.get("<module_folder>"), symbols.get("<plugin_folder>"), symbols.get("<object_folder>"))
@@ -1828,3 +1859,5 @@ global result : 0
 ```
 
 Ce sont exactement les résultats attendus.
+
+### III - Avancement : deuxième partie
