@@ -106,6 +106,10 @@
             - [VI - Object](#vi---object-1)
             - [VII - Loader](#vii---loader)
                 - [I - Loader.load](#i---loaderload)
+            - [VIII - Symbols](#viii---symbols-1)
+                - [I - Symbols.create](#i---symbolscreate)
+                - [II - Symbols.write](#ii---symbolswrite)
+                - [III - Symbols.get](#iii---symbolsget)
         - [II - Avancement : résultats](#ii---avancement--résultats)
             - [I - Premier exemple](#i---premier-exemple)
                 - [I - Configuration](#i---configuration)
@@ -115,6 +119,7 @@
                 - [I - Configuration](#i---configuration-1)
                 - [II - Code](#ii---code-1)
                 - [III - Résultats](#iii---résultats-1)
+        - [III - Avancement : deuxième partie](#iii---avancement--deuxième-partie)
 
 ## II - Préambule
 
@@ -1598,12 +1603,18 @@ def load(self, name, load_type)
 __init__(self, states)
 ```
 
+``` python
+```
+
 ##### I - Symbols.create
 
 Méthode implémentée.
 
 ``` python
 create(self, name)
+```
+
+``` python
 ```
 
 ##### II - Symbols.write
@@ -1614,12 +1625,18 @@ Méthode implémentée.
 write(self, path, value)
 ```
 
+``` python
+```
+
 ##### III - Symbols.get
 
 Méthode implémentée.
 
 ``` python
 get(self, path)
+```
+
+``` python
 ```
 
 ### II - Avancement : résultats
