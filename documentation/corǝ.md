@@ -2,7 +2,7 @@
 
 ## I - Table des matières
 
-- [I - corɘ](#i---corǝ)
+- [I - corǝ](#i---corǝ)
     - [I - Table des matières](#i---table-des-matières)
     - [II - Préambule](#ii---préambule)
         - [I - Sujet](#i---sujet)
