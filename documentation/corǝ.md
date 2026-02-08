@@ -1909,21 +1909,105 @@ get(self, path)
 
 ##### VI - Exemple d'utilisation
 
+Prenons l'ancien fichier utilisé, en remplaçant uniquement cette partie :
+
 ``` python
+loader = Loader(states, symbols.get("<module_folder>"), symbols.get("<plugin_folder>"), symbols.get("<object_folder>"))
+
+settings = Settings(states, loader)
+settings.create("objects")
+
+settings.write("objects/folder", symbols.get("<object_folder>"))
+settings.write("objects/path", symbols.get("<object_config>"))
+settings.write("objects/content", settings.settings.get_from_file(settings.get("objects/path")))
+
+for obj in settings.get("objects/content/objects"):
+    settings.enable(f"objects/content/objects/{obj}/enabled", obj, "object")
+    settings.save("objects/path", "objects/content")
+
 moment = Moment(states)
-moment.create("time1")
-moment.write("time1/value1", 0)
+moment.create("time")
+moment.write("time/value1", 0)
 
-print(moment.get("time1/value1"))
-# 0
+while states.get("app/value") == "on":
+    print("=" * 50)
+    print(f"moment {moment.get("time/value1")} : ")
 
-moment.next_moment("time1/value1")
+    for obj_name in loader.loader.json:
+        for obj in loader.get(f"{obj_name}/objects"):
+            print(f"object : {obj.name}\n")
 
-print(moment.get("time1/value1"))
-# 1
+            for execution in obj.execution:
+                for method in execution.methods:
+                    method.execute(logs = True)
 
-moment.previous_moment("time1/value1")
+    print("=" * 50)
+    choice = input("time += ? : ")
 
-print(moment.get("time1/value1"))
-# 0
+    if choice == "exit":
+        states.write("app/value", "off")
+    else:
+        moment.write("time/value1", moment.get("time/value1") + int(choice))
+```
+
+Le résultat est :
+
+```
+==================================================
+moment 0 : 
+object : cell
+
+execute : add_macro_check_check
+expected result : 1
+result : 1
+
+execute : add_macro_check
+expected result : 1
+result : 1
+
+execute : add
+expected result : 1
+result : 1
+
+global result : 1
+==================================================
+time += ? : 10
+==================================================
+moment 10 : 
+object : cell
+
+execute : add_macro_check_check
+expected result : 1
+result : 1
+
+execute : add_macro_check
+expected result : 1
+result : 1
+
+execute : add
+expected result : 1
+result : 1
+
+global result : 1
+==================================================
+time += ? : -10
+==================================================
+moment 0 : 
+object : cell
+
+execute : add_macro_check_check
+expected result : 1
+result : 1
+
+execute : add_macro_check
+expected result : 1
+result : 1
+
+execute : add
+expected result : 1
+result : 1
+
+global result : 1
+==================================================
+time += ? : exit
 ```
