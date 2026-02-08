@@ -38,24 +38,23 @@
             - [VII - Menu](#vii---menu)
             - [VIII - Evolution](#viii---evolution)
         - [II - Objets par défaut](#ii---objets-par-défaut)
-            - [I - Moment](#i---moment)
-            - [II - Date](#ii---date)
-            - [III - Season](#iii---season)
-            - [IV - Weather](#iv---weather)
-            - [V - Probability](#v---probability)
-            - [VI - Consequence](#vi---consequence)
-            - [VII - Aleatory](#vii---aleatory)
-            - [VIII - World](#viii---world)
-            - [IX - Rule](#ix---rule)
-            - [X - Obligation_future](#x---obligation_future)
-            - [XI - Possibilities](#xi---possibilities)
-            - [XII - Save](#xii---save)
+            - [I - Date](#i---date)
+            - [II - Season](#ii---season)
+            - [V - Weather](#v---weather)
+            - [IV - Probability](#iv---probability)
+            - [V - Consequence](#v---consequence)
+            - [VI - Aleatory](#vi---aleatory)
+            - [VII - World](#vii---world)
+            - [VIII - Rule](#viii---rule)
+            - [IX - Obligation_future](#ix---obligation_future)
+            - [X - Possibilities](#x---possibilities)
+            - [XI - Save](#xi---save)
                 - [I - Structure d'une save](#i---structure-dune-save)
-            - [XIII - Map](#xiii---map)
+            - [XII - Map](#xii---map)
                 - [I - Structure d'une map](#i---structure-dune-map)
-            - [XIV - Zone](#xiv---zone)
+            - [XIII - Zone](#xiii---zone)
                 - [I - Structure d'une zone](#i---structure-dune-zone)
-            - [XV - Entity](#xv---entity)
+            - [XIV - Entity](#xiv---entity)
         - [III - Modules par défaut](#iii---modules-par-défaut)
             - [I - Executable](#i---executable)
             - [II - Execution](#ii---execution)
@@ -69,6 +68,7 @@
             - [VII - Settings](#vii---settings)
             - [VIII - Symbols](#viii---symbols)
             - [IX - Json](#ix---json)
+            - [X - Moment](#x---moment)
         - [IV - UI](#iv---ui)
         - [V - Synchronisme](#v---synchronisme)
     - [IV - Idées moins claires](#iv---idées-moins-claires)
@@ -88,6 +88,7 @@
                 - [V - Json.exists](#v---jsonexists)
                 - [VI - Json.path_to_json](#vi---jsonpath_to_json)
                 - [VII - Json.get_from_file](#vii---jsonget_from_file)
+                - [VIII - Exemple d'utilisation](#viii---exemple-dutilisation)
             - [II - Settings](#ii---settings)
                 - [I - Settings.create](#i---settingscreate)
                 - [II - Settings.remove](#ii---settingsremove)
@@ -95,21 +96,29 @@
                 - [IV - Settings.write](#iv---settingswrite)
                 - [V - Settings.enable](#v---settingsenable)
                 - [VI - Settings.disable](#vi---settingsdisable)
+                - [VII - Exemple d'utilisation](#vii---exemple-dutilisation)
             - [III - States](#iii---states-1)
                 - [I - States.create](#i---statescreate)
                 - [II - States.write](#ii---stateswrite)
                 - [III - States.get](#iii---statesget)
                 - [IV - States.exists](#iv---statesexists)
+                - [V - Exemple d'utilisation](#vi---exemple-dutilisation)
             - [IV - Executable](#iv---executable)
                 - [I - Executable.execute](#i---executableexecute)
+                - [II - Exemple d'utilisation](#ii---exemple-dutilisation)
             - [V - Execution](#v---execution)
+                - [I - Exemple d'utilisation](#i---exemple-dutilisation)
             - [VI - Object](#vi---object-1)
+                - [I - Exemple d'utilisation](#i---exemple-dutilisation)
             - [VII - Loader](#vii---loader)
                 - [I - Loader.load](#i---loaderload)
+                - [II - Loader.get](#ii---loaderget)
+                - [III - Exemple d'utilisation](#iii---exemple-dutilisation)
             - [VIII - Symbols](#viii---symbols-1)
                 - [I - Symbols.create](#i---symbolscreate)
                 - [II - Symbols.write](#ii---symbolswrite)
                 - [III - Symbols.get](#iii---symbolsget)
+                - [IV - Exemple d'utilisation](#iv---exemple-dutilisation)
         - [II - Avancement : résultats](#ii---avancement--résultats)
             - [I - Premier exemple](#i---premier-exemple)
                 - [I - Configuration](#i---configuration)
@@ -120,6 +129,14 @@
                 - [II - Code](#ii---code-1)
                 - [III - Résultats](#iii---résultats-1)
         - [III - Avancement : deuxième partie](#iii---avancement--deuxième-partie)
+                - [I - Installator](#i---installator)
+                - [II - Moment](#ii---moment)
+                    - [I - Moment.create](#i---momentcreate)
+                    - [II - Moment.write](#ii---momentwrite)
+                    - [III - Moment.next_moment](#iii---momentnext_moment)
+                    - [IV - Moment.previous_moment](#iv---momentprevious_moment)
+                    - [V - Moment.get](#v---momentget)
+                    - [VI - Exemple d'utilisation](#vi---exemple-dutilisation)
 
 ## II - Préambule
 
@@ -674,20 +691,7 @@ Le plugin evolution permet de faire évoluer des objets en d'autres objets (ou a
 
 ### II - Objets par défaut
 
-#### I - Moment
-
-Il s'agit d'un objet d'écoulement d'instants.  
-Nous utilisons "instant" pour parler du temps.  
-L'instant est un concept, le temps est un objet.  
-
-L'idée est assez simple à comprendre.  
-Chaque instant a une valeur, représentée par le temps, qui est un objet.  
-L'instant suivant peut représenter le temps suivant, mais pas obligatoirement.  
-Par contre, il devrait toujours y avoir un écoulement d'instants, je crois.  
-
-Pour voir l'évolution de son monde, l'utilisateur doit donc pouvoir moduler les instants : passer tant d'instants, aller à un instant, etc.  
-
-#### II - Date
+#### I - Date
 
 Cet objet permet d'implémenter un système de dates.  
 Toutes les règles sont faisables, dans la limite du possible (performances de l'ordinateur, enjeux de mémoire, etc).  
@@ -697,11 +701,11 @@ Voici quelques idées de choses qui devraient être rendues possibles :
 - Ou bien encore imaginer un système de date totalement différent, qui repose sur des calculs aléatoires, pour définir quel jour nous sommes !
 - Ou une boucle temporelle : nous revenons à la même date, en boucle
 
-#### III - Season
+#### II - Season
 
 Cet objet implémente le type d'objet `Season`.  
 
-#### IV - Weather
+#### III - Weather
 
 Cet objet implémente le type d'objet `Weather`, un système de météo.  
 Nous pourrons y lier des objets de types `Probability`, `Consequence`, ...  
@@ -712,7 +716,7 @@ Voici quelques idées de choses qui devraient être rendues possibles :
 - Il sera aisé de créer une nouvelle météo, par exemple un temps où il pleut de l'électricité
 - Le sens n'est pas obligatoirement unidirectionnel. La plupart du temps, la météo vient de l'exterieur vers l'intérieur, mais ce n'est pas nécessairement le cas ici. Par exemple, une météo pourrait être une planète qui renvoie de l'eau qui monte au ciel (par une loi de type law)
 
-#### V - Probability
+#### IV - Probability
 
 Cet objet implémente le type d'objet `Probability`, un système de probabilité.  
 
@@ -723,7 +727,7 @@ Voici quelques idées de choses qui devraient être rendues possibles :
 - `Probability` n'est qu'un nom, on peut très bien imaginer un faux système derrière cela
 - Les méthodes de représentation peuvent changer, ce n'est pas obligatoirement une valeur entre 0 et 1. Par exemple : cela pourrait être des sentiments, un string, ou autre.
 
-#### VI - Consequence
+#### V - Consequence
 
 Cet objet implémente le type d'objet `Consequence`, un système de conséquence (déterminisme).  
 
@@ -733,14 +737,14 @@ Voici quelques idées de choses qui devraient être rendues possibles :
 - Une conséquence d'avant-apparition : ce qu'il se passe pour que l'évènement se produise. Par exemple : les fleurs poussent grâce à la pluie (en partie).
 - Une conséquence d'après-apparition : ce qu'il se passe à la suite de l'évènement, ce qu'il engendre. Par exemple : les fleurs qui éclosent permettent aux bourdons de venir butiner.
 
-#### VII - Aleatory
+#### VI - Aleatory
 
 Cet objet implémente le type d'objet `Aleatory`, un système d'aléatoire.  
 L'aléatoire n'existant pas en informatique classique, il serait par exemple possible d'utiliser des API comme random.org, en cas de besoin.  
 
 Cet objet pourrait implémenter plusieurs types d'aléatoires : les pseudo-aléatoires, etc.
 
-#### VIII - World
+#### VII - World
 
 Cet objet implémente le type d'objet `World`, un système de monde.  
 Un monde est un objet, d'un point de vu de type pur.  
@@ -756,7 +760,7 @@ Un monde pourrait par exemple être constitué des objets suivants :
 
 Un objet de type `World` devrait pouvoir "contenir" tout objet.
 
-#### IX - Rule
+#### VIII - Rule
 
 Cet objet implémente le type d'objet `Rule`, un système de règles.  
 Ce sont les propriétés fondamentales du monde, par exemple : la gravité.  
@@ -765,7 +769,7 @@ Ces règles ne sont pas contredites pas les objets, par défaut.
 Cependant, des paramètres spécifiques pourront être développés si un objet ne doit pas respecter une règle (ou plusieurs).  
 Nous faisons ce choix en pensant avant tout au dynamisme, nous ne voulons pas ajouter de contraintes statiques (telle chose obligatoire pour tous les objets).  
 
-#### X - Obligation_future
+#### IX - Obligation_future
 
 Cet objet implémente le type d'objet `Obligation_future`, un système d'obligations futures.  
 Les obligations futures sont des conditions faites pour altérer le futur du monde et des objets qui y vivent.  
@@ -774,11 +778,11 @@ Exemple : si nous avons un groupe d'entités qui vivent ensembles, et qu'une ent
 On peut forcer le conflit, pour voir ce qu'il va se passer, en posant cette obligation future : entité 1 attaque entité 2 tel jour.  
 L'utilisateur peut donc forcer un objet (conscient et "libre") à faire une chose à un instant T.
 
-#### XI - Possibilities
+#### X - Possibilities
 
 Cet objet implémente le type d'objet `Possibilities`, un système de possibilités (scénarios).  
 
-#### XII - Save
+#### XI - Save
 
 Cet objet implémente le type d'objet `Save`, un système de sauvegarde.  
 
@@ -825,7 +829,7 @@ Voici la structure JSON d'un objet de type `Save`, par défaut :
 - `states` : les states écrivent dans ce champ leurs données qui seront réstaurées à la prochaine exécution du programme.  
 Attention : cela ne doit pas être des adresses d'objets, car elles sont dynamiques. Ce sont bien des données, en JSON par exemple.
 
-#### XIII - Map
+#### XII - Map
 
 Cet objet implémente le type d'objet `Map`, un système de maps.  
 Une map est un ensemble qui contient des objets de type `Zone`.
@@ -883,7 +887,7 @@ zone 3 (100x100) : x = 0, y = 2
 Les zones n'utiliseraient donc pas les mêmes coordonnées que la map.  
 Je ne sais pas vraiment si cela sera le cas dans la version développée, mais c'est probable.
 
-#### XIV - Zone
+#### XIII - Zone
 
 Cet objet implémente le type d'objet `Zone`, un système de zones.  
 
@@ -945,7 +949,7 @@ Notons que pour le moment, ce fichier est très contextuel.
 En effet, une grande partie de ce schéma vient du premier fichier `old/preambule.md`.  
 La structure doit être adaptée.
 
-#### XV - Entity
+#### XIV - Entity
 
 Cet objet implémente le type d'objet `Entity`, un système d'entités.  
 
@@ -1204,6 +1208,19 @@ Ce sont simplement des variables propres au bon fonctionnement du programme.
 
 Il s'agit du module principal pour intéragir avec des objets JSON.
 
+#### X - Moment
+
+Il s'agit d'un module d'écoulement d'instants.  
+Nous utilisons "instant" pour parler du temps.  
+L'instant est un concept, le temps est un objet.  
+
+L'idée est assez simple à comprendre.  
+Chaque instant a une valeur, représentée par le temps, qui est un objet.  
+L'instant suivant peut représenter le temps suivant, mais pas obligatoirement.  
+Par contre, il devrait toujours y avoir un écoulement d'instants, je crois.  
+
+Pour voir l'évolution de son monde, l'utilisateur doit donc pouvoir moduler les instants : passer tant d'instants, aller à un instant, etc.
+
 ### IV - UI
 
 Pour l'UI, nous utiliserons très probablement `fastapi`, car il est plus fait pour le fonctionnement asynchrone que flask.  
@@ -1291,20 +1308,12 @@ Tout d'abord, nous allons développer le module `core` (moteur).
 __init__(self)
 ```
 
-``` python
->>> json = Json()
-```
-
 ##### I - Json.create
 
 Méthode implémentée.
 
 ``` python
 create(self, name)
-```
-
-``` python
->>> json.create("a")
 ```
 
 ##### II - Json.remove
@@ -1315,27 +1324,12 @@ Méthode implémentée.
 remove(self, path)
 ```
 
-``` python
->>> json = Json()
->>> json.create("a")
->>> json.write("a/b", "test")
->>> json.remove("a/b")
->>> print(json.exists("a"))
-True
->>> print(json.exists("a/b"))
-False
-```
-
 ##### III - Json.get
 
 Méthode implémentée.
 
 ``` python
 get(self, path)
-```
-
-``` python
->>> json.get("a")
 ```
 
 ##### IV - Json.write
@@ -1346,22 +1340,12 @@ Méthode implémentée.
 write(self, path, value, mode = 0)
 ```
 
-``` python
->>> json.write("a/b", "value")
-```
-
 ##### V - Json.exists
 
 Méthode implémentée.
 
 ``` python
 exists(self, path)
-```
-
-``` python
->>> if json.exists("a/b"):
-...     print(json.get("a/b"))
-value
 ```
 
 ##### VI - Json.path_to_json
@@ -1372,29 +1356,40 @@ Méthode implémentée.
 path_to_json(self, path)
 ```
 
-``` python
->>> print(json.path_to_json("a/b"))
-["a"]["b"]
-```
-
 ##### VII - Json.get_from_file
 
 ``` python
 get_from_file(self, path)
 ```
 
+##### VIII - Exemple d'utilisation
+
 ``` python
->>> json.write("a/b", json.get_from_file("core/modules/core/json/settings.json"))
+json = Json()
+json.create("a")
+json.write("a/b", "test")
+
+print(json.path_to_json("a/b"))
+# ["a"]["b"]
+
+print(json.get("a/b"))
+# test
+
+json.remove("a/b")
+
+print(json.exists("a"))
+# True
+
+print(json.exists("a/b"))
+# False
+
+json.write("a/b", json.get_from_file("core/modules/core/json/settings.json"))
 ```
 
 #### II - Settings
 
 ``` python
 __init__(self, states, loader)
-```
-
-``` python
->>> settings = Settings(states, loader)
 ```
 
 ##### I - Settings.create
@@ -1405,20 +1400,12 @@ Méthode implémentée.
 create(self, name)
 ```
 
-``` python
->>> settings.create("a")
-```
-
 ##### II - Settings.remove
 
 Méthode implémentée.
 
 ``` python
 remove(self, name)
-```
-
-``` python
->>> settings.remove("a")
 ```
 
 ##### III - Settings.get
@@ -1429,23 +1416,12 @@ Méthode implémentée.
 get(self, path)
 ```
 
-``` python
->>> print(settings.get("a"))
-{}
-```
-
 ##### IV - Settings.write
 
 Méthode implémentée.
 
 ``` python
 write(self, path, value, mode = 0)
-```
-
-``` python
->>> settings.write("a/b", "value")
->>> print(settings.get("a"))
-{'b': 'value'}
 ```
 
 ##### V - Settings.enable
@@ -1456,11 +1432,6 @@ Méthode implémentée.
 enable(self, settings_path, enabled_name, enabled_type)
 ```
 
-``` python
->>> settings.write("a/enabled", "")
->>> settings.enable("a/enabled", "core", "module")
-```
-
 ##### VI - Settings.disable
 
 Méthode implémentée.
@@ -1469,8 +1440,23 @@ Méthode implémentée.
 disable(self, settings_path, disabled_name, disabled_type)
 ```
 
+##### VII - Exemple d'utilisation
+
 ``` python
->>> settings.disable("a/enabled", "core", "module")
+settings = Settings(states, loader)
+
+settings.create("a")
+settings.write("a/b", "value")
+
+print(settings.get("a"))
+# {'b': 'value'}
+
+settings.write("a/enabled", "")
+
+settings.enable("a/enabled", "core", "module")
+settings.disable("a/enabled", "core", "module")
+
+settings.remove("a")
 ```
 
 #### III - States
@@ -1491,20 +1477,12 @@ Méthode implémentée.
 create(self, name)
 ```
 
-``` python
->>> states.create("app")
-```
-
 ##### II - States.write
 
 Méthode implémentée.
 
 ``` python
 write(self, path, value)
-```
-
-``` python
->>> states.write("app/value", "on")
 ```
 
 ##### III - States.get
@@ -1515,11 +1493,6 @@ Méthode implémentée.
 get(self, path)
 ```
 
-``` python
->>> print(states.get("app/value"))
-on
-```
-
 ##### IV - States.exists
 
 Méthode implémentée.
@@ -1528,21 +1501,24 @@ Méthode implémentée.
 exists(self, path)
 ```
 
+##### V - Exemple d'utilisation
+
 ``` python
->>> if states.exists("app/value"):
-...     if states.get("app/value") == "on":
-...         print("app is on !")
-app is on !
+states = States()
+
+states.create("app")
+states.write("app/value", "on")
+
+if states.exists("app/value"):
+    if states.get("app/value") == "on":
+        print("app is on !")
+        # app is on !
 ```
 
 #### IV - Executable
 
 ``` python
 __init__(self, config, states)
-```
-
-``` python
->>> executable = Executable(config, states)
 ```
 
 ##### I - Executable.execute
@@ -1553,8 +1529,11 @@ Méthode implémentée.
 execute(self, logs = False)
 ```
 
+##### II - Exemple d'utilisation
+
 ``` python
->>> executable.execute()
+executable = Executable(config, states)
+executable.execute()
 ```
 
 #### V - Execution
@@ -1563,8 +1542,10 @@ execute(self, logs = False)
 __init__(self, config, states)
 ```
 
+##### I - Exemple d'utilisation
+
 ``` python
->>> execution = Execution(config, states)
+execution = Execution(config, states)
 ```
 
 #### VI - Object
@@ -1573,8 +1554,10 @@ __init__(self, config, states)
 __init__(self, config, states)
 ```
 
+##### I - Exemple d'utilisation
+
 ``` python
->>> current_object = Object(config, states)
+obj = Object(config, states)
 ```
 
 #### VII - Loader
@@ -1583,27 +1566,32 @@ __init__(self, config, states)
 __init__(self, states, module_path, plugin_path, object_path)
 ```
 
-``` python
->>> loader = Loader(states, "module_folder", "plugin_folder", "object_folder")
-```
-
 ##### I - Loader.load
 
 ``` python
 def load(self, name, load_type)
 ```
 
+##### II - Loader.get
+
 ``` python
->>> loader.load("communication", "plugin")
+def load(self, path)
+```
+
+##### III - Exemple d'utilisation
+
+``` python
+loader = Loader(states, "module_folder", "plugin_folder", "object_folder")
+loader.load("communication", "plugin")
+
+print(loader.get("communication/plugin"))
+# [<core.modules.core.scripting.object.object.Object object at 0x10328acf0>]
 ```
 
 #### VIII - Symbols
 
 ``` python
 __init__(self, states)
-```
-
-``` python
 ```
 
 ##### I - Symbols.create
@@ -1614,18 +1602,12 @@ Méthode implémentée.
 create(self, name)
 ```
 
-``` python
-```
-
 ##### II - Symbols.write
 
 Méthode implémentée.
 
 ``` python
 write(self, path, value)
-```
-
-``` python
 ```
 
 ##### III - Symbols.get
@@ -1636,7 +1618,15 @@ Méthode implémentée.
 get(self, path)
 ```
 
+##### IV - Exemple d'utilisation
+
 ``` python
+symbols = Symbols(states)
+symbols.create("symbols")
+symbols.write("symbols/<version>", "1.0.0")
+
+print(symbols.get("symbols/<version>"))
+# 1.0.0
 ```
 
 ### II - Avancement : résultats
@@ -1878,3 +1868,62 @@ global result : 0
 Ce sont exactement les résultats attendus.
 
 ### III - Avancement : deuxième partie
+
+#### I - Installator
+
+#### II - Moment
+
+``` python
+__init__(self, states)
+```
+
+##### I - Moment.create
+
+``` python
+create(self, name)
+```
+
+##### II - Moment.write
+
+``` python
+write(self, path, value)
+```
+
+##### III - Moment.next_moment
+
+``` python
+next_moment(self, path)
+```
+
+##### IV - Moment.previous_moment
+
+``` python
+previous_moment(self, path)
+```
+
+##### V - Moment.get
+
+``` python
+get(self, path)
+```
+
+##### VI - Exemple d'utilisation
+
+``` python
+moment = Moment(states)
+moment.create("time1")
+moment.write("time1/value1", 0)
+
+print(moment.get("time1/value1"))
+# 0
+
+moment.next_moment("time1/value1")
+
+print(moment.get("time1/value1"))
+# 1
+
+moment.previous_moment("time1/value1")
+
+print(moment.get("time1/value1"))
+# 0
+```
