@@ -119,16 +119,6 @@
                 - [II - Symbols.write](#ii---symbolswrite)
                 - [III - Symbols.get](#iii---symbolsget)
                 - [IV - Exemple d'utilisation](#iv---exemple-dutilisation)
-        - [II - Avancement : résultats](#ii---avancement--résultats)
-            - [I - Premier exemple](#i---premier-exemple)
-                - [I - Configuration](#i---configuration)
-                - [II - Code](#ii---code)
-                - [III - Résultats](#iii---résultats)
-            - [II - Deuxième exemple](#ii---deuxième-exemple)
-                - [I - Configuration](#i---configuration-1)
-                - [II - Code](#ii---code-1)
-                - [III - Résultats](#iii---résultats-1)
-        - [III - Avancement : deuxième partie](#iii---avancement--deuxième-partie)
             - [I - Installator](#i---installator)
             - [II - Moment](#ii---moment)
                 - [I - Moment.create](#i---momentcreate)
@@ -137,6 +127,13 @@
                 - [IV - Moment.previous_moment](#iv---momentprevious_moment)
                 - [V - Moment.get](#v---momentget)
                 - [VI - Exemple d'utilisation](#vi---exemple-dutilisation)
+            - [III - Scheduler](#iii---scheduler)
+                - [I - Scheduler.create](#i---schedulercreate)
+                - [II - Scheduler.write](#ii---schedulerwrite)
+                - [III - Scheduler.get](#iii---schedulerget)
+                - [IV - Scheduler.run](#iv---schedulerrun)
+                - [V - Scheduler.execute_objects](#v---schedulerexecute_objects)
+                - [VI - Exemple d'utilisation](#vi---exemple-dutilisation-1)
 
 ## II - Préambule
 
@@ -1165,43 +1162,6 @@ Il s'agit d'un module permettant de créer / gérer des paramètres.
 #### VIII - Symbols
 
 C'est un module permettant de gérer des `symboles`.  
-Prenons un exemple pour comprendre ce qu'est un symbole, et son importance :
-
-``` python
-symbols = Symbols(states)
-
-for key in app_config:
-    if key not in symbols.symbols:
-        symbols.create(key, app_config[key])
-
-pattern = "<[a-z/<>_]*>"
-
-for key in symbols.symbols:
-    current_value = symbols.symbols[key]
-    done = False
-
-    while not done:
-        match = re.search(pattern, current_value)
-
-        if match:
-            to_replace = match.group()
-            if to_replace in symbols.symbols:
-                replace_by = symbols.symbols[to_replace]
-            else:
-                replace_by = "<not_found>"
-
-            current_value = current_value.replace(to_replace, replace_by)
-        else:
-            symbols.symbols[key] = current_value
-            done = True
-
-print(symbols.symbols)
-```
-
-``` python
-{'<version>': '1.0.0', '<minimum_version>': '1.0.0', '<maximum_version>': '1.0.0', '<plugin_folder>': 'core/plugins', '<plugin_config>': 'core/plugins/plugins.json', '<module_folder>': 'core/modules', '<module_config>': 'core/modules/modules.json', '<object_folder>': 'core/objects', '<object_config>': 'core/objects/objects.json'}
-```
-
 Ce sont simplement des variables propres au bon fonctionnement du programme.
 
 #### IX - Json
@@ -1220,6 +1180,13 @@ L'instant suivant peut représenter le temps suivant, mais pas obligatoirement.
 Par contre, il devrait toujours y avoir un écoulement d'instants, je crois.  
 
 Pour voir l'évolution de son monde, l'utilisateur doit donc pouvoir moduler les instants : passer tant d'instants, aller à un instant, etc.
+
+#### XI - Scheduler
+
+Il s'agit d'un module d'ordonnancement pour l'exécution des objets à un `Moment`.  
+L'idée est que des objets de type `Object` (les processus) sont tout d'abord ajoutés à une liste (tâches).  
+Ensuite, ils sont tous exécutés de manière asynchrone, avec une éventuelle limite pour des raisons de performances.  
+Grâce aux états de type `States`, nous attendrons que toutes les exécutions soient terminées avant de poursuivre d'éventuelles actions.
 
 ### IV - UI
 
@@ -1308,12 +1275,16 @@ Tout d'abord, nous allons développer le module `core` (moteur).
 __init__(self)
 ```
 
+``` python
+async init(self)
+```
+
 ##### I - Json.create
 
 Méthode implémentée.
 
 ``` python
-create(self, name)
+async create(self, name)
 ```
 
 ##### II - Json.remove
@@ -1321,7 +1292,7 @@ create(self, name)
 Méthode implémentée.
 
 ``` python
-remove(self, path)
+async remove(self, path)
 ```
 
 ##### III - Json.get
@@ -1329,7 +1300,7 @@ remove(self, path)
 Méthode implémentée.
 
 ``` python
-get(self, path)
+async get(self, path)
 ```
 
 ##### IV - Json.write
@@ -1337,7 +1308,7 @@ get(self, path)
 Méthode implémentée.
 
 ``` python
-write(self, path, value, mode = 0)
+async write(self, path, value, mode = 0)
 ```
 
 ##### V - Json.exists
@@ -1345,7 +1316,7 @@ write(self, path, value, mode = 0)
 Méthode implémentée.
 
 ``` python
-exists(self, path)
+async exists(self, path)
 ```
 
 ##### VI - Json.path_to_json
@@ -1353,43 +1324,48 @@ exists(self, path)
 Méthode implémentée.
 
 ``` python
-path_to_json(self, path)
+async path_to_json(self, path)
 ```
 
 ##### VII - Json.get_from_file
 
 ``` python
-get_from_file(self, path)
+async get_from_file(self, path)
 ```
 
 ##### VIII - Exemple d'utilisation
 
 ``` python
 json = Json()
-json.create("a")
-json.write("a/b", "test")
+await json.init()
+await json.create("a")
+await json.write("a/b", "test")
 
-print(json.path_to_json("a/b"))
+print(await json.path_to_json("a/b"))
 # ["a"]["b"]
 
-print(json.get("a/b"))
+print(await json.get("a/b"))
 # test
 
-json.remove("a/b")
+await json.remove("a/b")
 
-print(json.exists("a"))
+print(await json.exists("a"))
 # True
 
-print(json.exists("a/b"))
+print(await json.exists("a/b"))
 # False
 
-json.write("a/b", json.get_from_file("core/modules/core/json/settings.json"))
+await json.write("a/b", await json.get_from_file("core/modules/core/json/settings.json"))
 ```
 
 #### II - Settings
 
 ``` python
-__init__(self, states, loader)
+__init__(self)
+```
+
+``` python
+async init(self, states, loader)
 ```
 
 ##### I - Settings.create
@@ -1397,7 +1373,7 @@ __init__(self, states, loader)
 Méthode implémentée.
 
 ``` python
-create(self, name)
+async create(self, name)
 ```
 
 ##### II - Settings.remove
@@ -1405,7 +1381,7 @@ create(self, name)
 Méthode implémentée.
 
 ``` python
-remove(self, name)
+async remove(self, name)
 ```
 
 ##### III - Settings.get
@@ -1413,7 +1389,7 @@ remove(self, name)
 Méthode implémentée.
 
 ``` python
-get(self, path)
+async get(self, path)
 ```
 
 ##### IV - Settings.write
@@ -1421,7 +1397,7 @@ get(self, path)
 Méthode implémentée.
 
 ``` python
-write(self, path, value, mode = 0)
+async write(self, path, value, mode = 0)
 ```
 
 ##### V - Settings.enable
@@ -1429,7 +1405,7 @@ write(self, path, value, mode = 0)
 Méthode implémentée.
 
 ``` python
-enable(self, settings_path, enabled_name, enabled_type)
+async enable(self, settings_path, enabled_name, enabled_type)
 ```
 
 ##### VI - Settings.disable
@@ -1437,26 +1413,27 @@ enable(self, settings_path, enabled_name, enabled_type)
 Méthode implémentée.
 
 ``` python
-disable(self, settings_path, disabled_name, disabled_type)
+async disable(self, settings_path, disabled_name, disabled_type)
 ```
 
 ##### VII - Exemple d'utilisation
 
 ``` python
-settings = Settings(states, loader)
+settings = Settings()
+await settings.init(states, loader)
 
-settings.create("a")
-settings.write("a/b", "value")
+await settings.create("a")
+await settings.write("a/b", "value")
 
-print(settings.get("a"))
+print(await settings.get("a"))
 # {'b': 'value'}
 
-settings.write("a/enabled", "")
+await settings.write("a/enabled", "")
 
-settings.enable("a/enabled", "core", "module")
-settings.disable("a/enabled", "core", "module")
+await settings.enable("a/enabled", "core", "module")
+await settings.disable("a/enabled", "core", "module")
 
-settings.remove("a")
+await settings.remove("a")
 ```
 
 #### III - States
@@ -1466,7 +1443,7 @@ __init__(self)
 ```
 
 ``` python
->>> states = States()
+async init(self)
 ```
 
 ##### I - States.create
@@ -1474,7 +1451,7 @@ __init__(self)
 Méthode implémentée.
 
 ``` python
-create(self, name)
+async create(self, name)
 ```
 
 ##### II - States.write
@@ -1482,7 +1459,7 @@ create(self, name)
 Méthode implémentée.
 
 ``` python
-write(self, path, value)
+async write(self, path, value)
 ```
 
 ##### III - States.get
@@ -1490,7 +1467,7 @@ write(self, path, value)
 Méthode implémentée.
 
 ``` python
-get(self, path)
+async get(self, path)
 ```
 
 ##### IV - States.exists
@@ -1498,19 +1475,20 @@ get(self, path)
 Méthode implémentée.
 
 ``` python
-exists(self, path)
+async exists(self, path)
 ```
 
 ##### V - Exemple d'utilisation
 
 ``` python
 states = States()
+states.init()
 
-states.create("app")
-states.write("app/value", "on")
+await states.create("app")
+await states.write("app/value", "on")
 
-if states.exists("app/value"):
-    if states.get("app/value") == "on":
+if await states.exists("app/value"):
+    if await states.get("app/value") == "on":
         print("app is on !")
         # app is on !
 ```
@@ -1518,7 +1496,11 @@ if states.exists("app/value"):
 #### IV - Executable
 
 ``` python
-__init__(self, config, states)
+__init__(self)
+```
+
+``` python
+async init(self, config, states, macros = None)
 ```
 
 ##### I - Executable.execute
@@ -1526,72 +1508,92 @@ __init__(self, config, states)
 Méthode implémentée.
 
 ``` python
-execute(self, logs = False)
+async execute(self, logs = False)
 ```
 
 ##### II - Exemple d'utilisation
 
 ``` python
-executable = Executable(config, states)
-executable.execute()
+executable = Executable()
+await executable.init(config, states)
+await executable.execute()
 ```
 
 #### V - Execution
 
 ``` python
-__init__(self, config, states)
+__init__(self)
+```
+
+``` python
+async init(self, config, states)
 ```
 
 ##### I - Exemple d'utilisation
 
 ``` python
-execution = Execution(config, states)
+execution = Execution()
+await execution.init(config, states)
 ```
 
 #### VI - Object
 
 ``` python
-__init__(self, config, states)
+__init__(self)
+```
+
+``` python
+async init(self, config, states)
 ```
 
 ##### I - Exemple d'utilisation
 
 ``` python
-obj = Object(config, states)
+obj = Object()
+await obj.init(config, states)
 ```
 
 #### VII - Loader
 
 ``` python
-__init__(self, states, module_path, plugin_path, object_path)
+__init__(self)
+```
+
+``` python
+async init(self, states, module_path, plugin_path, object_path)
 ```
 
 ##### I - Loader.load
 
 ``` python
-def load(self, name, load_type)
+async load(self, name, load_type)
 ```
 
 ##### II - Loader.get
 
 ``` python
-def load(self, path)
+async get(self, path)
 ```
 
 ##### III - Exemple d'utilisation
 
 ``` python
-loader = Loader(states, "module_folder", "plugin_folder", "object_folder")
-loader.load("communication", "plugin")
+loader = Loader()
+await loader.init(states, "module_folder", "plugin_folder", "object_folder")
+await loader.load("communication", "plugin")
 
-print(loader.get("communication/plugin"))
+print(await loader.get("communication/plugin"))
 # [<core.modules.core.scripting.object.object.Object object at 0x10328acf0>]
 ```
 
 #### VIII - Symbols
 
 ``` python
-__init__(self, states)
+__init__(self)
+```
+
+``` python
+async init(self, states)
 ```
 
 ##### I - Symbols.create
@@ -1599,7 +1601,7 @@ __init__(self, states)
 Méthode implémentée.
 
 ``` python
-create(self, name)
+async create(self, name)
 ```
 
 ##### II - Symbols.write
@@ -1607,7 +1609,7 @@ create(self, name)
 Méthode implémentée.
 
 ``` python
-write(self, path, value)
+async write(self, path, value)
 ```
 
 ##### III - Symbols.get
@@ -1615,399 +1617,140 @@ write(self, path, value)
 Méthode implémentée.
 
 ``` python
-get(self, path)
+async get(self, path)
 ```
 
 ##### IV - Exemple d'utilisation
 
 ``` python
-symbols = Symbols(states)
-symbols.create("symbols")
-symbols.write("symbols/<version>", "1.0.0")
+symbols = Symbols()
+await symbols.init(states)
+await symbols.create("symbols")
+await symbols.write("symbols/<version>", "1.0.0")
 
-print(symbols.get("symbols/<version>"))
+print(await symbols.get("symbols/<version>"))
 # 1.0.0
 ```
-
-### II - Avancement : résultats
-
-Voici, entre autre, une démonstration de ce qu'il est actuellement possible de faire.  
-
-#### I - Premier exemple
-
-##### I - Configuration
-
-La configuration d'objet utilisée est la suivante :
-
-``` json
-{
-    "version": "1.0.0",
-    "name": "cell",
-    "type": "Object",
-    "requires":
-    {
-        "application":
-        {
-            "minimum_version": "eldest",
-            "maximum_version": "latest"
-        }
-    },
-    "execution":
-    {
-        "methods":
-        [
-            {
-                "type": "method",
-                "name": "add",
-                "file": "core/objects/cell/cell.py",
-                "process_type": "import",
-                "execution":
-                {
-                    "mode": "exec",
-                    "content": "add",
-                    "result":
-                    {
-                        "true": 1,
-                        "false": 0
-                    },
-                    "execution_conditions":
-                    [
-                        {
-                            "macro": "add_macro_check",
-                            "result":
-                            {
-                                "true": 1,
-                                "false": 0
-                            },
-                            "execution_conditions":
-                            [
-                                {
-                                    "type": "method",
-                                    "name": "add_macro_check_check",
-                                    "file": "core/objects/cell/cell_check.py",
-                                    "process_type": "import",
-                                    "execution":
-                                    {
-                                        "mode": "exec",
-                                        "content": "add_check_function_macro",
-                                        "result":
-                                        {
-                                            "true": 1,
-                                            "false": 0
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                }
-            }
-        ],
-        "macros":
-        [
-            {
-                "type": "macro",
-                "name": "add_macro_check",
-                "file": "core/objects/cell/cell_check.py",
-                "process_type": "import",
-                "execution":
-                {
-                    "mode": "exec",
-                    "content": "add_check_function"
-                }
-            }
-        ]
-    }
-}
-```
-
-##### II - Code
-
-Le code utilisé est le suivant :
-
-``` python
-import asyncio
-import re
-
-from core.modules.core.scripting.loader.loader import *
-from core.modules.core.scripting.states.states import *
-from core.modules.core.scripting.symbols.symbols import *
-from core.modules.core.scripting.json.json import *
-from core.modules.core.scripting.settings.settings import *
-
-async def main():
-    states = States()
-    states.create("app")
-    states.write("app/value", "on")
-
-    json = Json()
-    json.create("settings")
-    json.write("settings", json.get_from_file("core/modules/core/json/settings.json"))
-
-    symbols = Symbols(states)
-    symbols.create("symbols")
-
-    for key, value in json.get("settings").items():
-        if key not in symbols.get("symbols"):
-            symbols.write(f"symbols/{key}", value)
-
-    pattern = "<[a-z/<>_]*>"
-
-    for key in symbols.get("symbols"):
-        current_value = symbols.get(f"symbols/{key}")
-        done = False
-
-        while not done:
-            match = re.search(pattern, current_value)
-
-            if match:
-                to_replace = match.group()
-                if to_replace in symbols.get("symbols"):
-                    replace_by = symbols.get(f"symbols/{to_replace}")
-                else:
-                    replace_by = "<not_found>"
-
-                current_value = current_value.replace(to_replace, replace_by)
-            else:
-                symbols.write(key, current_value)
-                done = True
-
-    loader = Loader(states, symbols.get("<module_folder>"), symbols.get("<plugin_folder>"), symbols.get("<object_folder>"))
-
-    settings = Settings(states, loader)
-    settings.create("objects")
-
-    settings.write("objects/folder", symbols.get("<object_folder>"))
-    settings.write("objects/path", symbols.get("<object_config>"))
-
-    settings.load("objects", "path", "content")
-    settings.enable("objects/content/objects/cell/enabled", "cell", "object")
-    settings.save("objects/path", "objects/content")
-
-    cell = loader.get("cell/objects")
-
-    for obj in cell:
-        print(f"object : {obj.name}\n")
-
-        for execution in obj.execution:
-            for method in execution.methods:
-                method.execute(logs = True)
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-Toutes les fonctions de cell renvoient `1`.
-
-##### III - Résultats
-
-Les résultats (du point de vu du terminal) sont :
-
-```
-object : cell
-
-execute : add_macro_check_check
-expected result : 1
-result : 1
-
-execute : add_macro_check
-expected result : 1
-result : 1
-
-execute : add
-expected result : 1
-result : 1
-
-global result : 1
-```
-
-#### II - Deuxième exemple
-
-##### I - Configuration
-
-Cet exemple est le même que le premier, mais les résultats sont inversés :
-
-``` json
-{
-    "type": "method",
-    "name": "add_macro_check_check",
-    "file": "core/objects/cell/cell_check.py",
-    "process_type": "import",
-    "execution":
-    {
-        "mode": "exec",
-        "content": "add_check_function_macro",
-        "result":
-        {
-            "true": 0,
-            "false": 1
-        }
-    }
-}
-```
-
-##### II - Code
-
-Le code est le même que dans le premier exemple.  
-Toutes les fonctions renvoient `1`, la condition est donc fausse.
-
-##### III - Résultats
-
-Les résultats (du point de vu du terminal) sont :
-
-```
-object : cell
-
-execute : add_macro_check_check
-expected result : 0
-result : 1
-
-global result : 0
-```
-
-Ce sont exactement les résultats attendus.
-
-### III - Avancement : deuxième partie
 
 #### I - Installator
 
 #### II - Moment
 
 ``` python
-__init__(self, states)
+__init__(self)
+```
+
+``` python
+async init(self, states)
 ```
 
 ##### I - Moment.create
 
 ``` python
-create(self, name)
+async create(self, name)
 ```
 
 ##### II - Moment.write
 
 ``` python
-write(self, path, value)
+async write(self, path, value)
 ```
 
 ##### III - Moment.next_moment
 
 ``` python
-next_moment(self, path)
+async next_moment(self, path)
 ```
 
 ##### IV - Moment.previous_moment
 
 ``` python
-previous_moment(self, path)
+async previous_moment(self, path)
 ```
 
 ##### V - Moment.get
 
 ``` python
-get(self, path)
+async get(self, path)
 ```
 
 ##### VI - Exemple d'utilisation
 
-Prenons l'ancien fichier utilisé, en remplaçant uniquement cette partie :
+``` python
+```
+
+#### III - Scheduler
 
 ``` python
-loader = Loader(states, symbols.get("<module_folder>"), symbols.get("<plugin_folder>"), symbols.get("<object_folder>"))
+__init__(self)
+```
 
-settings = Settings(states, loader)
-settings.create("objects")
+``` python
+async init(self, states)
+```
 
-settings.write("objects/folder", symbols.get("<object_folder>"))
-settings.write("objects/path", symbols.get("<object_config>"))
-settings.write("objects/content", settings.settings.get_from_file(settings.get("objects/path")))
+##### I - Scheduler.create
 
-for obj in settings.get("objects/content/objects"):
-    settings.enable(f"objects/content/objects/{obj}/enabled", obj, "object")
-    settings.save("objects/path", "objects/content")
+Méthode implémentée.
 
-moment = Moment(states)
-moment.create("time")
-moment.write("time/value1", 0)
+``` python
+async create(self, name)
+```
 
-while states.get("app/value") == "on":
+##### II - Scheduler.write
+
+Méthode implémentée.
+
+``` python
+async write(self, path, value)
+```
+
+##### III - Scheduler.get
+
+Méthode implémentée.
+
+``` python
+async create(self, path)
+```
+
+##### IV - Scheduler.run
+
+Méthode implémentée.
+
+``` python
+async run(self, path)
+```
+
+##### V - Scheduler.execute_objects
+
+Méthode implémentée.
+
+``` python
+async execute_objects(self, value)
+```
+
+##### VI - Exemple d'utilisation
+
+``` python
+scheduler = Scheduler()
+await scheduler.init(states)
+await scheduler.create("task")
+
+while await states.get("app/value") == "on":
     print("=" * 50)
-    print(f"moment {moment.get("time/value1")} : ")
+    print(f"moment {await moment.get("time/value1")} : ")
 
     for obj_name in loader.loader.json:
-        for obj in loader.get(f"{obj_name}/objects"):
-            print(f"object : {obj.name}\n")
+        await scheduler.write(f"task/{obj_name}", await loader.get(f"{obj_name}/objects"))
 
-            for execution in obj.execution:
-                for method in execution.methods:
-                    method.execute(logs = True)
+    await scheduler.run("task")
+    await scheduler.write("task", {})
 
     print("=" * 50)
     choice = input("time += ? : ")
 
     if choice == "exit":
-        states.write("app/value", "off")
+        await states.write("app/value", "off")
     else:
-        moment.write("time/value1", moment.get("time/value1") + int(choice))
-```
-
-Le résultat est :
-
-```
-==================================================
-moment 0 : 
-object : cell
-
-execute : add_macro_check_check
-expected result : 1
-result : 1
-
-execute : add_macro_check
-expected result : 1
-result : 1
-
-execute : add
-expected result : 1
-result : 1
-
-global result : 1
-==================================================
-time += ? : 10
-==================================================
-moment 10 : 
-object : cell
-
-execute : add_macro_check_check
-expected result : 1
-result : 1
-
-execute : add_macro_check
-expected result : 1
-result : 1
-
-execute : add
-expected result : 1
-result : 1
-
-global result : 1
-==================================================
-time += ? : -10
-==================================================
-moment 0 : 
-object : cell
-
-execute : add_macro_check_check
-expected result : 1
-result : 1
-
-execute : add_macro_check
-expected result : 1
-result : 1
-
-execute : add
-expected result : 1
-result : 1
-
-global result : 1
-==================================================
-time += ? : exit
+        await moment.write("time/value1", await moment.get("time/value1") + int(choice))
 ```
