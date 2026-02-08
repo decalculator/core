@@ -1281,15 +1281,11 @@ async init(self)
 
 ##### I - Json.create
 
-Méthode implémentée.
-
 ``` python
 async create(self, name)
 ```
 
 ##### II - Json.remove
-
-Méthode implémentée.
 
 ``` python
 async remove(self, path)
@@ -1297,15 +1293,11 @@ async remove(self, path)
 
 ##### III - Json.get
 
-Méthode implémentée.
-
 ``` python
 async get(self, path)
 ```
 
 ##### IV - Json.write
-
-Méthode implémentée.
 
 ``` python
 async write(self, path, value, mode = 0)
@@ -1313,15 +1305,11 @@ async write(self, path, value, mode = 0)
 
 ##### V - Json.exists
 
-Méthode implémentée.
-
 ``` python
 async exists(self, path)
 ```
 
 ##### VI - Json.path_to_json
-
-Méthode implémentée.
 
 ``` python
 async path_to_json(self, path)
@@ -1370,15 +1358,11 @@ async init(self, states, loader)
 
 ##### I - Settings.create
 
-Méthode implémentée.
-
 ``` python
 async create(self, name)
 ```
 
 ##### II - Settings.remove
-
-Méthode implémentée.
 
 ``` python
 async remove(self, name)
@@ -1386,15 +1370,11 @@ async remove(self, name)
 
 ##### III - Settings.get
 
-Méthode implémentée.
-
 ``` python
 async get(self, path)
 ```
 
 ##### IV - Settings.write
-
-Méthode implémentée.
 
 ``` python
 async write(self, path, value, mode = 0)
@@ -1402,15 +1382,11 @@ async write(self, path, value, mode = 0)
 
 ##### V - Settings.enable
 
-Méthode implémentée.
-
 ``` python
 async enable(self, settings_path, enabled_name, enabled_type)
 ```
 
 ##### VI - Settings.disable
-
-Méthode implémentée.
 
 ``` python
 async disable(self, settings_path, disabled_name, disabled_type)
@@ -1448,15 +1424,11 @@ async init(self)
 
 ##### I - States.create
 
-Méthode implémentée.
-
 ``` python
 async create(self, name)
 ```
 
 ##### II - States.write
-
-Méthode implémentée.
 
 ``` python
 async write(self, path, value)
@@ -1464,15 +1436,11 @@ async write(self, path, value)
 
 ##### III - States.get
 
-Méthode implémentée.
-
 ``` python
 async get(self, path)
 ```
 
 ##### IV - States.exists
-
-Méthode implémentée.
 
 ``` python
 async exists(self, path)
@@ -1504,8 +1472,6 @@ async init(self, config, states, macros = None)
 ```
 
 ##### I - Executable.execute
-
-Méthode implémentée.
 
 ``` python
 async execute(self, logs = False)
@@ -1598,23 +1564,17 @@ async init(self, states)
 
 ##### I - Symbols.create
 
-Méthode implémentée.
-
 ``` python
 async create(self, name)
 ```
 
 ##### II - Symbols.write
 
-Méthode implémentée.
-
 ``` python
 async write(self, path, value)
 ```
 
 ##### III - Symbols.get
-
-Méthode implémentée.
 
 ``` python
 async get(self, path)
@@ -1691,15 +1651,11 @@ async init(self, states)
 
 ##### I - Scheduler.create
 
-Méthode implémentée.
-
 ``` python
 async create(self, name)
 ```
 
 ##### II - Scheduler.write
-
-Méthode implémentée.
 
 ``` python
 async write(self, path, value)
@@ -1707,23 +1663,17 @@ async write(self, path, value)
 
 ##### III - Scheduler.get
 
-Méthode implémentée.
-
 ``` python
 async create(self, path)
 ```
 
 ##### IV - Scheduler.run
 
-Méthode implémentée.
-
 ``` python
 async run(self, path)
 ```
 
 ##### V - Scheduler.execute_objects
-
-Méthode implémentée.
 
 ``` python
 async execute_objects(self, value)
