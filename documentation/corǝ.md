@@ -134,6 +134,15 @@
                 - [IV - Scheduler.run](#iv---schedulerrun)
                 - [V - Scheduler.execute_objects](#v---schedulerexecute_objects)
                 - [VI - Exemple d'utilisation](#vi---exemple-dutilisation-1)
+        - [II - Problème](#ii---problème)
+            - [I - Ce qui est plutôt réussi](#i---ce-qui-est-plutôt-réussi)
+            - [II - Ce qu'il manque](#ii---ce-quil-manque)
+        - [III - Proposition de solution](#iii---proposition-de-solution)
+            - [I - Objet classique](#i---objet-classique)
+                - [I - Le modèle d'appel tour par tour](#i---le-modèle-dappel-tour-par-tour)
+                - [II - Le modèle d'annulation tour par tour](#ii---le-modèle-dannulation-tour-par-tour)
+            - [II - Objet complexe](#ii---objet-complexe)
+                - [I - Fonctionnement](#i---fonctionnement)
 
 ## II - Préambule
 
@@ -1197,7 +1206,7 @@ Car je ne l'ai pas forcément précisé, mais l'interface en elle-même devra ê
 
 ### V - Synchronisme
 
-Les tâches s'exécutent de manière asynchrones, c'est à dire indépendamment les unes des autres, en même temps.  
+Les tâches s'exécutent de manière asynchrone, c'est à dire indépendamment les unes des autres, en même temps.  
 Pour cela, le module principal utilisé est `asyncio`, on déclare la fonction `main()` en `async def`.  
 Par exemple, pour le serveur :
 ``` python
@@ -1220,6 +1229,15 @@ while states.get("app/status") != "off":
     # boucle principale de l'app
 ```
 
+### VI - Asynchronisme : plan
+
+Ce que l'on souhaite, c'est que chaque objet puisse être exécuté en même temps qu'un autre.  
+C'est pour cela que chaque objet (classe) doit être déclaré en asynchrone. Voici ce que nous entendons par cela :
+- la méthode `__init__` ne peut pas être asynchrone en Python, elle initialise donc uniquement des `self.<something> = None`.
+- la véritable méthode d'init est nommée `init`, elle est requise pour tout objet (sauf si les self restent None ?).
+- toutes les méthodes (sauf `__init__`) sont `async`.
+- il faut utiliser le moins de fonctions / méthodes bloquantes dans ces méthodes.
+
 ## IV - Idées moins claires
 
 ### I - Dynamisme
@@ -1230,7 +1248,7 @@ Pour cela, plusieurs fonctions dynamiques propres à python peuvent être utilis
 - `eval()` : permet d'évaluer une expression, sans compilation
 - `write()` : permet de (ré)écrire le propre code du programme, sans compilation
 
-Mais si la non-contextualité est correctement développée, nous pourrions ne pas avoir à utiliser ces fonctions.
+Si la non-contextualité est correctement développée, nous pourrions ne pas avoir à utiliser ces fonctions.
 
 ### II - Template de création de système
 
@@ -1703,4 +1721,85 @@ while await states.get("app/value") == "on":
         await states.write("app/value", "off")
     else:
         await moment.write("time/value1", await moment.get("time/value1") + int(choice))
+```
+
+### II - Problème
+
+#### I - Ce qui est plutôt réussi
+
+La forme actuelle est déjà plutôt bonne pour des objets simples, je ne vais pas remettre cela en question.  
+Ce qui me semblait complexe, initialement, était de devoir exécuter des objets que nous ne connaissons pas à l'avance.  
+Pour cela, il fallait rendre les objets en "totale" indépendance, pour qu'ils choisissent eux-même quoi exécuter.  
+Réussir à exécuter des objets dynamiques (dont la structure n'est pas statique) me semblait compliqué.  
+La configuration JSON "statique" plutôt bien pensée a résolu ce problème.  
+Ce point est plutôt réussi : il est vrai que, `Moment` après `Moment`, le moteur peut maintenant exécuter des objets indépendants.  
+
+#### II - Ce qu'il manque
+
+Cependant, quelque chose manque.  
+Initialement, la couche d'abstraction devait aller plus loin qu'une exécution de choses indéfinies à l'avance, `Moment` après `Moment`.  
+La couche d'abstraction disait que tout est objet, sauf le moteur.  
+Néanmoins, actuellement, un objet ne peut exister qu'entre les `Moment`, c'est l'origine du problème que je constate.  
+Si le serveur `fastapi` permettant l'affichage graphique est un objet, (puisque c'est un objet de type `Plugin`), alors il est fragmenté par les `Moment`.  
+Cela signifie que si l'utilisateur choisit de ne pas passer de `Moment`, alors le serveur est stoppé.  
+
+Pourtant, le serveur est bien asynchrone, là n'est pas le problème.  
+Le vrai problème vient de la logique actuelle, trop "tour par tour".  
+
+Malheureusement, ce n'est pas le seul problème, car il est causé par quelque chose de plus haut encore.  
+Le problème, ce n'est pas vraiment que `Scheduler` lance tour par tour.  
+Le problème, c'est l'existence de `Scheduler`.  
+Tant que `Scheduler` existe, alors les objets ne peuvent être indépendants.  
+Tant que les objets sont exécutés à un moment choisi par le moteur, ils ne peuvent être indépendants.  
+Ils sont indépendants, car ils déterminent si ils s'exécutent ou non, mais le problème est que c'est le moteur qui déclenche cette vérification.  
+
+Ils sont donc en indépendance une fois appelés, pas avant.
+
+### III - Proposition de solution
+
+Je pense que pour répondre à ce besoin, il faudrait instaurer deux grands types d'objets.
+
+#### I - Objet classique
+
+Les objets classiques ne seraient pas en état d'indépendance totale.  
+Leurs méthodes sont indépendantes, mais des règles strictes concernant l'appel de l'objet existent.  
+
+Il existe ce que l'on appelle des `modèles`.  
+Chaque objet classique définit le modèle à utiliser, dans sa configuration.
+
+##### I - Le modèle d'appel tour par tour
+
+Il s'agit du modèle utilisé actuellement.  
+Nous appelons l'objet quand nous en avons besoin.
+
+##### II - Le modèle d'annulation tour par tour
+
+Définition simple :
+
+```
+Nous ne l'exécutons pas quand nous en avons besoin.
+Nous le stoppons quand nous n'en avons plus besoin.
+```
+
+Ce serait idéal pour un serveur, par exemple :
+- L'objet est load.
+- Le moteur comprend qu'il s'agit d'un objet fonctionnant avec le modèle d'annulation tour par tour.
+- `Scheduler` le traite différement, il le met dans un autre path.
+- A chaque `Moment`, `Scheduler` regarde si les processus fonctionnant avec le modèle d'annulation tour par tour ont un signal d'arrêt (ou autre).
+- Si c'est le cas, le processus est stoppé et supprimé du path.
+
+#### II - Objet complexe
+
+Les objets complexes sont en état d'indépendance totale.  
+Tous les objets ne peuvent pas être complexes, car cela prend plus de ressources (performances).  
+Un objet complexe n'indique pas à `Scheduler` quand l'exécuter.  
+
+##### I - Fonctionnement
+
+Voici une définition :
+
+```
+Un objet complexe n'est appelé qu'une seule fois, car il ne termine jamais.
+Il contient une boucle asynchrone qui tourne en permanence.
+Cette boucle peut faire ses propres vérifications pour savoir si telle méthode doit être exécutée ou non.
 ```
