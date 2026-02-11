@@ -1788,6 +1788,11 @@ Ce serait idéal pour un serveur, par exemple :
 - A chaque `Moment`, `Scheduler` regarde si les processus fonctionnant avec le modèle d'annulation tour par tour ont un signal d'arrêt (ou autre).
 - Si c'est le cas, le processus est stoppé et supprimé du path.
 
+Edit - Après rédaction du concept d'objet complexe :
+
+Je le garde tout de même comme idée, mais je ne pense pas que nous l'utiliserons.  
+En fait, je n'en vois pas trop l'utilité, autant utiliser un objet complexe ?
+
 #### II - Objet complexe
 
 Les objets complexes sont en état d'indépendance totale.  
@@ -1803,3 +1808,112 @@ Un objet complexe n'est appelé qu'une seule fois, car il ne termine jamais.
 Il contient une boucle asynchrone qui tourne en permanence.
 Cette boucle peut faire ses propres vérifications pour savoir si telle méthode doit être exécutée ou non.
 ```
+
+### IV - Développement et modifications relatives à cette solution
+
+#### I - Structure du fichier de configuration d'un objet
+
+A la racine, deux paramètres sont ajoutés :
+
+``` json
+{
+    "object_type": "value",
+    "object_model": "value",
+    ...
+}
+```
+
+Pour un objet classique :
+- `object_type` a pour valeur `classic`.
+- `object_model` peut avoir pour valeur `cbc` (call by calling).
+
+Pour un objet complexe :
+- `object_type` a pour valeur `complex`.
+- `object_model` n'est pas utilisé (pour le moment, il n'existe pas de modèles pour les objets complexes).
+
+#### II - Scheduler
+
+##### I - Scheduler.settings
+
+``` python
+async def settings(self, path, value)
+```
+
+``` python
+scheduler = Scheduler()
+await scheduler.init(states)
+await scheduler.create("classic_task")
+await scheduler.create("complex_task")
+await scheduler.settings("classic_task/mode", "classic")
+await scheduler.settings("classic_task/model", "")
+await scheduler.settings("complex_task/mode", "complex")
+```
+
+##### II - Modifications Scheduler.run
+
+Cette méthode contient maintenant des vérifications relatives aux paramètres de l'objet.
+
+##### III - Executable
+
+C'est le corps des changements importants.
+
+###### I - Executable.execute
+
+Cette méthode est maintenant plus longue.  
+Elle contient des vérifications relatives aux paramètres de l'objet.  
+Si il est classique, alors elle l'exécute avec des `await`.  
+Si il est complexe, alors elle l'exécute, mais n'attendra pas qu'il termine (elle l'exécute puis retourne directement, il continue de vivre en background).
+
+###### II - Executable._exec
+
+C'est un pont vers `exec()`, qui permet d'exécuter une liste de strings, ou bien un string directement.  
+Si l'objet est complexe :  
+Elle définit une fonction avec `exec()` puis sort de celui-ci pour obtenir une coroutine vers la fonction.  
+Ensuite, elle lance cette coroutine en arrière plan et retourne.
+Si l'objet est classique :
+Elle fait la même chose mais avec un `await`, elle ne lance pas en background.
+
+###### III - Résumé simple du processus actuel
+
+Executable.execute :
+- obtient l'objet à exécuter
+- obtient le contenu de son fichier JSON
+- créer un payload (bridge) en fonction de celui-ci (voir plus bas)
+- `self._exec(payload, mode = mode)`
+- si le mode est classique : cherche à interpréter / stocker les résultats
+
+Voici le bridge actuel utilisé pour `Executable._exec` :
+
+``` python
+lines = [
+    "import asyncio"
+]
+
+# ...
+
+lines.append(f"from {path} import *")
+
+# ...
+
+lines.append("async def bridge():")
+lines.append(f"    return await {executable_object.execution_content}()")
+```
+
+### Résultats
+
+Cela fonctionne toujours bien pour les objets classiques, car "rien ne change pour ceux-ci".  
+Le fonctionnement tour-par-tour est toujours bon.  
+
+Nous allons maintenant pouvoir tester avec des objets complexes, il faut commencer par en développer un.  
+Mais j'ai pensé à une potentielle question en faisant la séparation entre classique et complexe :  
+Un objet complexe ne peut pas contenir de vérifications dans son fichier JSON, comme un objet classique ?  
+Car actuellement, un objet complexe est lancé "dans le vide" (background).  
+Son comportement est "indéfinit" (d'un point de vu moteur).  
+On ne sait pas quand il terminera.  
+Mais, en est-il de même pour ses méthodes de vérifications ? Car si c'est le cas, cela serait plus complexe car nous ne pouvons pas `await` le résultat.  
+Cependant, si nous partons du principe qu'un objet complexe est en totale indépendance et se gère totalement seul, alors nous pouvons aussi affirmer qu'il n'a pas vraiment besoin d'une telle structure JSON concernant les vérifications.  
+Tout ce dont il aurait besoin, c'est d'un point d'entrée.  
+Donc la structure JSON d'un objet complexe pourrait ne contenir qu'une seule méthode asynchrone : l'entrée.  
+Cette entrée est lancée dans le vide (background) par le moteur, puis tout est géré par l'objet : il est indépendant.  
+
+Sinon, nous aurions pu partir du principe qui dit que les méthodes de vérifications retournent toujours, même pour un objet complexe, mais je pense que la solution précédente est plus adaptée.
