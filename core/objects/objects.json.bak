@@ -1,0 +1,49 @@
+{
+    "objects": {
+        "date": {
+            "param": "value"
+        },
+        "season": {
+            "param": "value"
+        },
+        "weather": {
+            "param": "value"
+        },
+        "probability": {
+            "param": "value"
+        },
+        "consequence": {
+            "param": "value"
+        },
+        "aleatory": {
+            "param": "value"
+        },
+        "world": {
+            "param": "value"
+        },
+        "rule": {
+            "param": "value"
+        },
+        "obligation_future": {
+            "param": "value"
+        },
+        "possibilities": {
+            "param": "value"
+        },
+        "save": {
+            "param": "value"
+        },
+        "map": {
+            "param": "value"
+        },
+        "zone": {
+            "param": "value"
+        },
+        "entity": {
+            "param": "value"
+        },
+        "cell": {
+            "param": "value"
+        }
+    }
+}

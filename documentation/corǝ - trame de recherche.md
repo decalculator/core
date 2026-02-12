@@ -1899,7 +1899,7 @@ lines.append("async def bridge():")
 lines.append(f"    return await {executable_object.execution_content}()")
 ```
 
-### Résultats
+### V - Résultats
 
 Cela fonctionne toujours bien pour les objets classiques, car "rien ne change pour ceux-ci".  
 Le fonctionnement tour-par-tour est toujours bon.  
@@ -1917,3 +1917,48 @@ Donc la structure JSON d'un objet complexe pourrait ne contenir qu'une seule mé
 Cette entrée est lancée dans le vide (background) par le moteur, puis tout est géré par l'objet : il est indépendant.  
 
 Sinon, nous aurions pu partir du principe qui dit que les méthodes de vérifications retournent toujours, même pour un objet complexe, mais je pense que la solution précédente est plus adaptée.
+
+### VI - Structure d'un objet complexe
+
+Exemple :
+
+``` json
+{
+    "version": "1.0.0",
+    "object_type": "complex",
+    "name": "cellule_complexe",
+    "type": "Object",
+    "requires":
+    {
+        "application":
+        {
+            "minimum_version": "eldest",
+            "maximum_version": "latest"
+        }
+    },
+    "execution":
+    {
+        "methods":
+        [
+            {
+                "type": "method",
+                "name": "entry",
+                "file": "core/objects/cellule_complexe/cellule_complexe.py",
+                "process_type": "import",
+                "execution":
+                {
+                    "mode": "exec",
+                    "content": "entry"
+                }
+            }
+        ]
+    }
+}
+```
+
+### VI - Code
+
+Une partie du code a été upload.  
+C'est la partie qui est considérée comme plutôt "stable" et fonctionnelle.  
+Elle a été retravaillée, mais peut toujours contenir des incohérences et des erreurs.  
+C'est pour le moment uniquement du code "fonctionnel", je l'ai fais le plus rapidement possible.

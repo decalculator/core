@@ -1,0 +1,14 @@
+{
+    "<version>": "1.0.0",
+    "<minimum_version>": "1.0.0",
+    "<maximum_version>": "1.0.0",
+
+    "<plugin_folder>": "core/plugins",
+    "<plugin_config>": "<plugin_folder>/plugins.json",
+
+    "<module_folder>": "core/modules",
+    "<module_config>": "<module_folder>/modules.json",
+
+    "<object_folder>": "core/objects",
+    "<object_config>": "<object_folder>/objects.json"
+}
