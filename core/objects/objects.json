@@ -2,9 +2,6 @@
     "objects": {
         "cell": {
             "enabled": true
-        },
-        "cellule": {
-            "enabled": true
         }
     }
 }

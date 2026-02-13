@@ -1962,3 +1962,24 @@ Une partie du code a été upload.
 C'est la partie qui est considérée comme plutôt "stable" et fonctionnelle.  
 Elle a été retravaillée, mais peut toujours contenir des incohérences et des erreurs.  
 C'est pour le moment uniquement du code "fonctionnel", je l'ai fais le plus rapidement possible.
+
+### VII - Amélioration(s)
+
+Il manque une partie importante pour les objets : un objet ne peut actuellement pas accéder aux variables du moteur.  
+Par exemple, il ne peut pas accéder aux states.  
+
+Une solution serait `tests/3/3.py`, mais ça nous oblige à mettre les variables importantes en `global`, et elles sont définies dans le moteur, c'est donc statique (`global states`).  
+
+Une autre potentielle solution serait que chaque objet implémente son propre pont, en déclarant en `global` ce qu'il souhaite obtenir.  
+Mais cela me semble compliqué pour peu.  
+
+Une dernière possibilité serait d'implémenter une classe `Variables` dans le moteur.  
+Cette classe servirait donc à créer des variables et stocker leurs valeurs.  
+Il faudrait qu'une seule instance soit partagée / utilisée pour avoir toutes les variables importantes en un seul objet (argument) que l'on pourrait passer au pont.  
+En fait, c'est peut-être un petit peu comme mettre toutes les variables en `global`, mais cela me semble plus modelable etc.  
+Et en plus, cela pourrait éviter de "polluer" les variables globales (je ne sais pas vraiment si cela affecte les performances générales).  
+
+C'est personnellement l'option qui m'intéresse le plus.  
+Je pense en réalité que nous aurions pu faire autrement en réfléchissant autour d'exec, mais je pense que cette classe `Variables` pourra toujours servir.  
+Reste à décider ce qui sera des variables de ce type.  
+Je pense au moins que tous les objets de modules (du moteur) seront de ce type de variables partagées.

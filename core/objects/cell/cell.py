@@ -1,5 +1,4 @@
 import asyncio
-import os
 
 class Cell:
     def __init__(self):

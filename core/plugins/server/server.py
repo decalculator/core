@@ -23,7 +23,10 @@ class Server:
         self.app = FastAPI()
 
         self.base_dir = Path(__file__).resolve().parent
+
+        # ?
         self.templates = Jinja2Templates(directory = f"{self.base_dir}/templates")
+
         self.app.mount("/static", StaticFiles(directory = f"{self.base_dir}/static"))
         self._register_routes()
 
