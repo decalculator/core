@@ -1956,6 +1956,9 @@ Exemple :
 }
 ```
 
+Je ne l'ai pas forcément précisé, mais cela fonctionne maintenant bien pour les objets complexes.  
+Ils sont pleinement fonctionnels, ils sont bien exécutés en même temps que les objets classiques et sont lancés "dans le vide".
+
 ### VI - Code
 
 Une partie du code a été upload.  
@@ -1964,6 +1967,8 @@ Elle a été retravaillée, mais peut toujours contenir des incohérences et des
 C'est pour le moment uniquement du code "fonctionnel", je l'ai fais le plus rapidement possible.
 
 ### VII - Amélioration(s)
+
+#### I - L'accès aux variables moteur
 
 Il manque une partie importante pour les objets : un objet ne peut actuellement pas accéder aux variables du moteur.  
 Par exemple, il ne peut pas accéder aux states.  
@@ -1983,3 +1988,232 @@ C'est personnellement l'option qui m'intéresse le plus.
 Je pense en réalité que nous aurions pu faire autrement en réfléchissant autour d'exec, mais je pense que cette classe `Variables` pourra toujours servir.  
 Reste à décider ce qui sera des variables de ce type.  
 Je pense au moins que tous les objets de modules (du moteur) seront de ce type de variables partagées.
+
+Pour le moment, je n'ai mis que la variable `states` car elle contient déjà tous les objets.  
+La structure serait peut-être à revoir : il vaudrait peut-être mieux définir tous les objets comme des `Variable`, puis créer une seule `State` nommée `variable` (par exemple).  
+Mais pour le moment, je ne cherche pas vraiment à faire un programme "parfait" (de toute façon, ça ne sera jamais vraiment le cas) : uniquement un programme qui répond aux fonctions que je lui impose.  
+
+C'est donc fonctionnel, les sous-objets (classiques mais surtout complexes) peuvent maintenant accéder aux states.  
+Et via ces states, ils peuvent accéder à tous les objets (modules moteur) en direct.  
+Par contre, cela implique que leur point d'entré (pointé par le pont) doit avoir pour signature `**kwargs`.  
+Mais c'est un statisme contrôlé, et encore une fois l'unique chose cherchée pour le moment est la fonctionnalitée.  
+Cela fonctionne.  
+
+Voici un exemple de point d'entré (très simple) :
+
+``` python
+async def entry(**kwargs):
+    print("server > entry()")
+
+    if "states" in kwargs:
+        states_object = kwargs["states"]
+        states_json_object = states_object.states.json
+        print(states_json_object)
+
+    server = Server()
+    await server.init("127.0.0.1", 4999)
+    print("server > ready")
+    print("server > start")
+    await server.run()
+```
+
+Je pense qu'il reste encore deux grandes questions qui pourraient être liées.
+
+#### II - Et les erreurs ? Stabilité du programme
+
+##### I - Objets classiques
+
+###### I - Scénario "idéal"
+
+Pour les objets classiques, voici le scénario que j'imagine comme étant "idéal" :
+
+1) L'objet classique "crash" (accès à une variable inexistante, par exemple).
+2) L'erreur remonte au pont, mais ne fait pas crash la boucle principale (`Moment`).
+3) Puis, au prochain tour, tout recommence normalement.
+
+Les crash pourraient donc faire partie du processus sans problème.  
+Cela pourrait même être un moyen pour quitter l'exécution d'un objet actuel (peu propre, certes...).
+
+###### II - Réalité
+
+Voici ce qu'il se passe actuellement si nous faisons crash un objet classique :
+
+```
+moment 0 :
+execute : add_macro_check_check
+expected result : 1
+result : 1
+
+execute : add_macro_check
+expected result : 1
+result : 1
+
+execute : add
+expected result : 1
+Task exception was never retrieved
+future: <Task finished name='Task-1' coro=<main() done, defined at /Users/mi/Desktop/share/développement/core/main.py:13> exception=NameError("name 'undefined_var' is not defined")>
+Traceback (most recent call last):
+  File "/Users/mi/Desktop/share/développement/core/main.py", line 127, in main
+    await scheduler.run("classic_task")
+  File "/Users/mi/Desktop/share/développement/core/core/modules/core/scripting/scheduler/scheduler.py", line 52, in run
+    await asyncio.gather(*async_task)
+  File "/Users/mi/Desktop/share/développement/core/core/modules/core/scripting/scheduler/scheduler.py", line 62, in execute_objects
+    await method.execute(logs = True, mode = mode)
+  File "/Users/mi/Desktop/share/développement/core/core/modules/core/scripting/executable/executable.py", line 132, in execute
+    result = await self._exec(lines, mode = mode)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mi/Desktop/share/développement/core/core/modules/core/scripting/executable/executable.py", line 169, in _exec
+    result = await bridge()
+             ^^^^^^^^^^^^^^
+  File "<string>", line 4, in bridge
+  File "/Users/mi/Desktop/share/développement/core/core/objects/cell/cell.py", line 14, in add
+    print(undefined_var)
+          ^^^^^^^^^^^^^
+NameError: name 'undefined_var' is not defined
+```
+
+###### III - Réalisation
+
+Pour cela, une solution simple me semble être de modifier directement le code du pont :
+
+``` python
+async def bridge():
+    try:
+        return await {executable_object.execution_content}(states = states)
+    except Exception as error:
+        print(error)
+    except:
+        print('error')
+```
+
+Notons que je me suis documenté concernant les try / except en Python, car je ne connais que peu ce langage de programmation.  
+Ici, j'ai tout d'abord placé un `except Exception as error` qui est censé intercepter les erreurs pour permettre de les afficher.  
+Mais j'ai tout de même laissé une couche plus basse avec un except classique (général), car certains disent que `except Exception as error` pourrait ne pas capturer toutes les erreurs.  
+Je ne sais pas vraiment si c'est toujours d'actualité, mais c'est une petite sécurité, pour le moment.
+
+###### IV - Résultats
+
+Les résultats sont ceux qui étaient attendus :
+
+```
+moment 0 :
+execute : add_macro_check_check
+expected result : 1
+result : 1
+
+execute : add_macro_check
+expected result : 1
+result : 1
+
+execute : add
+expected result : 1
+name 'undefined_var' is not defined
+result : None
+
+global result : False
+==================================================
+moment 1 :
+execute : add_macro_check_check
+expected result : 1
+result : 1
+
+execute : add_macro_check
+expected result : 1
+result : 1
+
+execute : add
+expected result : 1
+name 'undefined_var' is not defined
+result : None
+
+global result : False
+==================================================
+```
+
+#### III - Des objets classiques sans mémoire...
+
+##### I - Résumé du problème
+
+Il y a tout de même un autre problème, ou en tout cas une piste d'amélioration possible.  
+Actuellement, pour un objet classique, l'état est "réinitialisé" entre chaque tour : le point d'entré est ré-exécuté, et tous les tours sont "similaires" (même si des conditions concernant les `Moment` peuvent être créées, par exemple).  
+Mais un objet classique n'a pas de mémoire entre les tours, et c'est un problème.  
+Pourquoi ? Car à chaque fois il doit ré-initialiser les states, obtenir le JSON, etc, etc.  
+
+A chaque tour, un objet classique repart de zéro, comme s'il s'agissait de son premier instant de "vie".
+
+##### II - Proposition de solution
+
+Une solution plutôt simple à mettre en oeuvre me semble être la classe `Variable` (qui est déjà créée !).  
+Chaque objet classique pourrait créer un champ à la racine de l'objet commun `variable` à son nom, et y stocker ses variables.  
+
+Deux points me semblent problématiques dans ce que je propose :
+- Tout d'abord, la structure de données deviendrait potentiellement très grande si beaucoup d'objets classiques sont en exécution.
+- Et finalement, il ne faudrait pas les stocker à un nom mais plutôt à un identifiant unique (pensons au principe de non-unicité de l'objet !).
+
+Alors voici des sous-propositions à cette proposition :
+
+###### I - La classe système Identifier
+
+Il pourrait s'agir d'un simple compteur d'objets (+= 1 à chaque fois, par exemple).  
+Elle permettrait donc d'attribuer des IDs uniques à des objets, ainsi qu'à libérer les IDs des objets supprimés.  
+Cela répond parfaitement au principe de non-unicité de l'objet.
+
+###### II - Un système encore plus large : Memory
+
+Nouveau système : `Memory` contient des `Variables` qui contiennent des `Variable`.
+
+###### III - Réalisation : Identifier
+
+Cette classe est fonctionnelle.  
+Pour le moment, la possibilité de supprimer des objets (et par la même occasion des objets) n'existe pas.  
+C'est seulement un compteur.  
+
+Voici comme l'utiliser :
+
+``` python
+identifier = Identifier()
+await identifier.init(states)
+await identifier.create("objects_id")
+
+for i in range(2**10):
+    await identifier.generate_id("objects_id")
+
+print(await identifier.get_free_id("objects_id"))
+```
+
+###### IV - Réalisation : Memory
+
+``` python
+memory = Memory()
+await memory.init(states)
+await memory.create("objects")
+await memory.create("core")
+
+core_variables = Variables()
+await core_variables.init(states)
+await core_variables.create("variables")
+
+await memory.write("core/variables", core_variables)
+
+identifier = Identifier()
+await identifier.init(states)
+await identifier.create("objects_id")
+
+identifier_var = Variable()
+await identifier_var.init(states, "object", identifier)
+await core_variables.write("variables/identifier", identifier_var)
+
+print(memory.memory.json)
+print(memory.memory.json["core"]["variables"].variables.json)
+print(memory.memory.json["core"]["variables"].variables.json["variables"]["identifier"].name)
+print(memory.memory.json["core"]["variables"].variables.json["variables"]["identifier"].value)
+```
+
+```
+{'objects': {}, 'core': {'variables': <core.modules.core.scripting.variables.variables.Variables object at 0x103a167b0>}}
+{'variables': {'identifier': <core.modules.core.scripting.variable.variable.Variable object at 0x103a16a50>}}
+object
+<core.modules.core.scripting.identifier.identifier.Identifier object at 0x103a16900>
+```
+
+#### IV - Des accès aux objets contrôlés

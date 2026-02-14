@@ -10,5 +10,5 @@ class Cell:
     def cellule_get(self):
         return self.size
 
-async def cellule_add():
+async def cellule_add(**kwargs):
     return 1

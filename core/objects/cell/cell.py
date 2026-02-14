@@ -10,5 +10,6 @@ class Cell:
     def get(self):
         return self.size
 
-async def add():
+async def add(**kwargs):
+    print(undefined_var)
     return 1

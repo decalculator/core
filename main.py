@@ -8,10 +8,40 @@ from core.modules.core.scripting.json.json import *
 from core.modules.core.scripting.settings.settings import *
 from core.modules.core.scripting.moment.moment import *
 from core.modules.core.scripting.scheduler.scheduler import *
+from core.modules.core.scripting.identifier.identifier import *
+
+from core.modules.core.scripting.variable.variable import *
+from core.modules.core.scripting.variables.variables import *
+from core.modules.core.scripting.memory.memory import *
 
 async def main():
     states = States()
     await states.init()
+
+    memory = Memory()
+    await memory.init(states)
+    await memory.create("objects")
+    await memory.create("core")
+
+    core_variables = Variables()
+    await core_variables.init(states)
+    await core_variables.create("variables")
+
+    await memory.write("core/variables", core_variables)
+
+    identifier = Identifier()
+    await identifier.init(states)
+    await identifier.create("objects_id")
+
+    identifier_var = Variable()
+    await identifier_var.init(states, "object", identifier)
+    await core_variables.write("variables/identifier", identifier_var)
+
+    print(memory.memory.json)
+    print(memory.memory.json["core"]["variables"].variables.json)
+    print(memory.memory.json["core"]["variables"].variables.json["variables"]["identifier"].name)
+    print(memory.memory.json["core"]["variables"].variables.json["variables"]["identifier"].value)
+
     await states.create("app")
     await states.write("app/value", "on")
 
@@ -111,8 +141,8 @@ async def main():
                     await scheduler.write("complex_task/running", running)
                     await scheduler.write(f"complex_task/to_run/{obj_name}", objects)
 
-        await scheduler.run("complex_task/to_run")
-        await scheduler.write("complex_task/to_run", {})
+        #await scheduler.run("complex_task/to_run")
+        #await scheduler.write("complex_task/to_run", {})
 
         await scheduler.run("classic_task")
         await scheduler.write("classic_task", {})

@@ -94,7 +94,7 @@ class Executable:
 
         i = len(data) - 1
         done = False
-        result = False
+        result_code = False
 
         while i >= 0 and not done:
             executable_object = data[i]
@@ -126,17 +126,22 @@ class Executable:
                         lines.append(f"from {path} import *")
 
                     lines.append("async def bridge():")
-                    lines.append(f"    return await {executable_object.execution_content}()")
+                    lines.append("    try:")
+                    lines.append(f"        return await {executable_object.execution_content}(states = states)")
+                    lines.append("    except Exception as error:")
+                    lines.append("        print(error)")
+                    lines.append("    except:")
+                    lines.append("        print('error')")
 
             if len(lines) > 0:
-                result = await _exec(lines, mode = mode)
+                result = await self._exec(lines, mode = mode)
 
                 if mode == "classic":
                     if logs:
                         print(f"result : {result}")
                     if result == executable_object.result_true:
                         if i == 0:
-                            result = True
+                            result_code = True
                             done = True
                     else:
                         done = True
@@ -147,27 +152,27 @@ class Executable:
                 print()
             i -= 1
 
-        self.result_code = result
+        self.result_code = result_code
         if logs:
             print(f"global result : {self.result_code}")
 
-async def _exec(code, mode = None):
-    payload = ""
+    async def _exec(self, code, mode = None):
+        payload = ""
 
-    if type(code) == list:
-        for line in code:
-            payload += f"{line}\n"
-    else:
-        payload = code
+        if type(code) == list:
+            for line in code:
+                payload += f"{line}\n"
+        else:
+            payload = code
 
-    exec_vars = {}
-    exec(payload, exec_vars)
+        exec_vars = {"states": self.states}
+        exec(payload, exec_vars)
 
-    bridge = exec_vars['bridge']
+        bridge = exec_vars['bridge']
 
-    if mode == "classic":
-        result = await bridge()
-    elif mode == "complex":
-        result = asyncio.ensure_future(bridge())
+        if mode == "classic":
+            result = await bridge()
+        elif mode == "complex":
+            result = asyncio.ensure_future(bridge())
 
-    return result
+        return result

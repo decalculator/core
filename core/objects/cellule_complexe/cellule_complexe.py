@@ -1,4 +1,4 @@
 import asyncio
 
-async def entry():
+async def entry(**kwargs):
     print("cellule_complexe > entry()\n")
