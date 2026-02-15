@@ -15,35 +15,26 @@ from core.modules.core.scripting.variables.variables import *
 from core.modules.core.scripting.memory.memory import *
 
 async def main():
+    memory = Memory()
+    await memory.init()
+    await memory.create("variables")
+
+    variables = Variables()
+    await variables.init()
+
+    await memory.write("variables", variables)
+
     states = States()
     await states.init()
 
-    memory = Memory()
-    await memory.init(states)
-    await memory.create("objects")
-    await memory.create("core")
-
-    core_variables = Variables()
-    await core_variables.init(states)
-    await core_variables.create("variables")
-
-    await memory.write("core/variables", core_variables)
-
     identifier = Identifier()
-    await identifier.init(states)
+    await identifier.init(variables)
     await identifier.create("objects_id")
 
-    identifier_var = Variable()
-    await identifier_var.init(states, "object", identifier)
-    await core_variables.write("variables/identifier", identifier_var)
-
-    print(memory.memory.json)
-    print(memory.memory.json["core"]["variables"].variables.json)
-    print(memory.memory.json["core"]["variables"].variables.json["variables"]["identifier"].name)
-    print(memory.memory.json["core"]["variables"].variables.json["variables"]["identifier"].value)
-
-    await states.create("app")
-    await states.write("app/value", "on")
+    await variables.create("app")
+    app_value = Variable()
+    await app_value.init("on")
+    await variables.write("app/value", app_value)
 
     json = Json()
     await json.init()
@@ -51,7 +42,7 @@ async def main():
     await json.write("settings", await json.get_from_file("core/modules/core/json/settings.json"))
 
     symbols = Symbols()
-    await symbols.init(states)
+    await symbols.init(variables)
     await symbols.create("symbols")
 
     settings_value = await json.get("settings")
@@ -81,10 +72,10 @@ async def main():
                 done = True
 
     loader = Loader()
-    await loader.init(states, await symbols.get("<module_folder>"), await symbols.get("<plugin_folder>"), await symbols.get("<object_folder>"))
+    await loader.init(variables, await symbols.get("<module_folder>"), await symbols.get("<plugin_folder>"), await symbols.get("<object_folder>"))
 
     settings = Settings()
-    await settings.init(states, loader)
+    await settings.init(variables, loader)
     await settings.create("objects")
     await settings.create("plugins")
 
@@ -113,19 +104,23 @@ async def main():
             await loader.load(plg, "plugin")
 
     moment = Moment()
-    await moment.init(states)
+    await moment.init(variables)
     await moment.create("time")
     await moment.write("time/value1", 0)
 
     scheduler = Scheduler()
-    await scheduler.init(states)
+    await scheduler.init(variables)
     await scheduler.create("classic_task")
     await scheduler.create("complex_task")
     await scheduler.settings("classic_task/mode", "classic")
     await scheduler.settings("classic_task/model", "")
     await scheduler.settings("complex_task/mode", "complex")
 
-    while await states.get("app/value") == "on":
+    #_vars = await memory.get("variables")
+    #print(_vars.variables.json)
+
+    exit_bool = False
+    while not exit_bool:
         print(f"moment {await moment.get("time/value1")} :")
 
         for obj_name in await loader.get("loader"):
@@ -152,8 +147,10 @@ async def main():
         await asyncio.sleep(5)
         choice = 1
 
-        if choice == "exit":
-            await states.write("app/value", "off")
+        _var = await variables.get("app/value")
+        if _var.value == "off" or choice == "exit":
+            await variables.write("app/value", "off")
+            exit_bool = True
         else:
             await moment.write("time/value1", await moment.get("time/value1") + choice)
 

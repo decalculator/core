@@ -6,13 +6,9 @@ class Memory:
         self.memory = None
         self.states = None
 
-    async def init(self, states):
+    async def init(self):
         self.memory = Json()
         await self.memory.init()
-
-        self.states = states
-        await self.states.create("memory")
-        await self.states.write("memory/object", self)
 
     async def create(self, name):
         await self.memory.create(name)

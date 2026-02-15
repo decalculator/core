@@ -2168,52 +2168,42 @@ Cette classe est fonctionnelle.
 Pour le moment, la possibilité de supprimer des objets (et par la même occasion des objets) n'existe pas.  
 C'est seulement un compteur.  
 
-Voici comme l'utiliser :
+Voici comment l'utiliser :
 
 ``` python
 identifier = Identifier()
-await identifier.init(states)
+await identifier.init(variables)
 await identifier.create("objects_id")
-
-for i in range(2**10):
-    await identifier.generate_id("objects_id")
-
-print(await identifier.get_free_id("objects_id"))
 ```
 
 ###### IV - Réalisation : Memory
 
+La logique a donc complètement été repensée : `States` n'est plus utilisé.  
+Les méthodes qui utilisaient précédement `States` utilisent maintenant `Variables`.  
+La mémoire contient des variables qui contiennent des variables qui contiennent des valeurs.
+
 ``` python
-memory = Memory()
-await memory.init(states)
-await memory.create("objects")
-await memory.create("core")
+async def add(**kwargs):
+    if "variables" in kwargs:
+        variables = kwargs["variables"]
 
-core_variables = Variables()
-await core_variables.init(states)
-await core_variables.create("variables")
+        if await variables.exists("moment/object"):
+            _moment_var = await variables.get("moment/object")
+            _moment_obj = _moment_var.value
+            print(await _moment_obj.get("time/value1"))
 
-await memory.write("core/variables", core_variables)
-
-identifier = Identifier()
-await identifier.init(states)
-await identifier.create("objects_id")
-
-identifier_var = Variable()
-await identifier_var.init(states, "object", identifier)
-await core_variables.write("variables/identifier", identifier_var)
-
-print(memory.memory.json)
-print(memory.memory.json["core"]["variables"].variables.json)
-print(memory.memory.json["core"]["variables"].variables.json["variables"]["identifier"].name)
-print(memory.memory.json["core"]["variables"].variables.json["variables"]["identifier"].value)
+    return 1
 ```
 
 ```
-{'objects': {}, 'core': {'variables': <core.modules.core.scripting.variables.variables.Variables object at 0x103a167b0>}}
-{'variables': {'identifier': <core.modules.core.scripting.variable.variable.Variable object at 0x103a16a50>}}
-object
-<core.modules.core.scripting.identifier.identifier.Identifier object at 0x103a16900>
+0
 ```
+
+Maintenant, avec tous ces éléments, il est possible de créer ce que nous souhaitions : le système de mémoire pour les objets.
 
 #### IV - Des accès aux objets contrôlés
+
+# Attention
+
+Je n'ai pas vraiment le temps d'update cette trame en même temps que le code, elle contient donc des incohérences.  
+Je vais le faire très prochainement.

@@ -1,15 +1,19 @@
 import asyncio
 from core.modules.core.scripting.json.json import *
+from core.modules.core.scripting.variable.variable import *
 
 class Scheduler:
     def __init__(self):
-        self.states = None
+        self.variables = None
         self.scheduler = None
 
-    async def init(self, states):
-        self.states = states
-        await self.states.create("scheduler")
-        await self.states.write("scheduler/object", self)
+    async def init(self, variables):
+        self.variables = variables
+        await self.variables.create("scheduler")
+        obj = Variable()
+        await obj.init(self)
+        await self.variables.write("scheduler/object", obj)
+
         self.scheduler = Json()
         await self.scheduler.init()
         await self.scheduler.create("settings")

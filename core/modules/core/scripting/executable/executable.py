@@ -3,6 +3,7 @@
 
 import asyncio
 from core.modules.core.scripting.json.json import *
+from core.modules.core.scripting.variable.variable import *
 
 class Executable:
     def __init__(self):
@@ -16,10 +17,10 @@ class Executable:
         self.execution_content = None
         self.result_true = None
         self.result_false = None
-        self.states = None
+        self.variables = None
         self.result_code = None
 
-    async def init(self, config, states, macros = None):
+    async def init(self, config, variables, macros = None):
         self.executable = Json()
         await self.executable.init()
         await self.executable.create("executable")
@@ -63,9 +64,11 @@ class Executable:
                     self.result_true = await self.executable.get("executable/execution/result/true")
                     self.result_false = await self.executable.get("executable/execution/result/false")
 
-        self.states = states
-        await self.states.create(self.name)
-        await self.states.write(f"{self.name}/object", self)
+        self.variables = variables
+        await self.variables.create(self.name)
+        obj = Variable()
+        await obj.init(self)
+        await self.variables.write(f"{self.name}/object", obj)
 
         self.result_code = -1
 
@@ -76,7 +79,7 @@ class Executable:
         done = False
         while not done:
             executable = Executable()
-            await executable.init(temp, self.states, self.macros)
+            await executable.init(temp, self.variables, self.macros)
             data.append(executable)
 
             if "type" in temp:
@@ -127,7 +130,7 @@ class Executable:
 
                     lines.append("async def bridge():")
                     lines.append("    try:")
-                    lines.append(f"        return await {executable_object.execution_content}(states = states)")
+                    lines.append(f"        return await {executable_object.execution_content}(variables = variables)")
                     lines.append("    except Exception as error:")
                     lines.append("        print(error)")
                     lines.append("    except:")
@@ -165,7 +168,7 @@ class Executable:
         else:
             payload = code
 
-        exec_vars = {"states": self.states}
+        exec_vars = {"variables": self.variables}
         exec(payload, exec_vars)
 
         bridge = exec_vars['bridge']

@@ -1,17 +1,21 @@
 import asyncio
 from core.modules.core.scripting.json.json import *
+from core.modules.core.scripting.variable.variable import *
 
 class Moment:
     def __init__(self):
         self.moment = None
-        self.states = None
+        self.variables = None
 
-    async def init(self, states):
+    async def init(self, variables):
         self.moment = Json()
         await self.moment.init()
-        self.states = states
-        await self.states.create("moment")
-        await self.states.write("moment/object", self)
+
+        self.variables = variables
+        await self.variables.create("moment")
+        obj = Variable()
+        await obj.init(self)
+        await self.variables.write("moment/object", obj)
 
     async def create(self, name):
         await self.moment.create(name)

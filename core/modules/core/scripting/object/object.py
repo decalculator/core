@@ -1,10 +1,11 @@
 import asyncio
 from core.modules.core.scripting.execution.execution import *
 from core.modules.core.scripting.json.json import *
+from core.modules.core.scripting.variable.variable import *
 
 class Object:
     def __init__(self):
-        self.states = None
+        self.variables = None
         self.object = None
         self.config = None
         self.name = None
@@ -19,8 +20,8 @@ class Object:
         self.object_type = None
         self.object_model = None
 
-    async def init(self, config, states):
-        self.states = states
+    async def init(self, config, variables):
+        self.variables = variables
 
         self.object = Json()
         await self.object.init()
@@ -29,8 +30,11 @@ class Object:
 
         name = await self.object.get("settings/name")
 
-        await self.states.create(name)
-        await self.states.write(f"{name}/object", self)
+        self.variables = variables
+        await self.variables.create(name)
+        obj = Variable()
+        await obj.init(self)
+        await self.variables.write(f"{name}/object", obj)
 
         self.config = config
 
@@ -54,7 +58,7 @@ class Object:
             self.requires_application = await self.object.get("settings/requires/application")
 
         execution = Execution()
-        await execution.init(await self.object.get("settings/execution"), states)
+        await execution.init(await self.object.get("settings/execution"), self.variables)
         self.execution = [execution]
 
         self.object_type = await self.object.get("settings/object_type")

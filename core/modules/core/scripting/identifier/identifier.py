@@ -1,15 +1,18 @@
 import asyncio
 from core.modules.core.scripting.json.json import *
+from core.modules.core.scripting.variable.variable import *
 
 class Identifier:
     def __init__(self):
         self.identifier = None
-        self.states = None
+        self.variables = None
 
-    async def init(self, states):
-        self.states = states
-        await self.states.create("identifier")
-        await self.states.write("identifier/object", self)
+    async def init(self, variables):
+        self.variables = variables
+        await self.variables.create("identifier")
+        obj = Variable()
+        await obj.init(self)
+        await self.variables.write("identifier/object", obj)
 
         self.identifier = Json()
         await self.identifier.init()

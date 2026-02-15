@@ -1,17 +1,19 @@
 import asyncio
 from core.modules.core.scripting.json.json import *
+from core.modules.core.scripting.variable.variable import *
 
 class Settings:
     def __init__(self):
-        self.states = None
+        self.variables = None
         self.loader = None
         self.settings = None
 
-    async def init(self, states, loader):
-        self.states = states
-
-        await self.states.create("settings")
-        await self.states.write("settings/object", self)
+    async def init(self, variables, loader):
+        self.variables = variables
+        await self.variables.create("settings")
+        obj = Variable()
+        await obj.init(self)
+        await self.variables.write("settings/object", obj)
 
         self.loader = loader
         self.settings = Json()
