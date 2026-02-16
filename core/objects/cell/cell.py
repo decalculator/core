@@ -22,7 +22,13 @@ async def add(**kwargs):
 
             if await variables.exists("objects"):
                 temp_var = Variable()
-                await temp_var.init({"a": "b"})
+                if unique_object_id == "0":
+                    await temp_var.init({"value": "a"})
+                elif unique_object_id == "1":
+                    await temp_var.init({"value": "b"})
+                else:
+                    await temp_var.init({"value": "?"})
+
                 await variables.write(f"objects/{unique_object_id}", temp_var)
 
             if await variables.exists("objects"):

@@ -2216,7 +2216,7 @@ async def add(**kwargs):
 
             if await variables.exists("objects"):
                 temp_var = Variable()
-                await temp_var.init({"a": "b"})
+                await temp_var.init({"value": 1})
                 await variables.write(f"objects/{unique_object_id}", temp_var)
 
             if await variables.exists("objects"):
@@ -2242,12 +2242,121 @@ cell::add > memory : {'value': 1}
 cell::add > current moment : 0
 ```
 
-Et si nous l'exécutons sans le bloc qui écrit dans la mémoire :
+Si nous l'exécutons sans le bloc qui écrit dans la mémoire :
 
 ```
 cell::add > unique object id : 0
 cell::add > I don't remember anything, [...]
 cell::add > current moment : 0
+```
+
+Et j'ai oublié de préciser que le système d'IDs uniques est fonctionnel.  
+Nous pouvons load plusieurs objets (qui ont le même code), ils auront un ID différent, et une mémoire unique à cet ID.  
+
+Imaginons écrire trois fois les objets au lieu d'une seule :
+
+``` python
+for obj in await settings.get("objects/content/objects"):
+    if await settings.get(f"objects/content/objects/{obj}/enabled") == True:
+        unique_object_id = await identifier.generate_id("objects_id")
+        await loader.load(obj, "object", unique_object_id)
+
+        unique_object_id = await identifier.generate_id("objects_id")
+        await loader.load(obj, "object", unique_object_id)
+
+        unique_object_id = await identifier.generate_id("objects_id")
+        await loader.load(obj, "object", unique_object_id)
+```
+
+Avec ce code pour cell :
+
+``` python
+async def add(**kwargs):
+    if "variables" in kwargs:
+        variables = kwargs["variables"]
+
+        if "unique_object_id" in kwargs:
+            unique_object_id = kwargs["unique_object_id"]
+            print(f"cell::add > unique object id : {unique_object_id}")
+
+            if await variables.exists("objects"):
+                temp_var = Variable()
+                if unique_object_id == "0":
+                    await temp_var.init({"value": "a"})
+                elif unique_object_id == "1":
+                    await temp_var.init({"value": "b"})
+                else:
+                    await temp_var.init({"value": "?"})
+
+                await variables.write(f"objects/{unique_object_id}", temp_var)
+
+            if await variables.exists("objects"):
+                if await variables.exists(f"objects/{unique_object_id}"):
+                    memory = await variables.get(f"objects/{unique_object_id}")
+                    print(f"cell::add > memory : {memory.value}")
+                else:
+                    print("cell::add > I don't remember anything, [...]")
+
+        if await variables.exists("moment/object"):
+            _moment_var = await variables.get("moment/object")
+            _moment_obj = _moment_var.value
+            print(f"cell::add > current moment : {await _moment_obj.get("time/value1")}")
+
+    return 1
+```
+
+Les résultats sont bien :
+
+```
+moment 0 :
+execute : add_macro_check_check
+expected result : 1
+result : 1
+
+execute : add_macro_check
+expected result : 1
+result : 1
+
+execute : add
+expected result : 1
+cell::add > unique object id : 0
+cell::add > memory : {'value': 'a'}
+cell::add > current moment : 0
+result : 1
+
+global result : True
+execute : add_macro_check_check
+expected result : 1
+result : 1
+
+execute : add_macro_check
+expected result : 1
+result : 1
+
+execute : add
+expected result : 1
+cell::add > unique object id : 1
+cell::add > memory : {'value': 'b'}
+cell::add > current moment : 0
+result : 1
+
+global result : True
+execute : add_macro_check_check
+expected result : 1
+result : 1
+
+execute : add_macro_check
+expected result : 1
+result : 1
+
+execute : add
+expected result : 1
+cell::add > unique object id : 2
+cell::add > memory : {'value': '?'}
+cell::add > current moment : 0
+result : 1
+
+global result : True
 ```
 
 #### IV - Des accès aux objets contrôlés
