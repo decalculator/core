@@ -2201,9 +2201,58 @@ async def add(**kwargs):
 
 Maintenant, avec tous ces éléments, il est possible de créer ce que nous souhaitions : le système de mémoire pour les objets.
 
+##### III - Résultats
+
+Voici les résultats, tout sera très bientôt rédigé proprement, il me faut un petit peu de temps.  
+
+``` python
+async def add(**kwargs):
+    if "variables" in kwargs:
+        variables = kwargs["variables"]
+
+        if "unique_object_id" in kwargs:
+            unique_object_id = kwargs["unique_object_id"]
+            print(f"cell::add > unique object id : {unique_object_id}")
+
+            if await variables.exists("objects"):
+                temp_var = Variable()
+                await temp_var.init({"a": "b"})
+                await variables.write(f"objects/{unique_object_id}", temp_var)
+
+            if await variables.exists("objects"):
+                if await variables.exists(f"objects/{unique_object_id}"):
+                    memory = await variables.get(f"objects/{unique_object_id}")
+                    print(f"cell::add > memory : {memory.value}")
+                else:
+                    print("cell::add > I don't remember anything, [...]")
+
+        if await variables.exists("moment/object"):
+            _moment_var = await variables.get("moment/object")
+            _moment_obj = _moment_var.value
+            print(f"cell::add > current moment : {await _moment_obj.get("time/value1")}")
+
+    return 1
+```
+
+Si nous exécutons ce code :
+
+```
+cell::add > unique object id : 0
+cell::add > memory : {'value': 1}
+cell::add > current moment : 0
+```
+
+Et si nous l'exécutons sans le bloc qui écrit dans la mémoire :
+
+```
+cell::add > unique object id : 0
+cell::add > I don't remember anything, [...]
+cell::add > current moment : 0
+```
+
 #### IV - Des accès aux objets contrôlés
 
 # Attention
 
 Je n'ai pas vraiment le temps d'update cette trame en même temps que le code, elle contient donc des incohérences.  
-Je vais le faire très prochainement.
+Je vais le faire très prochainement, il me faut un petit peu de temps pour avancer puis bien rédiger proprement.

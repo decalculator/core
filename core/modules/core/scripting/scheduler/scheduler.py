@@ -20,7 +20,7 @@ class Scheduler:
 
     async def create(self, name):
         await self.scheduler.create(name)
-        await self.scheduler.write(f"{name}/running", [])
+        await self.scheduler.write(f"{name}/running", {})
         await self.scheduler.write(f"{name}/to_run", {})
 
     async def settings(self, path, value):
@@ -51,16 +51,20 @@ class Scheduler:
 
         if mode == "classic":
             for objects_name, objects_value in task.items():
-                async_task.append(asyncio.create_task(self.execute_objects(objects_value, mode)))
+                if not objects_name in ["running", "to_run"]:
+                    for unique_object_id in objects_value:
+                        async_task.append(asyncio.create_task(self.execute_objects(objects_value[unique_object_id]["objects"], mode, unique_object_id)))
 
             await asyncio.gather(*async_task)
 
         elif mode == "complex":
             for objects_name, objects_value in task.items():
-                await self.execute_objects(objects_value, mode)
+                if not objects_name in ["running", "to_run"]:
+                    for unique_object_id in objects_value:
+                        await self.execute_objects(objects_value[unique_object_id], mode, unique_object_id)
 
-    async def execute_objects(self, value, mode):
+    async def execute_objects(self, value, mode, unique_object_id):
         for obj in value:
             for execution in obj.execution:
                 for method in execution.methods:
-                    await method.execute(logs = True, mode = mode)
+                    await method.execute(logs = True, mode = mode, unique_object_id = unique_object_id)

@@ -20,7 +20,7 @@ class Object:
         self.object_type = None
         self.object_model = None
 
-    async def init(self, config, variables):
+    async def init(self, config, variables, unique_object_id):
         self.variables = variables
 
         self.object = Json()

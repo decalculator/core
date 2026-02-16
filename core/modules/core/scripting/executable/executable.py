@@ -72,7 +72,7 @@ class Executable:
 
         self.result_code = -1
 
-    async def execute(self, logs = False, mode = 0):
+    async def execute(self, logs = False, mode = 0, unique_object_id = None):
         data = []
         temp = await self.executable.get("executable")
 
@@ -130,14 +130,14 @@ class Executable:
 
                     lines.append("async def bridge():")
                     lines.append("    try:")
-                    lines.append(f"        return await {executable_object.execution_content}(variables = variables)")
+                    lines.append(f"        return await {executable_object.execution_content}(variables = variables, unique_object_id = unique_object_id)")
                     lines.append("    except Exception as error:")
                     lines.append("        print(error)")
                     lines.append("    except:")
                     lines.append("        print('error')")
 
             if len(lines) > 0:
-                result = await self._exec(lines, mode = mode)
+                result = await self._exec(lines, mode = mode, unique_object_id = unique_object_id)
 
                 if mode == "classic":
                     if logs:
@@ -159,7 +159,7 @@ class Executable:
         if logs:
             print(f"global result : {self.result_code}")
 
-    async def _exec(self, code, mode = None):
+    async def _exec(self, code, mode = None, unique_object_id = None):
         payload = ""
 
         if type(code) == list:
@@ -168,7 +168,7 @@ class Executable:
         else:
             payload = code
 
-        exec_vars = {"variables": self.variables}
+        exec_vars = {"variables": self.variables, "unique_object_id": unique_object_id}
         exec(payload, exec_vars)
 
         bridge = exec_vars['bridge']

@@ -31,6 +31,10 @@ async def main():
     await identifier.init(variables)
     await identifier.create("objects_id")
 
+    await variables.create("objects")
+    # objects/{obj_unique_id}/object : l'objet
+    # objects/{obj_unique_id}/memory : sa mémoire
+
     await variables.create("app")
     app_value = Variable()
     await app_value.init("on")
@@ -97,11 +101,13 @@ async def main():
 
     for obj in await settings.get("objects/content/objects"):
         if await settings.get(f"objects/content/objects/{obj}/enabled") == True:
-            await loader.load(obj, "object")
+            unique_object_id = await identifier.generate_id("objects_id")
+            await loader.load(obj, "object", unique_object_id)
 
     for plg in await settings.get("plugins/content/plugins"):
         if await settings.get(f"plugins/content/plugins/{plg}/enabled") == True:
-            await loader.load(plg, "plugin")
+            unique_object_id = await identifier.generate_id("objects_id")
+            await loader.load(plg, "plugin", unique_object_id)
 
     moment = Moment()
     await moment.init(variables)
@@ -116,9 +122,6 @@ async def main():
     await scheduler.settings("classic_task/model", "")
     await scheduler.settings("complex_task/mode", "complex")
 
-    #_vars = await memory.get("variables")
-    #print(_vars.variables.json)
-
     exit_bool = False
     while not exit_bool:
         print(f"moment {await moment.get("time/value1")} :")
@@ -126,18 +129,27 @@ async def main():
         for obj_name in await loader.get("loader"):
             objects = await loader.get(f"loader/{obj_name}/objects")
 
-            if objects[0].object_type == "classic":
-                await scheduler.write(f"classic_task/{obj_name}", objects)
-            elif objects[0].object_type == "complex":
-                if not obj_name in await scheduler.get("complex_task/running"):
-                    running = await scheduler.get("complex_task/running")
-                    running.append(obj_name)
+            for unique_object_id, value in objects.items():
+                temp_objs = await loader.get(f"loader/{obj_name}/objects/{unique_object_id}/object/objects")
+                if temp_objs[0].object_type == "classic":
+                    if not await scheduler.exists(f"classic_task/{obj_name}"):
+                        await scheduler.write(f"classic_task/{obj_name}", {})
+                    await scheduler.write(f"classic_task/{obj_name}/{unique_object_id}", value)
+                elif temp_objs[0].object_type == "complex":
+                    if not await scheduler.exists(f"complex_task/to_run/{obj_name}"):
+                        await scheduler.write(f"complex_task/to_run/{obj_name}", {})
 
-                    await scheduler.write("complex_task/running", running)
-                    await scheduler.write(f"complex_task/to_run/{obj_name}", objects)
+                    if not await scheduler.exists(f"complex_task/running/{obj_name}/{unique_object_id}"):
+                        await scheduler.write(f"complex_task/to_run/{obj_name}/{unique_object_id}", temp_objs)
 
-        #await scheduler.run("complex_task/to_run")
-        #await scheduler.write("complex_task/to_run", {})
+                    if not await scheduler.exists(f"complex_task/running/{obj_name}"):
+                        await scheduler.write(f"complex_task/running/{obj_name}", {})
+
+                    if not await scheduler.exists(f"complex_task/running/{obj_name}/{unique_object_id}"):
+                        await scheduler.write(f"complex_task/running/{obj_name}/{unique_object_id}", True)
+
+        await scheduler.run("complex_task/to_run")
+        await scheduler.write("complex_task/to_run", {})
 
         await scheduler.run("classic_task")
         await scheduler.write("classic_task", {})

@@ -33,7 +33,7 @@ class Loader:
     async def get(self, path):
         return await self.loader.get(path)
 
-    async def load(self, name, load_type):
+    async def load(self, name, load_type, unique_object_id):
         path = None
 
         if load_type == "plugin":
@@ -49,16 +49,19 @@ class Loader:
         if not await self.loader.exists(f"loader/{name}"):
             await self.loader.write(f"loader/{name}", {})
 
-        if not await self.loader.exists(f"loader/{name}/config"):
-            await self.loader.write(f"loader/{name}/config", await self.loader.get_from_file(main_config))
+        if not await self.loader.exists(f"loader/{name}/{unique_object_id}"):
+            await self.loader.write(f"loader/{name}/{unique_object_id}", {})
+
+        if not await self.loader.exists(f"loader/{name}/{unique_object_id}/config"):
+            await self.loader.write(f"loader/{name}/{unique_object_id}/config", await self.loader.get_from_file(main_config))
 
         current_object = Object()
-        await current_object.init(await self.loader.get(f"loader/{name}/config"), self.variables)
+        await current_object.init(await self.loader.get(f"loader/{name}/{unique_object_id}/config"), self.variables, unique_object_id)
 
-        if await self.loader.exists(f"loader/{name}/objects"):
-            await self.loader.write(f"loader/{name}/objects", await self.loader.get(f"loader/{name}/objects").append(current_object))
+        if await self.loader.exists(f"loader/{name}/{unique_object_id}/objects"):
+            await self.loader.write(f"loader/{name}/{unique_object_id}/objects", await self.loader.get(f"loader/{name}/{unique_object_id}/objects").append(current_object))
         else:
-            await self.loader.write(f"loader/{name}/objects", [current_object])
+            await self.loader.write(f"loader/{name}/{unique_object_id}/objects", [current_object])
 
     async def get(self, path):
         return await self.loader.get(path)
