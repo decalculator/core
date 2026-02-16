@@ -23,11 +23,7 @@ class Server:
         self.app = FastAPI()
 
         self.base_dir = Path(__file__).resolve().parent
-
-        # Je ne comprends pas pour le moment pourquoi cette ligne bloque l'exécution du serveur sur mon mac.
-        # Sur une autre machine sous arch, cela fonctionne très bien, cela doit être un problème relatif à ma machine.
-        # Pour le moment, je vais ignorer ce problème.
-        # self.templates = Jinja2Templates(directory = f"{self.base_dir}/templates")
+        self.templates = Jinja2Templates(directory = f"{self.base_dir}/templates")
 
         self.app.mount("/static", StaticFiles(directory = f"{self.base_dir}/static"))
         self._register_routes()
