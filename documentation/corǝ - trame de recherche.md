@@ -2359,7 +2359,58 @@ result : 1
 global result : True
 ```
 
+##### IV - Ajout restant concernant la mémoire : un système de suppression
+
+Nous y reviendrons quand le problème apparaîtra.
+
+#### IV - Mémoire commune entre les objets
+
+Nous y reviendrons quand le problème apparaîtra.
+
 #### IV - Des accès aux objets contrôlés
+
+Nous y reviendrons quand le problème apparaîtra.
+
+### VIII - Transition : de modules vers plugins, objets
+
+Cette partie repose sur une idée simple : il y a trop de modules à mon goût.  
+Pourquoi est-ce un problème (personnel, en tout cas) ? Car cela réduit une partie importante du programme au statisme.  
+Pour le moment, j'ai développé une grande partie dans `modules` car il s'agissait de la simplicité, mais maintenant que le moteur est bien avancé, j'aimerais changer cela.  
+
+Mais c'est chose plutôt compliquée, car ce qui est actuellement présent dans `modules` sont les éléments directeurs (en incluant `main.py`).  
+Cependant, `plugins` et `objects` ne contiennent normalement pas d'éléments directeurs.  
+
+Prenons un exemple : `Moment`.  
+Je trouve personnellement qu'il n'a pas sa place en tant que module.  
+Le problème, c'est que si nous le plaçons en tant que plugin, alors le moteur ne devrait pas l'utiliser de manière statique.  
+Car ce qui est dans le dossier `plugins` est modifiable par l'utilisateur (par définition), donc si le moteur utilise `Moment` mais que l'utilisateur le supprime, ça ne va pas.  
+
+#### I - Proposition de solution
+
+Je vois une solution possible.  
+Cette solution dirait que le moteur est en fait un plugin, et que le véritable "moteur" (au sens du statisme) sont les APIs comme `Json`, `Executable`, etc.  
+
+Et en fait, cela change beaucoup de choses.  
+Cela signifie donc que nous pouvons ensuite développer un plugin nommé `Moment`, et nous pouvons l'utiliser de manière statique dans ce moteur, puisqu'il est dédié à l'utilisateur.  
+Mais sauf que `Moment` ne serait toujours pas un objet "normal", comme `cell` par exemple.  
+Alors, je suis mitigé.  
+
+Ce que j'aimerais vraiment, ce serait que même `Moment` soit une sorte d'objet "vivant", exactement comme `cell`, qu'il ne soit en rien différent, mais c'est encore flou.  
+Mais la différence fondamentale, c'est que `cell` se dirige seul, pas `Moment`.  
+Alors, comment trouver un équilibre ?  
+Peu importe ! La date approche, mieux vaut se concentrer sur la nature, les détails pourront être réglés pour "parfaire" le tout, une fois le projet rendu.
+
+## II - corǝ : partie plus axée sur la nature
+
+Revenons au thème principal du sujet !  
+Le moteur étant bien commencé, nous pouvons entamer (ou plutôt factoriser, puisque les choses sont souvent faites dans le désordre...) la partie sur la nature !  
+C'est à dire, le moteur de simulation de vie.  
+
+C'est donc à partir de maintenant que nous allons pouvoir quitter peu à peu le dossier `modules` pour les dossiers `objects`, ainsi que `plugins`.  
+D'un point de vu chronologique, il me semblerait plus judicieux de continuer en allant du plus bas niveau au plus haut niveau.  
+C'est à dire : `modules`, puis `plugins`, et pour finir `objects`.  
+
+Pour le moment, le rapport à la nature n'est pas encore très grand dans le dossier `plugins`, mais cela ne saurait tarder (avec `objects`) !
 
 # Attention
 

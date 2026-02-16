@@ -67,15 +67,17 @@ class Server:
         await server.serve()
 
 async def entry(**kwargs):
-    print("server > entry()")
+    print("server::entry > exec !")
 
-    if "states" in kwargs:
-        states_object = kwargs["states"]
-        states_json_object = states_object.states.json
-        print(states_json_object)
+    if "variables" in kwargs:
+        variables = kwargs["variables"]
+
+        if "unique_object_id" in kwargs:
+            unique_object_id = kwargs["unique_object_id"]
+            print(f"server::entry > unique object id : {unique_object_id}")
 
     server = Server()
     await server.init("127.0.0.1", 4999)
-    print("server > ready")
-    print("server > start")
+    print("server::entry > ready")
+    print("server::entry > starting")
     await server.run()

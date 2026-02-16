@@ -148,11 +148,11 @@ async def main():
                     if not await scheduler.exists(f"complex_task/running/{obj_name}/{unique_object_id}"):
                         await scheduler.write(f"complex_task/running/{obj_name}/{unique_object_id}", True)
 
-        #await scheduler.run("complex_task/to_run")
-        #await scheduler.write("complex_task/to_run", {})
+        await scheduler.run("complex_task/to_run")
+        await scheduler.write("complex_task/to_run", {})
 
-        await scheduler.run("classic_task")
-        await scheduler.write("classic_task", {})
+        #await scheduler.run("classic_task")
+        #await scheduler.write("classic_task", {})
 
         print("=" * 50)
 
