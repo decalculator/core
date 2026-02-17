@@ -6,10 +6,12 @@
             core
         </title>
 
+        {% if js %}
+            <script src="/static/{{ js }}" defer></script>
+        {% endif %}
+
         {% if ui %}
             <link rel="stylesheet" href="/static/{{ ui }}">
-        {% else %}
-            <link rel="stylesheet" href="/static/css/style.css">
         {% endif %}
     </head>
 
@@ -32,6 +34,20 @@
             <h1>
                 d
             </h1>
+        {% elif menu == 'tasks' %}
+            <h1>
+                {% if data is defined %}
+                    {% for task_type in data %}
+                        {% for task_name in data[task_type] %}
+                            <input type="checkbox" id="task_{{ loop.index0 }}" name="tasks" value="{{ task_name }}" checked>
+                            <label for="task_{{ loop.index0 }}">{{ task_name }}</label>
+                            <br>
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+
+                <input id = "save" type = "button" value = "save"></button>
+            </h1>
         {% else %}
             <h1>
                 Welcome to core !
@@ -42,6 +58,8 @@
                 <button type = "submit" name = "menu_action" value = "load_local">load local world</button>
                 <button type = "submit" name = "menu_action" value = "create_network">create network world</button>
                 <button type = "submit" name = "menu_action" value = "load_network">load network world</button>
+                <button type = "submit" name = "menu_action" value = "tasks">tasks</button>
+                <button type = "submit" name = "menu_action" value = "exit">exit</button>
             </form>
         {% endif %}
 

@@ -2,3 +2,6 @@ fastapi
 uvicorn
 requests
 jinja2
+python-multipart
+PySide6
+qasync

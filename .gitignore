@@ -17,7 +17,7 @@ core/plugins/ui/
 core/plugins/world/
 core/plugins/plugins.json.bak
 
-core/plugins/server.py.bak
+core/plugins/server/
 
 __pycache__/
 ._*
