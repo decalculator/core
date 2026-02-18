@@ -103,11 +103,13 @@ async def main():
         if await settings.get(f"objects/content/objects/{obj}/enabled") == True:
             unique_object_id = await identifier.generate_id("objects_id")
             await loader.load(obj, "object", unique_object_id)
+            await loader.write(f"loader/{obj}/{unique_object_id}/enabled", True)
 
     for plg in await settings.get("plugins/content/plugins"):
         if await settings.get(f"plugins/content/plugins/{plg}/enabled") == True:
             unique_object_id = await identifier.generate_id("objects_id")
             await loader.load(plg, "plugin", unique_object_id)
+            await loader.write(f"loader/{plg}/{unique_object_id}/enabled", True)
 
     moment = Moment()
     await moment.init(variables)
@@ -130,29 +132,32 @@ async def main():
             objects = await loader.get(f"loader/{obj_name}/objects")
 
             for unique_object_id, value in objects.items():
-                temp_objs = await loader.get(f"loader/{obj_name}/objects/{unique_object_id}/object/objects")
-                if temp_objs[0].object_type == "classic":
-                    if not await scheduler.exists(f"classic_task/{obj_name}"):
-                        await scheduler.write(f"classic_task/{obj_name}", {})
-                    await scheduler.write(f"classic_task/{obj_name}/{unique_object_id}", value)
-                elif temp_objs[0].object_type == "complex":
-                    if not await scheduler.exists(f"complex_task/to_run/{obj_name}"):
-                        await scheduler.write(f"complex_task/to_run/{obj_name}", {})
+                if await loader.get(f"loader/{obj_name}/{unique_object_id}/enabled") == True:
+                    temp_objs = await loader.get(f"loader/{obj_name}/objects/{unique_object_id}/object/objects")
+                    if temp_objs[0].object_type == "classic":
+                        if not await scheduler.exists(f"classic_task/{obj_name}"):
+                            await scheduler.write(f"classic_task/{obj_name}", {})
+                        await scheduler.write(f"classic_task/{obj_name}/{unique_object_id}", value)
+                    elif temp_objs[0].object_type == "complex":
+                        if not await scheduler.exists(f"complex_task/to_run/{obj_name}"):
+                            await scheduler.write(f"complex_task/to_run/{obj_name}", {})
 
-                    if not await scheduler.exists(f"complex_task/running/{obj_name}/{unique_object_id}"):
-                        await scheduler.write(f"complex_task/to_run/{obj_name}/{unique_object_id}", temp_objs)
+                        if not await scheduler.exists(f"complex_task/running/{obj_name}/{unique_object_id}"):
+                            await scheduler.write(f"complex_task/to_run/{obj_name}/{unique_object_id}", temp_objs)
 
-                    if not await scheduler.exists(f"complex_task/running/{obj_name}"):
-                        await scheduler.write(f"complex_task/running/{obj_name}", {})
+                        if not await scheduler.exists(f"complex_task/running/{obj_name}"):
+                            await scheduler.write(f"complex_task/running/{obj_name}", {})
 
-                    if not await scheduler.exists(f"complex_task/running/{obj_name}/{unique_object_id}"):
-                        await scheduler.write(f"complex_task/running/{obj_name}/{unique_object_id}", True)
+                        if not await scheduler.exists(f"complex_task/running/{obj_name}/{unique_object_id}"):
+                            await scheduler.write(f"complex_task/running/{obj_name}/{unique_object_id}", True)
+                else:
+                    if await scheduler.exists(f"classic_task/{obj_name}/{unique_object_id}"):
+                        await scheduler.write(f"classic_task/{obj_name}/{unique_object_id}", {})
 
         await scheduler.run("complex_task/to_run")
         await scheduler.write("complex_task/to_run", {})
 
-        #await scheduler.run("classic_task")
-        #await scheduler.write("classic_task", {})
+        await scheduler.run("classic_task")
 
         print("=" * 50)
 

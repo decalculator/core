@@ -63,6 +63,9 @@ class Loader:
         else:
             await self.loader.write(f"loader/{name}/{unique_object_id}/objects", [current_object])
 
+    async def write(self, path, value):
+        await self.loader.write(path, value)
+
     async def get(self, path):
         return await self.loader.get(path)
 

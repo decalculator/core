@@ -1,8 +1,8 @@
 {
     "version": "1.0.0",
     "object_type": "complex",
-    "name": "cellule_complexe",
-    "type": "Object",
+    "name": "ui",
+    "type": "Plugin",
     "requires":
     {
         "application":
@@ -18,7 +18,7 @@
             {
                 "type": "method",
                 "name": "entry",
-                "file": "core/objects/cellule_complexe/cellule_complexe.py",
+                "file": "core/plugins/ui/ui.py",
                 "process_type": "import",
                 "execution":
                 {

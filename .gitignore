@@ -13,7 +13,6 @@ core/objects/zone/
 core/plugins/communication/
 core/plugins/configuration/
 core/plugins/filesystem/
-core/plugins/ui/
 core/plugins/world/
 core/plugins/plugins.json.bak
 

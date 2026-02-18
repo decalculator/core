@@ -6,6 +6,7 @@ class Scheduler:
     def __init__(self):
         self.variables = None
         self.scheduler = None
+        self.loader = None
 
     async def init(self, variables):
         self.variables = variables
@@ -13,6 +14,9 @@ class Scheduler:
         obj = Variable()
         await obj.init(self)
         await self.variables.write("scheduler/object", obj)
+
+        loader_var = await self.variables.get("loader/object")
+        self.loader = loader_var.value
 
         self.scheduler = Json()
         await self.scheduler.init()
@@ -52,8 +56,9 @@ class Scheduler:
         if mode == "classic":
             for objects_name, objects_value in task.items():
                 if not objects_name in ["running", "to_run"]:
-                    for unique_object_id in objects_value:
-                        async_task.append(asyncio.create_task(self.execute_objects(objects_value[unique_object_id]["objects"], mode, unique_object_id)))
+                    for unique_object_id, value in objects_value.items():
+                        if "objects" in value:
+                            async_task.append(asyncio.create_task(self.execute_objects(objects_value[unique_object_id]["objects"], mode, unique_object_id)))
 
             await asyncio.gather(*async_task)
 
@@ -68,3 +73,11 @@ class Scheduler:
             for execution in obj.execution:
                 for method in execution.methods:
                     await method.execute(logs = True, mode = mode, unique_object_id = unique_object_id)
+
+    async def disable(self, object_name, object_id):
+        print(f"scheduler::disable > {object_name}:{object_id}")
+        await self.loader.write(f"loader/{object_name}/{object_id}/enabled", False)
+
+    async def enable(self, object_name, object_id):
+        print(f"scheduler::enable > {object_name}:{object_id}")
+        await self.loader.write(f"loader/{object_name}/{object_id}/enabled", True)

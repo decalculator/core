@@ -2367,9 +2367,57 @@ Nous y reviendrons quand le problème apparaîtra.
 
 Nous y reviendrons quand le problème apparaîtra.
 
-#### IV - Des accès aux objets contrôlés
+#### V - Des accès aux objets contrôlés
 
 Nous y reviendrons quand le problème apparaîtra.
+
+#### VI - Arrêter un objet complexe
+
+Un autre problème est arrivé quand j'ai commencé à développer l'UI, et le `tasks manager`.  
+En fait, pour le moment j'ai brodé quelque chose de fonctionnel pour arrêter un objet classique, c'est assez simple.  
+Un système de booléen a pour cela été mis en place.  
+Si l'objet est `enabled`, alors la boucle principale le considère comme activé, et inversement si ce n'est pas le cas.  
+Et donc si il n'est pas considéré comme actif, on ne l'ajoute pas à `Scheduler` dans `to_run`.  
+
+Cependant, c'est plus compliqué pour un objet complexe, car nous ne l'exécutons qu'une seule fois.  
+Donc, nous ne pouvons pas empêcher sa prochaine exécution, puisqu'il n'y en a pas.  
+
+J'ai donc pensé à deux solutions :
+
+##### I - Première solution
+
+Cette première solution est la plus propre.  
+Elle dit que c'est l'objet complexe lui-même qui a un état interne, comme `self.on` pour l'ui qui lui indique si son objet est actuellement actif.  
+Et si `self.on` vaut `False`, alors il se ferme lui-même.  
+
+C'est ce que fait l'ui actuellement, de manière très simple :
+
+``` python
+count = 0
+while dpg.is_dearpygui_running() and self.on:
+    dpg.render_dearpygui_frame()
+    await asyncio.sleep(0)
+
+    if count - 100 == 0:
+        if await self.data["loader"].get(f"loader/ui/{self.unique_object_id}/enabled") == True:
+            count = 0
+        else:
+            self.on = False
+
+    count += 1
+
+dpg.destroy_context()
+```
+
+Mais le problème, c'est que cela nous force à faire des tests à chaque frame, c'est probablement mauvais.  
+Alors, j'ai aussi pensé à fonctionner via des signaux, comme en C++.  
+Nous y reviendrons
+
+##### II - Deuxième solution
+
+Celle-ci est probablement moins propre.  
+Elle dit que nous pourrions garder une trace de l'exécution déclenchée par `_exec`, puis que nous pourrions la "kill", mais cela me semble un petit peu brutal.  
+Ce qu'il faudrait, c'est que le programme puisse obtenir le message / signal AVANT d'être kill, pour pouvoir terminer proprement ses tâches.
 
 ### VIII - Transition : de modules vers plugins, objets
 
