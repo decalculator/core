@@ -11,13 +11,20 @@ class Loader:
         self.module_path = None
         self.plugin_path = None
         self.object_path = None
+        self.console = None
 
-    async def init(self, variables, module_path, plugin_path, object_path):
+    async def init(self, variables, module_path, plugin_path, object_path, console = None):
         self.loader = Json()
         await self.loader.init()
         self.module_path = module_path
         self.plugin_path = plugin_path
         self.object_path = object_path
+
+        self.console = console
+        if self.console != None:
+            console_core = await self.console.get("core")
+            console_core.append("loader > ready")
+            await self.console.write("core", console_core)
 
         await self.create("loader")
 

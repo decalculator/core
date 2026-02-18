@@ -7,13 +7,20 @@ class Settings:
         self.variables = None
         self.loader = None
         self.settings = None
+        self.console = None
 
-    async def init(self, variables, loader):
+    async def init(self, variables, loader, console = None):
         self.variables = variables
         await self.variables.create("settings")
         obj = Variable()
         await obj.init(self)
         await self.variables.write("settings/object", obj)
+
+        self.console = console
+        if self.console != None:
+            console_core = await self.console.get("core")
+            console_core.append("settings > ready")
+            await self.console.write("core", console_core)
 
         self.loader = loader
         self.settings = Json()

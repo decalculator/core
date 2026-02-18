@@ -6,8 +6,15 @@ class Identifier:
     def __init__(self):
         self.identifier = None
         self.variables = None
+        self.console = None
 
-    async def init(self, variables):
+    async def init(self, variables, console = None):
+        self.console = console
+        if self.console != None:
+            console_core = await self.console.get("core")
+            console_core.append("identifier > ready")
+            await self.console.write("core", console_core)
+
         self.variables = variables
         await self.variables.create("identifier")
         obj = Variable()

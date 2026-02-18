@@ -14,6 +14,8 @@ from core.modules.core.scripting.variable.variable import *
 from core.modules.core.scripting.variables.variables import *
 from core.modules.core.scripting.memory.memory import *
 
+from core.modules.core.scripting.console.console import *
+
 async def main():
     memory = Memory()
     await memory.init()
@@ -24,29 +26,32 @@ async def main():
 
     await memory.write("variables", variables)
 
+    console = Console()
+    await console.init(variables)
+    await console.create("core")
+    await console.write("core", ["memory > ready", "variables > ready"])
+
     states = States()
     await states.init()
 
     identifier = Identifier()
-    await identifier.init(variables)
+    await identifier.init(variables, console = console)
     await identifier.create("objects_id")
 
     await variables.create("objects")
-    # objects/{obj_unique_id}/object : l'objet
-    # objects/{obj_unique_id}/memory : sa mémoire
 
     await variables.create("app")
     app_value = Variable()
-    await app_value.init("on")
+    await app_value.init("on", console = console)
     await variables.write("app/value", app_value)
 
     json = Json()
-    await json.init()
+    await json.init(console = console)
     await json.create("settings")
     await json.write("settings", await json.get_from_file("core/modules/core/json/settings.json"))
 
     symbols = Symbols()
-    await symbols.init(variables)
+    await symbols.init(variables, console = console)
     await symbols.create("symbols")
 
     settings_value = await json.get("settings")
@@ -76,10 +81,10 @@ async def main():
                 done = True
 
     loader = Loader()
-    await loader.init(variables, await symbols.get("<module_folder>"), await symbols.get("<plugin_folder>"), await symbols.get("<object_folder>"))
+    await loader.init(variables, await symbols.get("<module_folder>"), await symbols.get("<plugin_folder>"), await symbols.get("<object_folder>"), console = console)
 
     settings = Settings()
-    await settings.init(variables, loader)
+    await settings.init(variables, loader, console = console)
     await settings.create("objects")
     await settings.create("plugins")
 
@@ -112,12 +117,12 @@ async def main():
             await loader.write(f"loader/{plg}/{unique_object_id}/enabled", True)
 
     moment = Moment()
-    await moment.init(variables)
+    await moment.init(variables, console = console)
     await moment.create("time")
     await moment.write("time/value1", 0)
 
     scheduler = Scheduler()
-    await scheduler.init(variables)
+    await scheduler.init(variables, console = console)
     await scheduler.create("classic_task")
     await scheduler.create("complex_task")
     await scheduler.settings("classic_task/mode", "classic")

@@ -7,8 +7,9 @@ class Scheduler:
         self.variables = None
         self.scheduler = None
         self.loader = None
+        self.console = None
 
-    async def init(self, variables):
+    async def init(self, variables, console = None):
         self.variables = variables
         await self.variables.create("scheduler")
         obj = Variable()
@@ -17,6 +18,12 @@ class Scheduler:
 
         loader_var = await self.variables.get("loader/object")
         self.loader = loader_var.value
+
+        self.console = console
+        if self.console != None:
+            console_core = await self.console.get("core")
+            console_core.append("symbols > ready")
+            await self.console.write("core", console_core)
 
         self.scheduler = Json()
         await self.scheduler.init()

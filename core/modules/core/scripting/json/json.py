@@ -4,9 +4,15 @@ import json
 class Json:
     def __init__(self):
         self.json = None
+        self.console = None
 
-    async def init(self):
+    async def init(self, console = None):
         self.json = {}
+        self.console = console
+        if self.console != None:
+            console_core = await self.console.get("core")
+            console_core.append("json > ready")
+            await self.console.write("core", console_core)
 
     async def create(self, name):
         self.json[name] = {}
