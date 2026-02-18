@@ -2419,6 +2419,33 @@ Celle-ci est probablement moins propre.
 Elle dit que nous pourrions garder une trace de l'exécution déclenchée par `_exec`, puis que nous pourrions la "kill", mais cela me semble un petit peu brutal.  
 Ce qu'il faudrait, c'est que le programme puisse obtenir le message / signal AVANT d'être kill, pour pouvoir terminer proprement ses tâches.
 
+#### VII - Changement d'UI : dearpygui
+
+Je pense que nous allons changer de framework pour le render asynchrone.  
+En effet, uvicorn, fastapi semblaient "parfaits" pour leur côté asynchrone et faible coût intéressant, mais il s'avère que c'est très très compliqué de développer ce que nous souhaitons avec de l'HTML / JS / CSS.  
+Je n'ai actuellement pas le niveau (et le temps) requis pour développer le moteur de rendu en HTML jinja2, avec JS.  
+
+Alors, une autre potentielle solution s'est proposée à nous : Dearpygui.  
+Pourquoi ce framework ? Car il n'impose pas sa boucle d'évênement, comme le ferait pyqt ou autre.  
+
+Cela signifie que, comme le framework précédent, l'ui peut être un objet exécuté via `_exec`, comme tout objet.  
+C'est exactement ce que nous souhaitons.  
+
+##### L'interface de notre app
+
+Je pense donc que l'interface va totalement changer.  
+Nous allons créer un menu principal, qui contiendra les options.  
+Ces options pourront être appelées applications, par exemple.
+
+Dans celles-ci :
+- le tasks manager, qui permet d'activer et de désactiver des objets en cours d'exécution.
+- le générateur d'ensembles, qui permet de créer un monde.
+- le chargeur d'ensembles, qui permet de charger (et exécuter) un ensemble.
+- une option permettant de quitter l'application.
+
+J'ai oublié de le préciser, mais nous ne parlerons désormais plus de mondes, mais plutôt d'ensembles.  
+C'est un petit peu moins contextuel, et c'est surtout la même chose : un monde est un ensemble d'objets.
+
 ### VIII - Transition : de modules vers plugins, objets
 
 Cette partie repose sur une idée simple : il y a trop de modules à mon goût.  
