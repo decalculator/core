@@ -18,6 +18,8 @@ core/plugins/plugins.json.bak
 
 core/plugins/server/
 
+core/objects/cellule_complexe/
+
 __pycache__/
 ._*
 .DS_Store
