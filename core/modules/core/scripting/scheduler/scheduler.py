@@ -88,3 +88,6 @@ class Scheduler:
     async def enable(self, object_name, object_id):
         print(f"scheduler::enable > {object_name}:{object_id}")
         await self.loader.write(f"loader/{object_name}/{object_id}/enabled", True)
+
+    async def remove(self, path):
+        await self.scheduler.remove(path)

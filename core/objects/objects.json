@@ -2,6 +2,9 @@
     "objects": {
         "cell": {
             "enabled": true
+        },
+        "cellule_complexe": {
+            "enabled": true
         }
     }
 }

@@ -104,13 +104,11 @@ async def main():
         await settings.enable(f"objects/content/objects/{obj}/enabled")
         await settings.save("objects/path", "objects/content")
 
-    """
     for obj in await settings.get("objects/content/objects"):
         if await settings.get(f"objects/content/objects/{obj}/enabled") == True:
             unique_object_id = await identifier.generate_id("objects_id")
             await loader.load(obj, "object", unique_object_id)
             await loader.write(f"loader/{obj}/{unique_object_id}/enabled", True)
-    """
 
     for plg in await settings.get("plugins/content/plugins"):
         if await settings.get(f"plugins/content/plugins/{plg}/enabled") == True:
@@ -133,6 +131,8 @@ async def main():
 
     exit_bool = False
     while not exit_bool:
+        print(f"moment {await moment.get("time/value1")} :")
+
         for obj_name in await loader.get("loader"):
             objects = await loader.get(f"loader/{obj_name}/objects")
 
@@ -163,6 +163,8 @@ async def main():
         await scheduler.write("complex_task/to_run", {})
 
         await scheduler.run("classic_task")
+
+        print("=" * 50)
 
         await asyncio.sleep(5)
         choice = 1
