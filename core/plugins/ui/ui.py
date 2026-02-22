@@ -83,14 +83,8 @@ class Ui:
                 with dpg.menu(label = "tasks manager"):
                     dpg.add_menu_item(label = "open", callback = self.tasks_callback, user_data = [0])
 
-            with dpg.menu(label = "spaces"):
+            with dpg.menu(label = "spaces", tag = "spaces_menu"):
                 dpg.add_menu_item(label = "create", callback = self.create_space_callback)
-                spaces = self.data["spaces"].spaces.json
-
-                if len(spaces) > 0:
-                    with dpg.menu(label = "open"):
-                        for space_name in spaces:
-                            dpg.add_menu_item(label = space_name)
 
             with dpg.menu(label = "console"):
                 dpg.add_menu_item(label = "open", callback = self.console_callback, user_data = [0])
@@ -121,6 +115,8 @@ class Ui:
         """
 
         while dpg.is_dearpygui_running():
+            #dpg.configure_item("test", label = value)
+
             dpg.render_dearpygui_frame()
             await asyncio.sleep(0)
 
@@ -311,11 +307,24 @@ class Ui:
 
     def space_creation_callback(self):
         space_name = dpg.get_value("space_name")
+
+        if not dpg.does_item_exist("sub_open_space"):
+            with dpg.menu(label = "open", parent = "spaces_menu", tag = "sub_open_space"):
+                dpg.add_menu_item(label = space_name, callback = self.space_creation_specific_callback, user_data = [space_name])
+        else:
+            dpg.add_menu_item(label = space_name, parent = "sub_open_space", callback = self.space_creation_specific_callback, user_data = [space_name])
+
         dpg.delete_item("create_space_window")
         #dpg.hide_item("create_space_window")
         #dpg.show_item("create_space_window")
 
         self.data["loop"].create_task(self.space_creation_function(space_name))
+
+    def space_creation_specific_callback(self, sender, app_data, user_data):
+        self.data["loop"].create_task(self.space_creation_specific_function(user_data))
+
+    async def space_creation_specific_function(self, args):
+        self.data["loop"].create_task(self.space_creation_function(args[0]))
 
     async def space_creation_function(self, space_name):
         await self.data["spaces"].create(space_name)
