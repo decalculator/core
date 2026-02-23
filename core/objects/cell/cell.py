@@ -1,6 +1,9 @@
 import asyncio
+import random
+
 from core.modules.core.scripting.variable.variable import *
 from core.modules.core.scripting.json.json import *
+from core.plugins.representation.representation import *
 
 class Cell:
     def __init__(self):
@@ -21,26 +24,38 @@ async def add(**kwargs):
             print(f"cell::add > unique object id : {unique_object_id}")
 
             if await variables.exists("objects"):
-                temp_var = Variable()
-                if unique_object_id == "0":
-                    await temp_var.init({"value": "a"})
-                elif unique_object_id == "1":
-                    await temp_var.init({"value": "b"})
-                else:
-                    await temp_var.init({"value": "?"})
-
-                await variables.write(f"objects/{unique_object_id}", temp_var)
-
-            if await variables.exists("objects"):
                 if await variables.exists(f"objects/{unique_object_id}"):
-                    memory = await variables.get(f"objects/{unique_object_id}")
-                    print(f"cell::add > memory : {memory.value}")
+                    var_var = await variables.get(f"objects/{unique_object_id}")
+                    var = var_var.value
+                    var["position"][0] += 1
+                    var["position"][1] += 1
                 else:
-                    print("cell::add > I don't remember anything, [...]")
+                    temp_var = Variable()
+                    await temp_var.init({"position": [random.randint(0, 100), random.randint(0, 100)]})
+                    await variables.write(f"objects/{unique_object_id}", temp_var)
 
-        if await variables.exists("moment/object"):
-            _moment_var = await variables.get("moment/object")
-            _moment_obj = _moment_var.value
-            print(f"cell::add > current moment : {await _moment_obj.get("time/value1")}")
+            if await variables.exists("representation/object") and await variables.exists("moment/object") and await variables.exists("objects") and await variables.exists(f"objects/{unique_object_id}"):
+                moment_var = await variables.get("moment/object")
+                moment = moment_var.value
+                now = await moment.get("time/value1")
+
+                memory = await variables.get(f"objects/{unique_object_id}")
+                mem_data = memory.value
+
+                representation_var = await variables.get("representation/object")
+                representation = representation_var.value
+
+                await representation.write(f"objects/{unique_object_id}", {
+                    "dimensions": [
+                        now * now,
+                        now * now
+                    ],
+                    "color": [
+                        0, 0, 0, 0
+                    ],
+                    "position": [
+                        mem_data["position"][0], mem_data["position"][1]
+                    ]
+                })
 
     return 1

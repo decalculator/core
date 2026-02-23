@@ -15,7 +15,9 @@ from core.modules.core.scripting.variable.variable import *
 from core.modules.core.scripting.variables.variables import *
 from core.modules.core.scripting.memory.memory import *
 from core.modules.core.scripting.console.console import *
+
 from core.plugins.spaces.spaces import *
+from core.plugins.representation.representation import *
 
 class Ui:
     def __init__(self):
@@ -94,8 +96,11 @@ class Ui:
 
             dpg.add_menu_item(label = "exit", callback = self.exit_callback)
 
-        dpg.create_viewport(title = "core", width = 1000, height = 1000)
-        #dpg.set_primary_window("core_windows", True)
+        dpg.create_viewport(title = "core", width = 2560, height = 1440)
+
+        # dpg.create_viewport(title = "core", width = 2560, height = 1440)
+        # dpg.set_primary_window("core_windows", True)
+
         dpg.setup_dearpygui()
         dpg.show_viewport()
 
@@ -356,6 +361,38 @@ class Ui:
         await identifier.create("objects_id")
         await self.data["spaces"].write(f"{space_name}/modules/identifier", identifier)
 
+        representation = Representation()
+        await representation.init(variables)
+        await representation.create("objects")
+        await self.data["spaces"].write(f"{space_name}/modules/representation", representation)
+
+        dimension_x = 500
+        dimension_y = 500
+
+        default = []
+        for i in range(dimension_x * dimension_y):
+            for _ in range(4):
+                default.append(0)
+
+        await representation.write("objects/core", {
+            "dimensions": [
+                dimension_x,
+                dimension_y
+            ],
+            "color": [
+                1, 1, 1, 1
+            ],
+            "position": [
+                0, 0
+            ]
+        })
+
+        if not dpg.does_item_exist(f"{space_name}_representation_texture_tag"):
+            with dpg.texture_registry():
+                # dpg.add_static_texture(width = dimension_x, height = dimension_y, default_value = texture_data, tag = f"{space_name}_representation_texture_tag")
+                # dpg.add_dynamic_texture(width = dimension_x, height = dimension_y, default_value = texture_data, tag = f"{space_name}_representation_texture_tag")
+                dpg.add_dynamic_texture(width = dimension_x, height = dimension_y, default_value = default, tag = f"{space_name}_representation_texture_tag")
+
         await variables.create("objects")
         await variables.create("app")
         app_value = Variable()
@@ -464,9 +501,61 @@ class Ui:
                 dpg.add_menu_item(label = "objects", callback = self.space_objects_callback, user_data = name)
                 dpg.add_menu_item(label = "settings", callback = self.space_settings_callback, user_data = name)
                 with dpg.menu(label = "moment"):
-                    dpg.add_menu_item(label = "next", callback = self.space_change_moment_callback, user_data = [name, 1])
-                    dpg.add_menu_item(label = "previous", callback = self.space_change_moment_callback, user_data = [name, -1])
+                    dpg.add_menu_item(label = "next", callback = self.space_change_moment_callback, user_data = [name, 1, 0])
+                    dpg.add_menu_item(label = "previous", callback = self.space_change_moment_callback, user_data = [name, -1, 0])
                 dpg.add_menu_item(label = "tasks", callback = self.tasks_callback, user_data = [1, name])
+                with dpg.menu(label = "console"):
+                    dpg.add_menu_item(label = "open", callback = self.console_callback, user_data = [1, name])
+                with dpg.menu(label = "representation"):
+                    dpg.add_menu_item(label = "open", callback = self.space_representation_visualisation_callback, user_data = [name, 0])
+
+    def space_representation_visualisation_callback(self, sender, app_data, user_data):
+        self.data["loop"].create_task(self.space_representation_visualisation_function(user_data))
+
+    async def space_representation_visualisation_function(self, args):
+        space_name = args[0]
+        mode = args[1]
+
+        representation = await self.data["spaces"].get(f"{space_name}/modules/representation")
+        objects = await representation.get("objects")
+
+        core_dimension_x = objects["core"]["dimensions"][0]
+        core_dimension_y = objects["core"]["dimensions"][1]
+
+        color_size = 4
+        texture_data = dpg.get_value(f"{space_name}_representation_texture_tag")
+
+        for object_name, object_data in objects.items():
+            dimension_x = object_data["dimensions"][0]
+            dimension_y = object_data["dimensions"][1]
+            position_x = object_data["position"][0]
+            position_y = object_data["position"][1]
+            color = object_data["color"]
+
+            for y in range(dimension_y):
+                for x in range(dimension_x):
+                    tex_x = position_x + x
+                    tex_y = position_y + y
+
+                    index = (tex_y * core_dimension_x + tex_x) * color_size
+
+                    for c in range(color_size):
+                        texture_data[index + c] = color[c]
+
+        dpg.set_value(f"{space_name}_representation_texture_tag", texture_data)
+
+        if mode == 0:
+            with dpg.window(label = f"representation : {space_name}", tag = f"{space_name}_space_representation_window", on_close = self.on_close_callback):
+                dpg.add_image(f"{space_name}_representation_texture_tag")
+                with dpg.group(horizontal = True):
+                    dpg.add_button(label = "refresh", callback = self.refresh_space_representation_visualisation_callback, user_data = [space_name, 1])
+                    dpg.add_button(label = "<--", callback = self.space_change_moment_callback, user_data = [space_name, -1, 1])
+                    dpg.add_button(label = "-->", callback = self.space_change_moment_callback, user_data = [space_name, 1, 1])
+        elif mode == 1:
+            dpg.set_value(f"{space_name}_space_representation_window", f"{space_name}_representation_texture_tag")
+
+    def refresh_space_representation_visualisation_callback(self, sender, app_data, user_data):
+        self.data["loop"].create_task(self.space_representation_visualisation_function(user_data))
 
     def space_change_moment_callback(self, sender, app_data, user_data):
         self.data["loop"].create_task(self.space_change_moment_function(user_data))
@@ -474,6 +563,7 @@ class Ui:
     async def space_change_moment_function(self, args):
         space_name = args[0]
         value = args[1]
+        mode = args[2]
 
         moment = await self.data["spaces"].get(f"{space_name}/modules/moment")
         loader = await self.data["spaces"].get(f"{space_name}/modules/loader")
@@ -515,6 +605,9 @@ class Ui:
         await scheduler.run("classic_task")
 
         print("=" * 50)
+
+        if mode == 1:
+            await self.space_representation_visualisation_function([space_name, 1])
 
     def space_objects_callback(self, sender, app_data, user_data):
         self.data["loop"].create_task(self.space_objects_function(user_data))
