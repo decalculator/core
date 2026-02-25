@@ -24,14 +24,9 @@ async def add(**kwargs):
             print(f"cell::add > unique object id : {unique_object_id}")
 
             if await variables.exists("objects"):
-                if await variables.exists(f"objects/{unique_object_id}"):
-                    var_var = await variables.get(f"objects/{unique_object_id}")
-                    var = var_var.value
-                    var["position"][0] += 1
-                    var["position"][1] += 1
-                else:
+                if not await variables.exists(f"objects/{unique_object_id}"):
                     temp_var = Variable()
-                    await temp_var.init({"position": [random.randint(0, 100), random.randint(0, 100)]})
+                    await temp_var.init({"animation": {"frames": ["core/objects/cell/frames/0.png", "core/objects/cell/frames/1.png", "core/objects/cell/frames/2.png"], "last": None}})
                     await variables.write(f"objects/{unique_object_id}", temp_var)
 
             if await variables.exists("representation/object") and await variables.exists("moment/object") and await variables.exists("objects") and await variables.exists(f"objects/{unique_object_id}"):
@@ -45,17 +40,26 @@ async def add(**kwargs):
                 representation_var = await variables.get("representation/object")
                 representation = representation_var.value
 
-                await representation.write(f"objects/{unique_object_id}", {
-                    "dimensions": [
-                        now * now,
-                        now * now
-                    ],
-                    "color": [
-                        0, 0, 0, 0
-                    ],
-                    "position": [
-                        mem_data["position"][0], mem_data["position"][1]
-                    ]
-                })
+                if "animation" in mem_data:
+                    animation = mem_data["animation"]
+                    if "frames" in animation and "last" in animation:
+                        frames = animation["frames"]
+                        last_frame = animation["last"]
+
+                        if last_frame == None:
+                            last_frame = 0
+                        else:
+                            if last_frame == len(frames) - 1:
+                                last_frame = 0
+                            else:
+                                last_frame += 1
+
+                        mem_data["animation"]["last"] = last_frame
+
+                        await representation.write(f"objects/{unique_object_id}", {
+                            "mode": "image",
+                            "path": frames[last_frame],
+                            "position": [100, 100]
+                        })
 
     return 1

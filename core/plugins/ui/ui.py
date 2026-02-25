@@ -2,6 +2,9 @@ import asyncio
 import ast
 import re
 import dearpygui.dearpygui as dpg
+import numpy as np
+from PIL import Image
+from PIL import ImageGrab
 
 from core.modules.core.scripting.loader.loader import *
 from core.modules.core.scripting.states.states import *
@@ -366,8 +369,8 @@ class Ui:
         await representation.create("objects")
         await self.data["spaces"].write(f"{space_name}/modules/representation", representation)
 
-        dimension_x = 500
-        dimension_y = 500
+        dimension_x = 1000
+        dimension_y = 1000
 
         default = []
         for i in range(dimension_x * dimension_y):
@@ -384,7 +387,8 @@ class Ui:
             ],
             "position": [
                 0, 0
-            ]
+            ],
+            "mode": "pixel"
         })
 
         if not dpg.does_item_exist(f"{space_name}_representation_texture_tag"):
@@ -522,25 +526,56 @@ class Ui:
         core_dimension_x = objects["core"]["dimensions"][0]
         core_dimension_y = objects["core"]["dimensions"][1]
 
-        color_size = 4
         texture_data = dpg.get_value(f"{space_name}_representation_texture_tag")
 
         for object_name, object_data in objects.items():
-            dimension_x = object_data["dimensions"][0]
-            dimension_y = object_data["dimensions"][1]
-            position_x = object_data["position"][0]
-            position_y = object_data["position"][1]
-            color = object_data["color"]
+            render_mode = object_data["mode"]
 
-            for y in range(dimension_y):
-                for x in range(dimension_x):
-                    tex_x = position_x + x
-                    tex_y = position_y + y
+            if render_mode == "image":
+                path = object_data["path"]
+                position_x = object_data["position"][0]
+                position_y = object_data["position"][1]
 
-                    index = (tex_y * core_dimension_x + tex_x) * color_size
+                image = Image.open(path).convert("RGBA")
+                dimension_x, dimension_y = image.size
 
-                    for c in range(color_size):
-                        texture_data[index + c] = color[c]
+                dpg_image = []
+                for y in range(dimension_y):
+                    for x in range(dimension_x):
+                        pixel = image.getpixel((x, y))
+                        dpg_image.append(pixel[0] / 255)
+                        dpg_image.append(pixel[1] / 255)
+                        dpg_image.append(pixel[2] / 255)
+                        dpg_image.append(255 / 255)
+
+                for y in range(dimension_y):
+                    for x in range(dimension_x):
+                        tex_x = position_x + x
+                        tex_y = position_y + y
+
+                        global_index = (tex_y * core_dimension_x + tex_x) * 4
+                        local_index = (y * dimension_x + x) * 4
+
+                        for c in range(4):
+                            texture_data[global_index + c] = dpg_image[local_index + c]
+
+            elif render_mode == "pixel":
+                dimension_x = object_data["dimensions"][0]
+                dimension_y = object_data["dimensions"][1]
+                position_x = object_data["position"][0]
+                position_y = object_data["position"][1]
+                color = object_data["color"]
+                color_size = len(color)
+
+                for y in range(dimension_y):
+                    for x in range(dimension_x):
+                        tex_x = position_x + x
+                        tex_y = position_y + y
+
+                        index = (tex_y * core_dimension_x + tex_x) * color_size
+
+                        for c in range(color_size):
+                            texture_data[index + c] = color[c]
 
         dpg.set_value(f"{space_name}_representation_texture_tag", texture_data)
 
