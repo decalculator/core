@@ -1,0 +1,13 @@
+{
+    "objects": {
+        "cell": {
+            "enabled": true
+        },
+        "cell1": {
+            "enabled": true
+        },
+        "cell2": {
+            "enabled": true
+        }
+    }
+}

@@ -1,0 +1,87 @@
+{
+    "references":
+    {
+        "json":
+        {
+            "values":
+            {
+                "versions":
+                {
+                    "latest":
+                    {
+                        "value": "<minimum_version>",
+                        "types":
+                        [
+                            "str(float)"
+                        ]
+                    },
+                    "eldest":
+                    {
+                        "value": "<maximum_version>",
+                        "types":
+                        [
+                            "str(float)"
+                        ]
+                    }
+                }
+            },
+            "keys":
+            {
+                "files":
+                {
+                    "value": "<program_files>",
+                    "types":
+                    [
+                        "json_object"
+                    ],
+                    "sub":
+                    {
+                        "_entry":
+                        {
+                            "value": "<program_entry>",
+                            "types":
+                            [
+                                "str"
+                            ]
+                        },
+                        "others":
+                        {
+                            "value": "<program_other_files>",
+                            "types":
+                            [
+                                "str(path)"
+                            ]
+                        }
+                    }
+                },
+                "requires":
+                {
+                    "value": "<program_requirements>",
+                    "types":
+                    [
+                        "json_object"
+                    ],
+                    "sub":
+                    {
+                        "modules":
+                        {
+                            "value": "<program_modules>",
+                            "types":
+                            [
+                                "json_object"
+                            ]
+                        },
+                        "plugins":
+                        {
+                            "value": "<program_plugins>",
+                            "types":
+                            [
+                                "json_array"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

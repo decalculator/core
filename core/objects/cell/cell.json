@@ -1,0 +1,80 @@
+{
+    "version": "1.0.0",
+    "name": "cell",
+    "type": "Object",
+    "object_type": "classic",
+    "requires":
+    {
+        "application":
+        {
+            "minimum_version": "eldest",
+            "maximum_version": "latest"
+        }
+    },
+    "execution":
+    {
+        "methods":
+        [
+            {
+                "type": "method",
+                "name": "add",
+                "file": "core/objects/cell/cell.py",
+                "process_type": "import",
+                "execution":
+                {
+                    "mode": "exec",
+                    "content": "add",
+                    "result":
+                    {
+                        "true": 1,
+                        "false": 0
+                    },
+                    "execution_conditions":
+                    [
+                        {
+                            "macro": "add_macro_check",
+                            "result":
+                            {
+                                "true": 1,
+                                "false": 0
+                            },
+                            "execution_conditions":
+                            [
+                                {
+                                    "type": "method",
+                                    "name": "add_macro_check_check",
+                                    "file": "core/objects/cell/cell_check.py",
+                                    "process_type": "import",
+                                    "execution":
+                                    {
+                                        "mode": "exec",
+                                        "content": "add_check_function_macro",
+                                        "result":
+                                        {
+                                            "true": 1,
+                                            "false": 0
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ],
+        "macros":
+        [
+            {
+                "type": "macro",
+                "name": "add_macro_check",
+                "file": "core/objects/cell/cell_check.py",
+                "process_type": "import",
+                "execution":
+                {
+                    "mode": "exec",
+                    "content": "add_check_function"
+                }
+            }
+        ]
+    }
+}

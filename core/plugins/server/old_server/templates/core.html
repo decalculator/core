@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            core
+        </title>
+
+        {% if ui %}
+            <link rel="stylesheet" href="/static/{{ ui }}">
+        {% else %}
+            <link rel="stylesheet" href="/static/css/style.css">
+        {% endif %}
+    </head>
+
+    <body>
+        {% if menu == 'create_local' %}
+            <form method = "POST">
+                <label for = "world_name_local">World name :</label><br>
+                <input type = "text" id = "world_name_local" name = "world_name_local"><br>
+                <button type = "submit">Submit</button>
+            </form>
+        {% elif menu == 'load_local' %}
+            <h1>
+                b
+            </h1>
+        {% elif menu == 'create_network' %}
+            <h1>
+                c
+            </h1>
+        {% elif menu == 'load_network' %}
+            <h1>
+                d
+            </h1>
+        {% else %}
+            <h1>
+                Welcome to core !
+            </h1>
+
+            <form method = "POST">
+                <button type = "submit" name = "menu_action" value = "create_local">create local world</button>
+                <button type = "submit" name = "menu_action" value = "load_local">load local world</button>
+                <button type = "submit" name = "menu_action" value = "create_network">create network world</button>
+                <button type = "submit" name = "menu_action" value = "load_network">load network world</button>
+            </form>
+        {% endif %}
+
+    </body>
+</html>

@@ -1,0 +1,46 @@
+from fastapi import *
+import asyncio
+
+class Server:
+    def __init__(self, ip = "127.0.0.1", port = 5333):
+        self.ip = ip
+        self.port = port
+        self.status = "off"
+        self.ui_file = "css/core.css"
+        self.informations = {}
+
+        self.app = FastAPI()
+        self._register_routes()
+
+    def _register_routes(self):
+        @self.app.get("/", response_class = HTMLResponse)
+        @self.app.post("/", response_class = HTMLResponse)
+        def main_menu():
+            action = None
+
+            if request.method == "POST":
+                action = None
+
+                if "menu_action" in request.form:
+                    action = request.form.get("menu_action")
+
+                self.status = action
+
+                if action == "create_local":
+                    pass
+                elif action == "load_local":
+                    pass
+                elif action == "create_network":
+                    pass
+                elif action == "load_network":
+                    pass
+
+                if "world_name_local" in request.form:
+                    world_name_local = request.form.get("world_name_local")
+                    self.informations["world_name"] = world_name_local
+
+            return render_template("core.html", ui = self.ui_file, menu = action)
+
+    def run(self):
+        self.status = "on"
+        self.app.run(host = self.ip, port = self.port, debug = False)

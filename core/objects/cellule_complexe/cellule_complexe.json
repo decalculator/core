@@ -1,0 +1,31 @@
+{
+    "version": "1.0.0",
+    "object_type": "complex",
+    "name": "cellule_complexe",
+    "type": "Object",
+    "requires":
+    {
+        "application":
+        {
+            "minimum_version": "eldest",
+            "maximum_version": "latest"
+        }
+    },
+    "execution":
+    {
+        "methods":
+        [
+            {
+                "type": "method",
+                "name": "entry",
+                "file": "core/objects/cellule_complexe/cellule_complexe.py",
+                "process_type": "import",
+                "execution":
+                {
+                    "mode": "exec",
+                    "content": "entry"
+                }
+            }
+        ]
+    }
+}

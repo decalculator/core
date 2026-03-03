@@ -1,0 +1,9 @@
+{
+    "modules":
+    {
+        "core":
+        {
+            "enabled": true
+        }
+    }
+}
