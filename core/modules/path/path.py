@@ -55,5 +55,20 @@ class Path:
 
         return result
 
+    async def subfiles(self, path):
+        # https://stackoverflow.com/questions/5817209/browse-files-and-subfolders-in-python
+        # je me suis aidé d'internet pour des raisons de performances, voici ce que j'allais faire :
+        # une fonction récursive qui fonctionne avec path.ls pour chaque dossier / sous-dossier
+        # c'est globalement ce que l'on fait, mais c'est plus simple ici
+
+        files_list = []
+
+        for root, dirs, files in os.walk(path):
+            for name in files:
+                path = root + os.sep + name
+                files_list.append(path)
+
+        return files_list
+
     async def get(self, path):
         return await self.path.get(path)

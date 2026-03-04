@@ -36,6 +36,9 @@ class Communication:
 
             await self.communication.write("response", {"content": response_content, "mode": response_mode})
 
+    async def _get(self, path):
+        return await self.communication.get(path)
+
     async def assign(self, url):
         await self.communication.write("url", url)
 

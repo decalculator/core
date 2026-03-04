@@ -59,6 +59,8 @@ class Installator:
                 elif object_type == 2:
                     path3 = "core/objects"
                     common_config_path = f"{path3}/objects.json"
+                elif object_type == 3:
+                    path3 = "core/data/repo"
 
                 with open(path1, "wb") as file:
                     file.write(await communication.get_json("response/content"))
@@ -77,16 +79,17 @@ class Installator:
                         if "name" in content:
                             await self.filesystem.mv(f"{object_path}/{content['path']}", f"{path3}/{content['name']}")
 
-                            common_config = await self.filesystem.read_file(common_config_path, 2)
+                            if object_type in [0, 1, 2]:
+                                common_config = await self.filesystem.read_file(common_config_path, 2)
 
-                            if object_type == 0:
-                                common_config["modules"][object_name] = {"enabled": True}
-                            elif object_type == 1:
-                                common_config["plugins"][object_name] = {"enabled": True}
-                            elif object_type == 2:
-                                common_config["objects"][object_name] = {"enabled": True}
+                                if object_type == 0:
+                                    common_config["modules"][object_name] = {"enabled": True}
+                                elif object_type == 1:
+                                    common_config["plugins"][object_name] = {"enabled": True}
+                                elif object_type == 2:
+                                    common_config["objects"][object_name] = {"enabled": True}
 
-                            await self.filesystem.write_to_file(common_config_path, json.dumps(common_config))
+                                await self.filesystem.write_to_file(common_config_path, json.dumps(common_config))
 
                 os.remove(path1)
         elif mode == 1:
@@ -101,6 +104,8 @@ class Installator:
             elif object_type == 2:
                 path2 = "core/objects"
                 common_config_path = f"{path2}/objects.json"
+            elif object_type == 3:
+                path2 = "core/data/repo"
 
             with ZipFile(path, "r") as obj:
                 obj.extractall(path1)
@@ -118,13 +123,14 @@ class Installator:
 
                         await self.filesystem.mv(f"{object_path}/{content['path']}", f"{path2}/{object_name}")
 
-                        common_config = await self.filesystem.read_file(common_config_path, 2)
+                        if object_type in [0, 1, 2]:
+                            common_config = await self.filesystem.read_file(common_config_path, 2)
 
-                        if object_type == 0:
-                            common_config["modules"][object_name] = {"enabled": True}
-                        elif object_type == 1:
-                            common_config["plugins"][object_name] = {"enabled": True}
-                        elif object_type == 2:
-                            common_config["objects"][object_name] = {"enabled": True}
+                            if object_type == 0:
+                                common_config["modules"][object_name] = {"enabled": True}
+                            elif object_type == 1:
+                                common_config["plugins"][object_name] = {"enabled": True}
+                            elif object_type == 2:
+                                common_config["objects"][object_name] = {"enabled": True}
 
-                        await self.filesystem.write_to_file(common_config_path, json.dumps(common_config))
+                            await self.filesystem.write_to_file(common_config_path, json.dumps(common_config))

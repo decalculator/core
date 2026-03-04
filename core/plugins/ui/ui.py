@@ -22,6 +22,7 @@ from core.plugins.spaces.spaces import *
 from core.plugins.representation.representation import *
 from core.plugins.installator.installator import *
 from core.plugins.updater.updater import *
+from core.plugins.repo.repo import *
 
 class Ui:
     def __init__(self):
@@ -64,8 +65,12 @@ class Ui:
         self.data["installator"] = installator
 
         updater = Updater()
-        await updater.init(await self.data["settings"].get("repo/config_url"))
+        await updater.init(await self.data["settings"].get("repo/url"), await self.data["settings"].get("repo/config_url"))
         self.data["updater"] = updater
+
+        repo = Repo()
+        await repo.init()
+        self.data["repo"] = repo
 
         path = Path()
         await path.init()
@@ -138,6 +143,13 @@ class Ui:
                     with dpg.menu(label = "online"):
                         dpg.add_menu_item(label = "single", callback = self.url_callback, user_data = [2, 0])
                         dpg.add_menu_item(label = "pack", callback = self.url_callback, user_data = [2, 1])
+                with dpg.menu(label = "repos"):
+                    with dpg.menu(label = "local"):
+                        dpg.add_menu_item(label = "single", callback = self.local_callback, user_data = [3, 0])
+                        dpg.add_menu_item(label = "pack", callback = self.local_callback, user_data = [3, 1])
+                    with dpg.menu(label = "online"):
+                        dpg.add_menu_item(label = "single", callback = self.url_callback, user_data = [3, 0])
+                        dpg.add_menu_item(label = "pack", callback = self.url_callback, user_data = [3, 1])
 
             dpg.add_menu_item(label = "updater", callback = self.updater_callback)
 
@@ -188,14 +200,14 @@ class Ui:
         # temporaire, il faut quelque chose comme : if version < latest_version_number
         if version != latest_version_number:
             if dpg.does_item_exist("updater_window"):
-                dpg.add_button(label = "update", parent = "updater_window", callback = update_callback)
+                dpg.add_button(label = "update", parent = "updater_window", callback = self.update_callback)
 
     def update_callback(self, sender, app_data, user_data):
         self.data["loop"].create_task(self.update_function())
 
     async def update_function(self):
         updater = self.data["updater"]
-        updater.update()
+        await updater.update()
 
     def local_callback(self, sender, app_data, user_data):
         self.data["loop"].create_task(self.local_function(user_data))
@@ -231,11 +243,47 @@ class Ui:
         self.data["loop"].create_task(self.url_function(user_data))
 
     async def url_function(self, args):
-        with dpg.window(label = "url"):
+        with dpg.window(label = "url", on_close = self.on_close_callback):
             with dpg.group(horizontal = True):
                 dpg.add_text("url : ")
                 dpg.add_input_text(tag = "url_value")
                 dpg.add_button(label = "install", callback = self.install_callback, user_data = args)
+
+            dpg.add_button(label = "install from repository", callback = self.install_from_repo_callback, user_data = args)
+
+    def install_from_repo_callback(self, sender, app_data, user_data):
+        self.data["loop"].create_task(self.install_from_repo_function(user_data))
+
+    async def install_from_repo_function(self, args):
+        with dpg.window(label = "install from repository", on_close = self.on_close_callback):
+            repo_obj = self.data["repo"]
+            repos = await repo_obj._get("repo")
+            for repo, value in repos.items():
+                with dpg.collapsing_header(label = repo):
+                    for file, file_value in value.items():
+                        repo_file_content = file_value["content"]
+                        with dpg.collapsing_header(label = file):
+
+                            with dpg.collapsing_header(label = "objects"):
+                                objects = repo_file_content["content"]["objects"]
+                                for obj, obj_value in objects.items():
+                                    with dpg.group(horizontal = True):
+                                        dpg.add_text(obj)
+                                        dpg.add_button(label = "install")
+
+                            with dpg.collapsing_header(label = "plugins"):
+                                plugins = repo_file_content["content"]["plugins"]
+                                for plg, plg_value in plugins.items():
+                                    with dpg.group(horizontal = True):
+                                        dpg.add_text(plg)
+                                        dpg.add_button(label = "install")
+
+                            with dpg.collapsing_header(label = "modules"):
+                                modules = repo_file_content["content"]["modules"]
+                                for mdl, mdl_value in modules.items():
+                                    with dpg.group(horizontal = True):
+                                        dpg.add_text(mdl)
+                                        dpg.add_button(label = "install")
 
     def install_callback(self, sender, app_data, user_data):
         self.data["loop"].create_task(self.install_function(user_data))

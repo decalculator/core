@@ -26,9 +26,9 @@ class Updater:
         await communication.get(1)
 
         if await communication.exists("response/content"):
-            if await communication.get("response/mode") == 1:
-                data = json.loads(await communication.get("response/content"))
-                result = data["<version>"]
+            if await communication._get("response/mode") == 1:
+                response = await communication._get("response/content")
+                result = response["<version>"]
 
         return result
 
@@ -38,4 +38,4 @@ class Updater:
         communication = await self.updater.get("communication")
         url = await self.updater.get("url")
 
-        await communication.git_clone(url, "updater/temp")
+        await communication.git_clone(url, "_core")
