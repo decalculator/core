@@ -41,6 +41,8 @@ Mais donc, mis à part les cellules, qu'est-ce que nous pourrions représenter ?
 Si nous voulons représenter des fleurs, par exemple, il est impossible pour le temps qu'il nous reste de le faire de manière "chronologique" (partir de cellules, pour former x chose, qui elle-même forme x chose, qui forme au final la fleur).
 Alors, nous devrions opter pour le choix "grossier et peu précis" : développer directement l'objet fleur, cela ne me plaît pas vraiment.
 
+il faut aussi ajouter un système de langues, comme avec des TID, mais ce sera probablement à la fin.
+
 # autres modifications
 
 ## 1
@@ -111,3 +113,48 @@ j'opte ici pour le fait que `Repo` soit un plugin, car il ne semble être utilis
 je vais terminer le système de repo plus tard, j'ai déjà bien avancé côté classe et UI.
 
 j'ai trouvé la solution pour suivre l'exécution des objets complexes, voir tests/a.py
+
+
+je vais maintenant m'occuper du module `Temp`
+j'ai réutilisé le modèle du module `Identifier`, mais je pense garder les deux pour bien séparer les classes
+je considère que le module est terminé, car je ne sais pas trop si il faut intégrer une méthode de création de dossier temporaire, ça ne sera pas le cas pour le moment, en partant du principe que l'objet qui l'utilise obtient l'id et peut créer le dossier temp avec filesystem.mkdir()
+
+# la vie !
+
+je pense qu'il est grand temps de commencer à développer les objets contextuels au sujet...
+la chose qui "m'effraie" le plus est le système de scénarios, je ne sais pas encore exactement comment faire
+il est nécessaire d'utiliser la récursivité :
+
+(ici, scénario = hypothèse, je vais sans doute renommer le module car je trouve qu'hypothèse sonne mieux)
+
+result = cell::entry()
+
+hypothèse 0 : result = 0 :
+    result = cell::entry() + result
+
+    hypothèse 0 : result = 0 :
+        [...]
+
+    hypothèse 1 : result = 1 :
+        [...]
+
+hypothèse 1 : result = 1 :
+    result = cell::entry() + result
+
+    hypothèse 0 : result = 1 :
+        [...]
+
+    hypothèse 1 : result = 2 :
+        [...]
+
+ici, ça semble plutôt simple, mais ça peut vite devenir très lourd avec des résultats qui ne sont pas juste 0 ou 1, et avec plus d'objets
+c'est pour cela que le module `Hypothese` pourra ne pas toutes les calculer :
+
+nous pouvons par exemple définir un nombre d'hypothèses par objet
+ici, l'hypothèse liée à cell::entry() pourrait n'accepter qu'une seule hypothèse, par exemple
+
+je ne sais pas encore comment nous choisirons les hypothèses, dans le cas où nous déclarons seulement "5 hypothèses maximum pour telle méthode d'objet", peut-être avec de l'aléatoire ? Ou bien les probabilités les plus fortes ?
+
+et il y aura un autre cas : celui où nous décidons de l'hypothèse
+ici, nous ne déclarons pas "je veux 2 hypothèses", mais "je veux les deux hypothèses suivantes pour telle méthode d'objet : retour = 0, retour = 1"
+et donc, c'est tout de suite plus simple
