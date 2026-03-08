@@ -1,12 +1,10 @@
 {
-    "plugins": {
-        "ui": {
-            "enabled": true,
-            "entry_plugin": true
-        },
-        "cli": {
-            "enabled": true,
-            "entry_plugin": true
-        }
+    "gui": {
+        "enabled": true,
+        "entry": true
+    },
+    "cli": {
+        "enabled": true,
+        "entry": true
     }
 }

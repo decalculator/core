@@ -18,7 +18,7 @@
             {
                 "type": "method",
                 "name": "entry",
-                "file": "core/plugins/cli/cli.py",
+                "file": "core/plugins/cli/entry.py",
                 "process_type": "import",
                 "execution":
                 {

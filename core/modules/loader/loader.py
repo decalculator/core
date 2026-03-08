@@ -3,6 +3,7 @@ import asyncio
 from core.modules.object.object import *
 from core.modules.json.json import *
 from core.modules.variable.variable import *
+from core.modules.path.path import *
 
 class Loader:
     def __init__(self):
@@ -22,17 +23,17 @@ class Loader:
 
         self.console = console
         if self.console != None:
-            console_core = await self.console.get("core")
+            console_core = await self.console.get(Path("core"))
             console_core.append("loader > ready")
-            await self.console.write("core", console_core)
+            await self.console.write(Path("core"), console_core)
 
-        await self.create("loader")
+        await self.create(Path("loader"))
 
         self.variables = variables
-        await self.variables.create("loader")
+        await self.variables.create(Path("loader"))
         obj = Variable()
         await obj.init(self)
-        await self.variables.write("loader/object", obj)
+        await self.variables.write(Path("loader/object"), obj)
 
     async def create(self, name):
         await self.loader.create(name)
@@ -50,25 +51,24 @@ class Loader:
         elif load_type == "object":
             path = self.object_path
 
-        folder = f"{path}/{name}"
-        main_config = f"{folder}/{name}.json"
+        main_config = Path(f"{path}/{name}/{name}.json", mode = 1)
 
-        if not await self.loader.exists(f"loader/{name}"):
-            await self.loader.write(f"loader/{name}", {})
+        if not await self.loader.exists(Path(f"loader/{name}")):
+            await self.loader.write(Path(f"loader/{name}"), {})
 
-        if not await self.loader.exists(f"loader/{name}/{unique_object_id}"):
-            await self.loader.write(f"loader/{name}/{unique_object_id}", {})
+        if not await self.loader.exists(Path(f"loader/{name}/{unique_object_id}")):
+            await self.loader.write(Path(f"loader/{name}/{unique_object_id}"), {})
 
-        if not await self.loader.exists(f"loader/{name}/{unique_object_id}/config"):
-            await self.loader.write(f"loader/{name}/{unique_object_id}/config", await self.loader.get_from_file(main_config))
+        if not await self.loader.exists(Path(f"loader/{name}/{unique_object_id}/config")):
+            await self.loader.write(Path(f"loader/{name}/{unique_object_id}/config"), await self.loader.get_from_file(main_config))
 
         current_object = Object()
-        await current_object.init(await self.loader.get(f"loader/{name}/{unique_object_id}/config"), self.variables, unique_object_id)
+        await current_object.init(await self.loader.get(Path(f"loader/{name}/{unique_object_id}/config")), self.variables, unique_object_id)
 
-        if await self.loader.exists(f"loader/{name}/{unique_object_id}/objects"):
-            await self.loader.write(f"loader/{name}/{unique_object_id}/objects", await self.loader.get(f"loader/{name}/{unique_object_id}/objects").append(current_object))
+        if await self.loader.exists(Path(f"loader/{name}/{unique_object_id}/objects")):
+            await self.loader.write(Path(f"loader/{name}/{unique_object_id}/objects"), await self.loader.get(Path(f"loader/{name}/{unique_object_id}/objects")).append(current_object))
         else:
-            await self.loader.write(f"loader/{name}/{unique_object_id}/objects", [current_object])
+            await self.loader.write(Path(f"loader/{name}/{unique_object_id}/objects"), [current_object])
 
     async def write(self, path, value):
         await self.loader.write(path, value)

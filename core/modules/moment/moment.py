@@ -14,15 +14,15 @@ class Moment:
 
         self.console = console
         if self.console != None:
-            console_core = await self.console.get("core")
+            console_core = await self.console.get(Path("core"))
             console_core.append("console > ready")
-            await self.console.write("core", console_core)
+            await self.console.write(Path("core"), console_core)
 
         self.variables = variables
-        await self.variables.create("moment")
+        await self.variables.create(Path("moment"))
         obj = Variable()
         await obj.init(self)
-        await self.variables.write("moment/object", obj)
+        await self.variables.write(Path("moment/object"), obj)
 
     async def create(self, name):
         await self.moment.create(name)

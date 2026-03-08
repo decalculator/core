@@ -3,7 +3,7 @@ import ast
 import re
 
 from core.modules.loader.loader import *
-from core.modules.states.states import *
+# from core.modules.states.states import *
 from core.modules.symbols.symbols import *
 from core.modules.json.json import *
 from core.modules.settings.settings import *
@@ -61,15 +61,15 @@ class Cli:
         await installator.init(self.data["variables"])
         self.data["installator"] = installator
 
-        path = Path()
-        await path.init()
-        self.data["path"] = path
-        await self.data["path"].create("objects")
-        await self.data["path"].write("objects", "core/objects")
-        await self.data["path"].create("plugins")
-        await self.data["path"].write("plugins", "core/plugins")
-        await self.data["path"].create("modules")
-        await self.data["path"].write("modules", "core/modules/core/scripting")
+        path_utils = Path_utils()
+        await path_utils.init()
+        self.data["path_utils"] = path_utils
+        await path_utils.create("objects")
+        await path_utils.write("objects", "core/objects")
+        await path_utils.create("plugins")
+        await path_utils.write("plugins", "core/plugins")
+        await path_utils.create("modules")
+        await path_utils.write("modules", "core/modules")
 
         await self.main_menu()
 
@@ -319,9 +319,11 @@ class Cli:
         await console.write("core", ["memory > ready", "variables > ready"])
         await self.data["spaces"].write(f"{space_name}/modules/console", console)
 
+        """
         states = States()
         await states.init()
         await self.data["spaces"].write(f"{space_name}/modules/states", states)
+        """
 
         identifier = Identifier()
         await identifier.init(variables, console = console)
@@ -520,28 +522,13 @@ class Cli:
 
         settings = await self.data["spaces"].get(f"{space_name}/modules/settings")
 
-        for obj in await self.data["path"].ls(await self.data["path"].get("objects"), mode = 1):
+        for obj in await self.data["path_utils"].ls(await self.data["path_utils"].get("objects"), mode = 1):
             print(obj)
 
         print("add plugins :")
 
-        for plg in await self.data["path"].ls(await self.data["path"].get("plugins"), mode = 1):
+        for plg in await self.data["path_utils"].ls(await self.data["path_utils"].get("plugins"), mode = 1):
             print(plg)
 
         obj = await ainput("object name : ")
         unique_id = await ainput("unique id : ")
-
-async def entry(**kwargs):
-    # print("cli::entry > exec !")
-
-    variables = None
-    unique_object_id = None
-
-    if "variables" in kwargs:
-        variables = kwargs["variables"]
-
-    if "unique_object_id" in kwargs:
-        unique_object_id = kwargs["unique_object_id"]
-
-    cli = Cli()
-    await cli.init(variables, unique_object_id)

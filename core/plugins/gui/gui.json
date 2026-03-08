@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "object_type": "complex",
-    "name": "ui",
+    "name": "gui",
     "type": "Plugin",
     "requires":
     {
@@ -18,7 +18,7 @@
             {
                 "type": "method",
                 "name": "entry",
-                "file": "core/plugins/ui/ui.py",
+                "file": "core/plugins/gui/entry.py",
                 "process_type": "import",
                 "execution":
                 {

@@ -1,84 +1,73 @@
 import asyncio
 import json
+import os
+
+from core.modules.path.path import *
 
 class Json:
     def __init__(self):
         self.json = None
         self.console = None
+        self.separator = None
 
-    async def init(self, console = None):
+    async def init(self, console = None, separator = '/'):
+        self.separator = separator
         self.json = {}
         self.console = console
         if self.console != None:
-            console_core = await self.console.get("core")
+            console_core = await self.console.get(Path("core"))
             console_core.append("json > ready")
-            await self.console.write("core", console_core)
+            await self.console.write(Path("core"), console_core)
 
     async def create(self, name):
+        name = name.json_path
         self.json[name] = {}
 
     async def remove(self, path):
-        exec(f"del self.json{await self.path_to_json(await self.fix_path(path))}")
+        exec(f"del self.json{await self.path_to_json(path)}")
+        # exec(f"del self.json{await self.path_to_json(Path(path.json_path))}")
 
-    async def fix_path(self, path):
-        while path[-1] == '/':
-            path = path[:-1]
+    async def get(self, path, separator = '/'):
+        splitted = path.splitted
+        if len(splitted) > 0:
+            result = self.json[splitted[0]]
 
-        while path[0] == '/':
-            path = path[1:]
-
-        bad = False
-        result = ""
-
-        for i in range(len(path)):
-            if path[i] == '/':
-                if not bad:
-                    result += path[i]
-                    bad = True
-            else:
-                result += path[i]
-
-                if bad:
-                    bad = False
-
-        return result
-
-    async def get(self, path):
-        path = await self.fix_path(path)
-
-        splitted = path.split("/")
-        result = self.json[splitted[0]]
-
-        for i in range(1, len(splitted)):
-            if splitted[i] in result:
-                result = result[splitted[i]]
+            for i in range(1, len(splitted)):
+                if splitted[i] in result:
+                    result = result[splitted[i]]
+        else:
+            result = self.json
 
         return result
 
     async def exists(self, path):
-        path = await self.fix_path(path)
-
-        splitted = path.split("/")
+        splitted = path.splitted
+        size = len(splitted)
         temp = self.json
 
-        result = True
+        result = False
         i = 0
-        while result and i < len(splitted):
-            element = splitted[i]
 
-            if element in temp:
-                temp = temp[element]
-            else:
-                result = False
+        if size > 0:
+            result = True
+            while result and i < size:
+                element = splitted[i]
 
-            i += 1
+                if element in temp:
+                    temp = temp[element]
+                else:
+                    result = False
+
+                i += 1
 
         return result
 
     async def path_to_json(self, path):
-        path = await self.fix_path(path)
+        if isinstance(path, Path):
+            splitted = path.splitted
+        else:
+            print(path, type(path))
 
-        splitted = path.split("/")
         result = ""
 
         for i in range(len(splitted)):
@@ -88,7 +77,7 @@ class Json:
 
     async def write(self, path, value, mode = 0):
         if mode == 1:
-            splitted = path.split("/")
+            splitted = path.splitted
             current_path = ""
             last_path = ""
             current_json_path = ""
@@ -103,9 +92,9 @@ class Json:
                 if i == 0:
                     current_path += elem
                 else:
-                    current_path += f"/{elem}"
+                    current_path += f"{self.separator}{elem}"
 
-                current_json_path = await self.path_to_json(current_path)
+                current_json_path = await self.path_to_json(Path(current_path))
                 input_data = {"elem": elem, "object": self.json}
 
                 if last_json_path:
@@ -121,5 +110,5 @@ class Json:
         exec(f"conf{path} = value", input_data)
 
     async def get_from_file(self, path):
-        with open(path, "r") as file:
+        with open(path.os_path, "r") as file:
             return json.load(file)

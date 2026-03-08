@@ -1,5 +1,6 @@
 import asyncio
 from core.modules.json.json import *
+from core.modules.path.path import *
 
 class Temp:
     def __init__(self):
@@ -18,14 +19,14 @@ class Temp:
     async def generate_id(self, path):
         path = await self.temp.fix_path(path)
         new_id = await self.get_free_id(path)
-        await self.temp.write(f"{path}/{new_id}", {})
-        await self.temp.write(f"{path}/last_id", new_id)
+        await self.temp.write(Path(f"{path}/{new_id}"), {})
+        await self.temp.write(Path(f"{path}/last_id"), new_id)
 
         return new_id
 
     async def get_free_id(self, path):
         path = await self.temp.fix_path(path)
-        return await self.temp.get(f"{path}/last_id") + 1
+        return await self.temp.get(Path(f"{path}/last_id")) + 1
 
     async def get(self, path):
         return await self.temp.get(path)

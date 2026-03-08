@@ -1,6 +1,7 @@
 import asyncio
 from core.modules.json.json import *
 from core.modules.variable.variable import *
+from core.modules.path.path import *
 
 class Scheduler:
     def __init__(self):
@@ -11,31 +12,31 @@ class Scheduler:
 
     async def init(self, variables, console = None):
         self.variables = variables
-        await self.variables.create("scheduler")
+        await self.variables.create(Path("scheduler"))
         obj = Variable()
         await obj.init(self)
-        await self.variables.write("scheduler/object", obj)
+        await self.variables.write(Path("scheduler/object"), obj)
 
-        loader_var = await self.variables.get("loader/object")
+        loader_var = await self.variables.get(Path("loader/object"))
         self.loader = loader_var.value
 
         self.console = console
         if self.console != None:
-            console_core = await self.console.get("core")
+            console_core = await self.console.get(Path("core"))
             console_core.append("symbols > ready")
-            await self.console.write("core", console_core)
+            await self.console.write(Path("core"), console_core)
 
         self.scheduler = Json()
         await self.scheduler.init()
-        await self.scheduler.create("settings")
+        await self.scheduler.create(Path("settings"))
 
     async def create(self, name):
         await self.scheduler.create(name)
-        await self.scheduler.write(f"{name}/running", {})
-        await self.scheduler.write(f"{name}/to_run", {})
+        await self.scheduler.write(Path(f"{name.json_path}/running"), {})
+        await self.scheduler.write(Path(f"{name.json_path}/to_run"), {})
 
     async def settings(self, path, value):
-        await self.scheduler.write(f"settings/{path}", value, 1)
+        await self.scheduler.write(Path(f"settings/{path.json_path}"), value, 1)
 
     async def write(self, path, value):
         await self.scheduler.write(path, value)
@@ -47,15 +48,17 @@ class Scheduler:
         return await self.scheduler.exists(path)
 
     async def run(self, path):
-        splitted = path.split("/")
+        json_path = path.json_path
+
+        splitted = json_path.split("/")
         name = splitted[0]
 
         classic_task = []
         mode = None
 
-        if await self.scheduler.exists(f"settings/{name}"):
-            if await self.scheduler.exists(f"settings/{name}/mode"):
-                mode = await self.scheduler.get(f"settings/{name}/mode")
+        if await self.scheduler.exists(Path(f"settings/{name}")):
+            if await self.scheduler.exists(Path(f"settings/{name}/mode")):
+                mode = await self.scheduler.get(Path(f"settings/{name}/mode"))
 
         task = await self.scheduler.get(path)
         async_task = []
@@ -83,11 +86,11 @@ class Scheduler:
 
     async def disable(self, object_name, object_id):
         print(f"scheduler::disable > {object_name}:{object_id}")
-        await self.loader.write(f"loader/{object_name}/{object_id}/enabled", False)
+        await self.loader.write(Path(f"loader/{object_name}/{object_id}/enabled"), False)
 
     async def enable(self, object_name, object_id):
         print(f"scheduler::enable > {object_name}:{object_id}")
-        await self.loader.write(f"loader/{object_name}/{object_id}/enabled", True)
+        await self.loader.write(Path(f"loader/{object_name}/{object_id}/enabled"), True)
 
     async def remove(self, path):
         await self.scheduler.remove(path)

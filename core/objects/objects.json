@@ -1,13 +1,14 @@
 {
-    "objects": {
-        "cell": {
-            "enabled": true
-        },
-        "cell1": {
-            "enabled": true
-        },
-        "cell2": {
-            "enabled": true
-        }
+    "cell": {
+        "enabled": true
+    },
+    "cell1": {
+        "enabled": true
+    },
+    "cell2": {
+        "enabled": true
+    },
+    "repo1": {
+        "enabled": true
     }
 }

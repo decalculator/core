@@ -15,10 +15,12 @@ class Filesystem:
         await self.filesystem.init()
 
     async def mkdir(self, path):
-        await aiofiles.os.mkdir(path)
+        await aiofiles.os.mkdir(path.os_path)
 
     async def write_to_file(self, path, value):
         value_type = type(value)
+
+        path = path.os_path
 
         async with aiofiles.open(path, "w") as file:
             if value_type == str:
@@ -27,7 +29,7 @@ class Filesystem:
     async def read_file(self, path, mode):
         result = None
 
-        async with aiofiles.open(path, "r") as file:
+        async with aiofiles.open(path.os_path, "r") as file:
             if mode == 0:
                 result = await file.read()
             elif mode == 1:
@@ -38,10 +40,10 @@ class Filesystem:
         return result
 
     async def path_exists(self, path):
-        return await aiofiles.os.path.exists(path)
+        return await aiofiles.os.path.exists(path.os_path)
 
     async def path_is_dir(self, path):
-        return await aiofiles.os.path.isdir(path)
+        return await aiofiles.os.path.isdir(path.os_path)
 
     async def mv(self, path1, path2):
-        _path(path1).rename(path2)
+        _path(path1.os_path).rename(path2.os_path)

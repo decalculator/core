@@ -1,6 +1,7 @@
 import asyncio
 from core.modules.json.json import *
 from core.modules.variable.variable import *
+from core.modules.path.path import *
 
 class Symbols:
     def __init__(self):
@@ -14,15 +15,15 @@ class Symbols:
 
         self.console = console
         if self.console != None:
-            console_core = await self.console.get("core")
+            console_core = await self.console.get(Path("core"))
             console_core.append("symbols > ready")
-            await self.console.write("core", console_core)
+            await self.console.write(Path("core"), console_core)
 
         self.variables = variables
-        await self.variables.create("symbols")
+        await self.variables.create(Path("symbols"))
         obj = Variable()
         await obj.init(self)
-        await self.variables.write("symbols/object", obj)
+        await self.variables.write(Path("symbols/object"), obj)
 
     async def create(self, name):
         await self.symbols.create(name)

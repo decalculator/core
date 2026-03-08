@@ -1,5 +1,6 @@
 import asyncio
 from core.modules.json.json import *
+from core.modules.path.path import *
 
 class Spaces:
     def __init__(self):
@@ -12,7 +13,7 @@ class Spaces:
         self.spaces = Json()
         await self.spaces.init()
 
-        self.default_path = "core/data/plugins/spaces/spaces"
+        self.default_path = Path("core/data/plugins/spaces/spaces", mode = 1)
 
     async def create(self, name):
         await self.spaces.create(name)

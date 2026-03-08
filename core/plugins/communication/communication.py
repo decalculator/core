@@ -1,7 +1,9 @@
 import requests
 import asyncio
 from git import Repo
+
 from core.modules.json.json import *
+from core.modules.path.path import *
 
 class Communication:
     def __init__(self):
@@ -10,18 +12,18 @@ class Communication:
     async def init(self):
         self.communication = Json()
         await self.communication.init()
-        await self.communication.create("url")
-        await self.communication.create("status")
+        await self.communication.create(Path("url"))
+        await self.communication.create(Path("status"))
 
     async def get(self, mode):
         try:
-            response = requests.get(await self.communication.get("url"))
+            response = requests.get(await self.communication.get(Path("url")))
             status = 1
         except:
             response = None
             status = 0
 
-        await self.communication.write("status", status)
+        await self.communication.write(Path("status"), status)
 
         if response:
             try:
@@ -34,13 +36,13 @@ class Communication:
                     response_content = response.content
                 response_mode = 0
 
-            await self.communication.write("response", {"content": response_content, "mode": response_mode})
+            await self.communication.write(Path("response"), {"content": response_content, "mode": response_mode})
 
     async def _get(self, path):
         return await self.communication.get(path)
 
     async def assign(self, url):
-        await self.communication.write("url", url)
+        await self.communication.write(Path("url"), url)
 
     async def get_json(self, path):
         return await self.communication.get(path)

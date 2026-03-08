@@ -1,9 +1,7 @@
-# executable.py
-# Il s'agit du fichier implémentant la classe Executable.
-
 import asyncio
 from core.modules.json.json import *
 from core.modules.variable.variable import *
+from core.modules.path.path import *
 
 class Executable:
     def __init__(self):
@@ -23,27 +21,27 @@ class Executable:
     async def init(self, config, variables, macros = None):
         self.executable = Json()
         await self.executable.init()
-        await self.executable.create("executable")
-        await self.executable.write("executable", config)
+        await self.executable.create(Path("executable"))
+        await self.executable.write(Path("executable"), config)
 
         self.macros = macros
 
         # la condition est temporaire (fragile)
-        if await self.executable.exists("executable/type"):
-            self.name = await self.executable.get("executable/name")
-            self.type = await self.executable.get("executable/type")
-            self.file = await self.executable.get("executable/file")
-            self.process_type = await self.executable.get("executable/process_type")
-            self.execution_mode = await self.executable.get("executable/execution/mode")
-            self.execution_content = await self.executable.get("executable/execution/content")
+        if await self.executable.exists(Path("executable/type")):
+            self.name = await self.executable.get(Path("executable/name"))
+            self.type = await self.executable.get(Path("executable/type"))
+            self.file = await self.executable.get(Path("executable/file"))
+            self.process_type = await self.executable.get(Path("executable/process_type"))
+            self.execution_mode = await self.executable.get(Path("executable/execution/mode"))
+            self.execution_content = await self.executable.get(Path("executable/execution/content"))
 
-            if await self.executable.exists("executable/execution/result/true"):
-                self.result_true = await self.executable.get("executable/execution/result/true")
-            if await self.executable.exists("executable/execution/result/false"):
-                self.result_false = await self.executable.get("executable/execution/result/false")
+            if await self.executable.exists(Path("executable/execution/result/true")):
+                self.result_true = await self.executable.get(Path("executable/execution/result/true"))
+            if await self.executable.exists(Path("executable/execution/result/false")):
+                self.result_false = await self.executable.get(Path("executable/execution/result/false"))
         else:
-            if await self.executable.exists("executable/macro"):
-                value = await self.executable.get("executable/macro")
+            if await self.executable.exists(Path("executable/macro")):
+                value = await self.executable.get(Path("executable/macro"))
 
                 found = False
                 i = 0
@@ -55,26 +53,26 @@ class Executable:
                     i += 1
 
                 if found:
-                    self.name = await macro.executable.get("executable/name")
-                    self.type = await macro.executable.get("executable/type")
-                    self.file = await macro.executable.get("executable/file")
-                    self.process_type = await macro.executable.get("executable/process_type")
-                    self.execution_mode = await macro.executable.get("executable/execution/mode")
-                    self.execution_content = await macro.executable.get("executable/executable/execution/content")
-                    self.result_true = await self.executable.get("executable/execution/result/true")
-                    self.result_false = await self.executable.get("executable/execution/result/false")
+                    self.name = await macro.executable.get(Path("executable/name"))
+                    self.type = await macro.executable.get(Path("executable/type"))
+                    self.file = await macro.executable.get(Path("executable/file"))
+                    self.process_type = await macro.executable.get(Path("executable/process_type"))
+                    self.execution_mode = await macro.executable.get(Path("executable/execution/mode"))
+                    self.execution_content = await macro.executable.get(Path("executable/executable/execution/content"))
+                    self.result_true = await self.executable.get(Path("executable/execution/result/true"))
+                    self.result_false = await self.executable.get(Path("executable/execution/result/false"))
 
         self.variables = variables
-        await self.variables.create(self.name)
+        await self.variables.create(Path(self.name))
         obj = Variable()
         await obj.init(self)
-        await self.variables.write(f"{self.name}/object", obj)
+        await self.variables.write(Path(f"{self.name}/object"), obj)
 
         self.result_code = -1
 
     async def execute(self, logs = False, mode = 0, unique_object_id = None):
         data = []
-        temp = await self.executable.get("executable")
+        temp = await self.executable.get(Path("executable"))
 
         done = False
         while not done:

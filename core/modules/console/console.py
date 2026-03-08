@@ -1,6 +1,7 @@
 import asyncio
 from core.modules.json.json import *
 from core.modules.variable.variable import *
+from core.modules.path.path import *
 
 class Console:
     def __init__(self):
@@ -11,10 +12,10 @@ class Console:
         await self.console.init()
 
         self.variables = variables
-        await self.variables.create("console")
+        await self.variables.create(Path("console"))
         obj = Variable()
         await obj.init(self)
-        await self.variables.write("console/object", obj)
+        await self.variables.write(Path("console/object"), obj)
 
     async def create(self, name):
         await self.console.create(name)

@@ -1,6 +1,7 @@
 import asyncio
 from core.modules.json.json import *
 from core.modules.variable.variable import *
+from core.modules.path.path import *
 
 class Representation:
     def __init__(self):
@@ -14,10 +15,10 @@ class Representation:
         self.variables = variables
 
         if self.variables != None:
-            await self.variables.create("representation")
+            await self.variables.create(Path("representation"))
             obj = Variable()
             await obj.init(self)
-            await self.variables.write("representation/object", obj)
+            await self.variables.write(Path("representation/object"), obj)
 
     async def create(self, name):
         await self.representation.create(name)

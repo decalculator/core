@@ -1,74 +1,41 @@
-import asyncio
 import os
-from core.modules.json.json import *
-from core.modules.filesystem.filesystem import *
 
 class Path:
-    def __init__(self):
-        self.path = None
-        self.filesystem = None
+    def __init__(self, path, separator = '/', mode = 0):
+        self.json_path = path
+        path = self.fix_path(path, separator = separator)
 
-    async def init(self):
-        self.path = Json()
-        await self.path.init()
-        self.filesystem = Filesystem()
-        await self.filesystem.init()
+        if path == "":
+            self.splitted = []
+        else:
+            self.splitted = path.split(separator)
 
-    async def create(self, name):
-        await self.path.create(name)
+        if mode == 1:
+            self.os_path = os.sep.join(self.splitted)
 
-    async def write(self, path, value):
-        await self.path.write(path, value)
+    def fix_path(self, path, separator = '/'):
+        result = ""
 
-    async def resolve(self, path):
-        pass
+        if len(path) > 0:
+            """
+            while path[-1] == separator:
+                path = path[:-1]
 
-    async def ls(self, path, exclude = None, mode = 0):
-        # mode 0 : dossiers et fichiers
-        # mode 1 : dossiers
-        # mode 2 : fichiers
+            while path[0] == separator:
+                path = path[1:]
+            """
 
-        result = []
-        if mode == 0:
-            if exclude == None:
-                result = os.listdir(path)
-            else:
-                for element in os.listdir(path):
-                    if element not in exclude:
-                        result.append(element)
-        elif mode == 1:
-            for element in os.listdir(path):
-                if exclude == None:
-                    if not os.path.isfile(os.path.join(path, element)):
-                        result.append(element)
+            bad = False
+
+            for i in range(len(path)):
+                if path[i] == separator:
+                    if not bad:
+                        result += path[i]
+                        bad = True
                 else:
-                    if element not in exclude and not os.path.isfile(os.path.join(path, element)):
-                        result.append(element)
-        elif mode == 2:
-            for element in os.listdir(path):
-                if exclude == None:
-                    if os.path.isfile(os.path.join(path, element)):
-                        result.append(element)
-                else:
-                    if element not in exclude and os.path.isfile(os.path.join(path, element)):
-                        result.append(element)
+                    result += path[i]
+
+                    if bad:
+                        bad = False
 
         return result
-
-    async def subfiles(self, path):
-        # https://stackoverflow.com/questions/5817209/browse-files-and-subfolders-in-python
-        # je me suis aidé d'internet pour des raisons de performances, voici ce que j'allais faire :
-        # une fonction récursive qui fonctionne avec path.ls pour chaque dossier / sous-dossier
-        # c'est globalement ce que l'on fait, mais c'est plus simple ici
-
-        files_list = []
-
-        for root, dirs, files in os.walk(path):
-            for name in files:
-                path = root + os.sep + name
-                files_list.append(path)
-
-        return files_list
-
-    async def get(self, path):
-        return await self.path.get(path)

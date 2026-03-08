@@ -1,6 +1,7 @@
 import asyncio
 from core.modules.json.json import *
 from core.modules.variable.variable import *
+from core.modules.path.path import *
 
 class Settings:
     def __init__(self):
@@ -11,16 +12,16 @@ class Settings:
 
     async def init(self, variables, loader, console = None):
         self.variables = variables
-        await self.variables.create("settings")
+        await self.variables.create(Path("settings"))
         obj = Variable()
         await obj.init(self)
-        await self.variables.write("settings/object", obj)
+        await self.variables.write(Path("settings/object"), obj)
 
         self.console = console
         if self.console != None:
-            console_core = await self.console.get("core")
+            console_core = await self.console.get(Path("core"))
             console_core.append("settings > ready")
-            await self.console.write("core", console_core)
+            await self.console.write(Path("core"), console_core)
 
         self.loader = loader
         self.settings = Json()

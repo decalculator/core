@@ -1,5 +1,6 @@
 import asyncio
 from core.modules.json.json import *
+from core.modules.path.path import *
 
 class Variable:
     def __init__(self):
@@ -10,9 +11,9 @@ class Variable:
     async def init(self, value = None, console = None):
         self.console = console
         if self.console != None:
-            console_core = await self.console.get("core")
+            console_core = await self.console.get(Path("core"))
             console_core.append("variable > ready")
-            await self.console.write("core", console_core)
+            await self.console.write(Path("core"), console_core)
 
         self.value = value
 
