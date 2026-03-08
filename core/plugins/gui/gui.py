@@ -430,7 +430,7 @@ class Gui:
             if await scheduler.exists(Path(f"complex_task/to_run/{obj}")):
                 await scheduler.remove(Path(f"complex_task/to_run/{obj}"))
 
-        if unique_id == self.data["unique_object_id"]:
+        if unique_id == self.data["unique_object_id"] and mode == 0:
             signals = self.data["signals"]
             await signals.write(Path(f"objects/{self.data["unique_object_id"]}/on"), False)
 

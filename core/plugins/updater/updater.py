@@ -36,7 +36,10 @@ class Updater:
     async def update(self):
         # il faudra bien penser à reset le json de communication
 
-        communication = await self.updater.get("communication")
+        communication = await self.updater.get(Path("communication"))
         url = await self.updater.get(Path("url"))
 
-        await communication.git_clone(url, Path("_core", mode = 1))
+        out_path = Path("_core", mode = 1)
+        await communication.git_clone(url, out_path.os_path)
+
+        # ...
