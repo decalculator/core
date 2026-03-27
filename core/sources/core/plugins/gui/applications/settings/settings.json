@@ -1,0 +1,13 @@
+{
+    "name": "settings",
+    "enabled": true,
+    "show": true,
+
+    "payloads":
+    {
+        "viewport_menu_bar":
+        {
+            "path": "sources/core/plugins/gui/applications/settings/payloads/viewport_menu_bar.py"
+        }
+    }
+}

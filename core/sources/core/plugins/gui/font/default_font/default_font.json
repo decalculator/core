@@ -1,0 +1,12 @@
+{
+    "name": "default_font",
+    "enabled": true,
+
+    "payloads":
+    {
+        "font_init":
+        {
+            "path": "sources/core/plugins/gui/font/default_font/payloads/font_init.py"
+        }
+    }
+}

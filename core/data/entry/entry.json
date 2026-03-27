@@ -1,0 +1,43 @@
+{
+    "text": {
+        "title": {
+            "content": [
+                "   ___ ___  _ __ ___ ",
+                "  / __/ _ \\| '__/ _ \\",
+                " | (_| (_) | | |  __/",
+                "  \\___\\___/|_|  \\___|"
+            ],
+            "hide_title": true,
+            "hide": false,
+            "translated": false
+        },
+        "version": {
+            "content": "1.0.0",
+            "hide_title": false,
+            "hide": false,
+            "translated": false
+        },
+        "build": {
+            "content": "x",
+            "hide_title": false,
+            "hide": false,
+            "translated": false
+        },
+        "delimiter": {
+            "content": [
+                "=================================================="
+            ],
+            "hide_title": true,
+            "hide": false,
+            "translated": false
+        },
+        "intro": {
+            "content": [
+                "welcome_message"
+            ],
+            "hide_title": true,
+            "hide": false,
+            "translated": true
+        }
+    }
+}

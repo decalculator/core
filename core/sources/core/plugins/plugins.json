@@ -1,0 +1,1 @@
+{"52": {"enabled": true, "config_path": "sources/core/plugins/52/core.json"}, "device": {"enabled": true}, "gui": {"enabled": true}, "moment": {"enabled": true}, "terminal": {"enabled": true}, "installator": {"enabled": true}, "communication": {"enabled": true}, "temp": {"enabled": true}, "math": {"enabled": true}, "representation": {"enabled": true}}

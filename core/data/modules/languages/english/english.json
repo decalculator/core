@@ -1,0 +1,10 @@
+{
+    "entry":
+    {
+        "path": "data/modules/languages/english/entry/entry.json"
+    },
+    "gui":
+    {
+        "path": "data/modules/languages/english/gui/gui.json"
+    }
+}

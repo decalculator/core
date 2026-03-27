@@ -1,0 +1,13 @@
+{
+    "name": "tasks_manager",
+    "enabled": true,
+    "show": true,
+
+    "payloads":
+    {
+        "viewport_menu_bar":
+        {
+            "path": "sources/core/plugins/gui/applications/tasks_manager/payloads/viewport_menu_bar.py"
+        }
+    }
+}

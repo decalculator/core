@@ -1,0 +1,13 @@
+{
+    "name": "updater",
+    "enabled": true,
+    "show": true,
+
+    "payloads":
+    {
+        "viewport_menu_bar":
+        {
+            "path": "sources/core/plugins/gui/applications/updater/payloads/viewport_menu_bar.py"
+        }
+    }
+}

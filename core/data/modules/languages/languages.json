@@ -1,0 +1,9 @@
+{
+    "languages":
+    {
+        "english":
+        {
+            "configuration": "data/modules/languages/english/english.json"
+        }
+    }
+}

@@ -1,0 +1,30 @@
+device        : 2
+dynamic_value : 3
+executable    : 14
+execution     : 13
+filesystem    : 4
+json          : 5
+languages     : 6
+loader        : 11
+logs          : 7
+memory        : 1
+object        : 12
+path          : 8
+pid_manager   : 1
+scheduler     : 15
+settings      : 9
+template      : 10 | int
+moment        : 16
+gui entry     : 17
+gui           : 19
+references_manager : 18
+communication : 20
+device        : 21
+installator   : 22
+math          : 23
+moment        : 24
+representation : 25
+spaces        : 26
+temp          : 27
+updater       : 28
+repos         : 29

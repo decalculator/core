@@ -1,0 +1,5 @@
+aiofiles
+requests
+GitPython
+pillow
+dearpygui

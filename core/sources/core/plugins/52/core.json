@@ -1,0 +1,46 @@
+{
+    "name": "core",
+    "version": 1.0,
+    "usoi": 52,
+    "type": "plugin",
+
+    "requires":
+    {
+        "application":
+        {
+            "minimum_version": "eldest",
+            "maximum_version": "latest"
+        }
+    },
+
+    "register":
+    {
+        "files":
+        {
+            "entry":
+            {
+                "path": "core/plugins/52/core.py"
+            }
+        },
+
+        "methods":
+        {
+            "entry":
+            {
+                "file": "entry",
+                "mode": "async",
+                "type": "complex"
+            }
+        },
+
+        "execution":
+        {
+            "execution":
+            {
+                "mode": "exec",
+                "content": "entry",
+                "type": "python"
+            }
+        }
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "neofetch":
+    {
+        "path": "sources/core/plugins/gui/applications/console/commands/neofetch/neofetch.py",
+        "method": "neofetch"
+    },
+    "com":
+    {
+        "path": "sources/core/plugins/gui/applications/console/commands/com/bridge.py",
+        "method": "com"
+    }
+}

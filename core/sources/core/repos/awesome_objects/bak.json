@@ -1,0 +1,54 @@
+{
+    "mode": "local",
+    "name": "repo1",
+    "version": "1.0.0",
+
+    "content":
+    {
+        "objects":
+        {
+            "cell1":
+            {
+                "mode": "online",
+                "url": "https://github.com/decalculator/cell1",
+                "type": "github_repo"
+            },
+            "cell2":
+            {
+                "mode": "online",
+                "url": "https://raw.com/cell2.zip",
+                "type": "raw_zip"
+            }
+        },
+        "plugins":
+        {
+            "plg1":
+            {
+                "mode": "online",
+                "url": "https://github.com/decalculator/cell1",
+                "type": "github_repo"
+            },
+            "plg2":
+            {
+                "mode": "online",
+                "url": "https://raw.com/cell2.zip",
+                "type": "raw_zip"
+            }
+        },
+        "modules":
+        {
+            "mdl1":
+            {
+                "mode": "online",
+                "url": "https://github.com/decalculator/cell1",
+                "type": "github_repo"
+            },
+            "mdl2":
+            {
+                "mode": "online",
+                "url": "https://raw.com/cell2.zip",
+                "type": "raw_zip"
+            }
+        }
+    }
+}

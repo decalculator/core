@@ -1,0 +1,49 @@
+{
+    "name": "terminal",
+    "version": 1.0,
+    "usoi": 18,
+    "type": "plugin",
+    "object_type": "complex",
+
+    "requires":
+    {
+        "application":
+        {
+            "minimum_version": "eldest",
+            "maximum_version": "latest"
+        }
+    },
+
+    "register":
+    {
+        "files":
+        {
+            "entry":
+            {
+                "path": "osascript",
+                "args": ["-e", "tell app \"Terminal\" to do script \"cd $PWD && pwd\""],
+                "flags": []
+            }
+        },
+
+        "executables":
+        {
+            "entry":
+            {
+                "file": "entry",
+                "mode": "async",
+                "type": "complex"
+            }
+        },
+
+        "execution":
+        {
+            "execution":
+            {
+                "mode": "exec",
+                "content": "entry",
+                "type": "executable"
+            }
+        }
+    }
+}

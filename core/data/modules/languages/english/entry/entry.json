@@ -1,0 +1,8 @@
+{
+    "welcome_message": "welcome to core !",
+    "no_entry_found": "no entry ?",
+    "objects_name": "objects :",
+    "plugins_name": "plugins :",
+    "select_entries": "select entry(ies) and type \"done\" (\"*\" to enable all)",
+    "object_already_enabled": "already enabled"
+}

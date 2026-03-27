@@ -1,0 +1,35 @@
+{
+    "version": 0.0,
+    "minimum_version": 1.0,
+    "maximum_version": 1.0,
+    "repo_url": "https://github.com/decalculator/core",
+    "repo_config_url": "https://github.com/decalculator/core/raw/refs/heads/main/gitlab/sources/core/data/core/settings.json",
+    "program_name": "core",
+
+    "variables_pattern": "{([a-z0-9_]*)}",
+
+    "souces_folder": "sources",
+
+    "objects_folder_name": "objects",
+    "objects_folder_path": "{souces_folder}/{program_name}/{objects_folder_name}",
+    "objects_config": "{objects_folder_path}/{objects_folder_name}.json",
+
+    "plugins_folder_name": "plugins",
+    "plugins_folder_path": "{souces_folder}/{program_name}/{plugins_folder_name}",
+    "plugins_config": "{plugins_folder_path}/{plugins_folder_name}.json",
+
+    "modules_folder_name": "modules",
+    "modules_folder_path": "{souces_folder}/{program_name}/{modules_folder_name}",
+    "modules_config": "{modules_folder_path}/{modules_folder_name}.json",
+
+    "data_folder_name": "data",
+    "data_folder_path": "{data_folder_name}",
+
+    "objects_data_folder_path": "{data_folder_path}/{objects_folder_name}",
+    "plugins_data_folder_path": "{data_folder_path}/{plugins_folder_name}",
+    "modules_data_folder_path": "{data_folder_path}/{modules_folder_name}",
+
+    "repos_folder_name": "repos",
+    "repos_folder_path": "{souces_folder}/{program_name}/{repos_folder_name}",
+    "repos_config": "{repos_folder_path}/{repos_folder_name}.json"
+}

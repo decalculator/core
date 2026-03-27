@@ -1,0 +1,12 @@
+{
+    "name": "white_theme",
+    "enabled": true,
+
+    "payloads":
+    {
+        "theme_init":
+        {
+            "path": "sources/core/plugins/gui/themes/white_theme/payloads/theme_init.py"
+        }
+    }
+}

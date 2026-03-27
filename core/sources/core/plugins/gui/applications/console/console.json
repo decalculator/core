@@ -1,0 +1,13 @@
+{
+    "name": "console",
+    "enabled": true,
+    "show": true,
+
+    "payloads":
+    {
+        "viewport_menu_bar":
+        {
+            "path": "sources/core/plugins/gui/applications/console/payloads/viewport_menu_bar.py"
+        }
+    }
+}

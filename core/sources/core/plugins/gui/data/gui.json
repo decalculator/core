@@ -1,0 +1,69 @@
+{
+    "applications":
+    {
+        "console":
+        {
+            "path": "sources/core/plugins/gui/applications/console/console.json"
+        },
+        "installator":
+        {
+            "path": "sources/core/plugins/gui/applications/installator/installator.json"
+        },
+        "spaces":
+        {
+            "path": "sources/core/plugins/gui/applications/spaces/spaces.json"
+        },
+        "tasks_manager":
+        {
+            "path": "sources/core/plugins/gui/applications/tasks_manager/tasks_manager.json"
+        },
+        "updater":
+        {
+            "path": "sources/core/plugins/gui/applications/updater/updater.json"
+        },
+        "settings":
+        {
+            "path": "sources/core/plugins/gui/applications/settings/settings.json"
+        }
+    },
+
+    "components":
+    {
+        "change_language":
+        {
+            "path": "sources/core/plugins/gui/components/change_language/change_language.json"
+        },
+        "viewport":
+        {
+            "path": "sources/core/plugins/gui/components/viewport/viewport.json"
+        },
+        "viewport_menu_bar":
+        {
+            "path": "sources/core/plugins/gui/components/viewport_menu_bar/viewport_menu_bar.json"
+        }
+    },
+
+    "fonts":
+    {
+        "default_font":
+        {
+            "path": "sources/core/plugins/gui/font/default_font/default_font.json"
+        },
+        "terminal_font":
+        {
+            "path": "sources/core/plugins/gui/font/terminal_font/terminal_font.json"
+        }
+    },
+
+    "themes":
+    {
+        "white_theme":
+        {
+            "path": "sources/core/plugins/gui/themes/white_theme/white_theme.json"
+        },
+        "terminal_theme":
+        {
+            "path": "sources/core/plugins/gui/themes/terminal_theme/terminal_theme.json"
+        }
+    }
+}
